@@ -868,6 +868,128 @@
         .btn, .product-card, .choice, .order-chip { transition: none; }
         .p-step.current .p-dot::after { animation: none; }
       }
+
+      /* ---------- four-step order flow ---------- */
+      .calc-panel { overflow: visible; }
+      .calc-head { border-radius: 14px 14px 0 0; }
+      .co-zone { border-radius: 0 0 14px 14px; }
+      .live-strip {
+        position: sticky; top: 87px; z-index: 25;
+        display: flex; flex-wrap: wrap; align-items: center; gap: 4px 16px;
+        background: var(--green); color: var(--black);
+        border-bottom: 2px solid var(--black);
+        padding: 12px 22px;
+      }
+      .live-strip .ls-label {
+        font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 0.05em; font-size: 15px;
+        border: 2px solid var(--black); border-radius: 999px; padding: 2px 12px; background: var(--white);
+      }
+      .live-strip .ls-text { font-weight: 700; font-size: 19.5px; font-variant-numeric: tabular-nums lining-nums; }
+      .step-block { border-top: 2px solid var(--black); margin-top: 34px; padding-top: 30px; }
+      .step-block:first-child { border-top: none; margin-top: 0; padding-top: 4px; }
+      .step-head { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
+      .step-num {
+        flex: 0 0 auto; width: 46px; height: 46px; border-radius: 50%;
+        background: var(--black); color: var(--green); border: 2px solid var(--black);
+        display: inline-flex; align-items: center; justify-content: center;
+        font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; font-size: 23px; line-height: 1;
+      }
+      .step-title { font-size: clamp(28px, 3.8vw, 40px); line-height: 1.05; }
+      .step-title-hl { font-style: italic; box-shadow: inset 0 -0.30em 0 var(--green); }
+      .step-opt { font-size: 0.52em; letter-spacing: 0.02em; }
+      .calc-body .mode-switch { margin: 0 auto 26px; }
+      .calc-body .mat-switch { margin: 0 auto 16px; }
+      .mat-about {
+        max-width: 780px; margin: 0 auto; text-align: left;
+        border: 1.5px solid var(--black); border-radius: 12px; padding: 13px 17px; background: var(--white);
+      }
+      .mat-about summary { font-weight: 700; font-size: 17.5px; cursor: pointer; padding: 2px 0; }
+      .mat-about .mat-blurb, .mat-about .flute-note { text-align: left; max-width: none; margin-top: 10px; font-size: 16.5px; }
+      .size-zone { text-align: center; margin-top: 28px; }
+      .size-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 16px; }
+      .size-card {
+        position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+        border: 2px solid var(--black); border-radius: 16px; background: var(--white); color: var(--black);
+        padding: 18px 12px 15px; font: inherit; text-align: center; cursor: pointer; width: 100%; min-height: 138px;
+      }
+      .size-card:hover { box-shadow: inset 0 0 0 2px var(--black); }
+      .size-card[aria-pressed="true"] { background: rgba(172, 229, 14, 0.22); box-shadow: inset 0 0 0 2.5px var(--black); }
+      .size-card.featured { border-width: 3px; }
+      .sc-badges { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; min-height: 25px; margin-bottom: 4px; }
+      .sc-badge {
+        font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 0.03em; font-size: 13px; line-height: 1.2;
+        border: 1.5px solid var(--black); border-radius: 999px; padding: 3px 11px; background: var(--white); white-space: nowrap;
+      }
+      .sc-badge--deal { background: var(--green); }
+      .sc-size { font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; text-transform: uppercase; font-size: 29px; line-height: 1; white-space: nowrap; }
+      .sc-price { font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; font-size: 27px; line-height: 1.1; font-variant-numeric: tabular-nums lining-nums; }
+      .sc-sub { font-size: 15.5px; }
+      .sc-min {
+        font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 0.03em; font-size: 14.5px; margin-top: 4px;
+        box-shadow: inset 0 -0.30em 0 var(--green);
+      }
+      .sides-row { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; justify-content: center; margin-top: 24px; }
+      .sides-row .sides-label { margin-bottom: 0; }
+      .sides-toggle { display: inline-flex; flex-wrap: wrap; justify-content: center; gap: 6px; border: 2px solid var(--black); border-radius: 999px; padding: 5px; background: var(--white); }
+      .sides-btn {
+        border: 2px solid transparent; background: transparent; color: var(--black);
+        border-radius: 999px; padding: 10px 24px; min-height: 48px;
+        font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 0.03em; font-size: 17.5px; line-height: 1.1; cursor: pointer;
+      }
+      .sides-btn:hover { border-color: var(--black); }
+      .sides-btn[aria-pressed="true"] { background: var(--black); color: var(--white); border-color: var(--black); }
+      .size-zone .pkg-grid-note { margin-top: 20px; }
+      .size-zone .calc-ink { margin-top: 10px; font-size: 16.5px; }
+      .qty-zone { text-align: center; }
+      .qty-zone .f-label { display: block; text-align: center; }
+      .qty-stepper { display: flex; gap: 12px; align-items: stretch; justify-content: center; margin-top: 4px; }
+      .qty-step-btn {
+        width: 58px; min-height: 58px; flex: 0 0 auto;
+        border: 2px solid var(--black); border-radius: 12px; background: var(--black); color: var(--green);
+        font-size: 32px; font-weight: 700; line-height: 1; cursor: pointer;
+        display: inline-flex; align-items: center; justify-content: center;
+      }
+      .qty-step-btn:active { background: var(--green); color: var(--black); }
+      .qty-input { width: 132px; min-height: 58px; text-align: center; font-size: 23px; font-weight: 700; }
+      .qty-zone .qty-note { text-align: center; margin-top: 10px; }
+      .qty-zone .cp-note { text-align: center; margin-top: 8px; font-size: 16.5px; }
+      .tier-zone { margin-top: 26px; text-align: center; }
+      .tier-zone .f-label { display: block; text-align: center; }
+      .tier-chips { display: flex; flex-wrap: wrap; gap: 9px; justify-content: center; margin-top: 12px; }
+      .tier-chips .ladder-cell {
+        flex-direction: row; align-items: baseline; justify-content: center; gap: 8px;
+        border: 1.5px solid var(--black); border-radius: 999px; background: var(--white); color: var(--black);
+        padding: 10px 18px; min-height: 48px; min-width: 0; cursor: pointer; font: inherit; text-align: center;
+      }
+      .tier-chips .ladder-cell:hover { box-shadow: inset 0 0 0 2px var(--black); }
+      .tier-chips .ladder-cell .lq { font-size: 20px; }
+      .tier-chips .ladder-cell .lp { font-size: 20px; }
+      .tier-chips .ladder-cell.active { background: var(--green); box-shadow: inset 0 0 0 2.5px var(--black); }
+      .tier-zone .ladder-note { text-align: center; margin-top: 14px; }
+      .custom-line { text-align: center; margin-top: 22px; font-weight: 600; font-size: 18.5px; }
+      .addon-rows { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 840px; margin: 0 auto; }
+      .addon-row .f-label { display: block; margin-bottom: 8px; }
+      .co-zone .step-head { margin-bottom: 12px; }
+      .step4-sub { font-size: 19.5px; margin-bottom: 28px; max-width: 42em; }
+      @media (max-width: 960px) {
+        .size-grid { grid-template-columns: repeat(2, 1fr); }
+      }
+      @media (max-width: 640px) {
+        .live-strip { position: static; padding: 11px 16px; }
+        .live-strip .ls-text { font-size: 17.5px; }
+        .size-grid { grid-template-columns: 1fr; gap: 14px; }
+        .size-card { min-height: 0; padding: 18px 12px 15px; }
+        .addon-rows { grid-template-columns: 1fr; }
+        .step-title { font-size: 27px; }
+        .step-num { width: 40px; height: 40px; font-size: 20px; }
+        .qty-step-btn { width: 54px; min-height: 54px; }
+        .qty-input { width: 112px; min-height: 54px; }
+        .sides-btn { padding: 10px 18px; }
+      }
     </style>
   </head>
   <body>
@@ -943,7 +1065,14 @@
           </div>
           <div class="calc-panel">
             <p class="calc-head" id="calcHead">4mm Corrugated Plastic • Printed with 5–7yr UV Inks • Durable Outdoors • Weatherproof</p>
+            <div class="live-strip" id="liveStrip" aria-live="polite">
+              <span class="ls-label">Your order</span>
+              <span class="ls-text" id="stripText">24”×18” Coroplast · 1 side · Qty 10 — $6.95 each · TOTAL $69.50</span>
+            </div>
             <div class="calc-body">
+              <!-- STEP 1 — pick your sign -->
+              <div class="step-block">
+                <div class="step-head"><span class="step-num" aria-hidden="true">1</span><h3 class="display step-title">Pick your sign</h3></div>
               <div class="mode-switch">
                 <span class="mode-heading" id="pricingLabel">How do you want to buy?</span>
                 <div class="mode-grid" role="group" aria-labelledby="pricingLabel">
@@ -964,55 +1093,51 @@
                   <button type="button" class="mat-btn" data-material="maxmetal" aria-pressed="false">Max Metal</button>
                   <button type="button" class="mat-btn" data-material="foamboard" aria-pressed="false">Foamboard</button>
                 </div>
+              </div>
+              <details class="mat-about" id="matAbout">
+                <summary>About this material</summary>
                 <p class="mat-blurb" id="matBlurb" hidden></p>
                 <p class="flute-note" id="fluteNote" hidden>Flute direction matters: vertical flutes are required if you&rsquo;re using standard Wire H-stakes. Horizontal flutes are recommended when attaching signs to wooden stakes, zip-tying them to fences, or mounting them to trees or poles, as they provide more rigidity and reduce bending. Choosing the correct flute orientation ensures your corrugated plastic signs display properly and hold up in outdoor conditions.</p>
-              </div>
-              <div class="qp-block">
-                <span class="ms-label qp-heading" id="qpLabel">Popular sizes — quick pick</span>
-                <div class="qp-row" role="group" aria-labelledby="qpLabel">
-                  <button type="button" class="qp-btn" data-qpsize="s24" aria-pressed="true">
-                    <span class="qp-size"><span class="sz">24”<span class="x x-in">×</span>18”</span></span>
-                    <span class="qp-price">$6.95</span>
-                    <span class="qp-sub">per sign · 1 side · 2 sides <span class="qp-price2">$9.95</span></span>
-                    <span class="qp-min">10 pc minimum</span>
-                  </button>
-                  <button type="button" class="qp-btn" data-qpsize="s44" aria-pressed="false">
-                    <span class="qp-size"><span class="sz">4’<span class="x x-ft">×</span>4’</span></span>
-                    <span class="qp-price">$39.95</span>
-                    <span class="qp-sub">per sign · 1 side · 2 sides <span class="qp-price2">$54.95</span></span>
-                    <span class="qp-min">2 pc minimum</span>
-                  </button>
-                  <button type="button" class="qp-btn featured" data-qpsize="s48" aria-pressed="false">
-                    <span class="qp-flag">Best deal · Full sheet</span>
-                    <span class="qp-size"><span class="sz">4’<span class="x x-ft">×</span>8’</span></span>
-                    <span class="qp-price">$69.95</span>
-                    <span class="qp-sub">per sign · 1 side · 2 sides <span class="qp-price2">$99.95</span></span>
-                  </button>
+              </details>
+              <div class="size-zone">
+                <span class="ms-label" id="sizeLabel">Choose your size</span>
+                <div class="size-grid" id="sizeGrid" role="group" aria-labelledby="sizeLabel"></div>
+                <div class="sides-row">
+                  <span class="f-label sides-label" id="sidesLabel">Sides</span>
+                  <div class="sides-toggle" role="group" aria-labelledby="sidesLabel">
+                    <button type="button" class="sides-btn" data-sides="0" aria-pressed="true">Single sided</button>
+                    <button type="button" class="sides-btn" data-sides="1" aria-pressed="false">Double sided</button>
+                  </div>
                 </div>
-                <p class="sample-note pkg-grid-note" id="pkgFootnote">Coroplast prices from our price sheet — wholesale based on <span class="sz">4’<span class="x x-ft">×</span>8’</span> sheets. Cutting fee for custom shapes: $50 per sheet. Headline price is for 1 side; 2-side prices are on each quick pick.</p>
-                <p class="pkg-extra">Need a different size? We cut custom sizes too — call <a href="tel:+19567778300">(956) 777-8300</a>.</p>
-                <p class="pkg-extra">For higher quantities, call for special rates.</p>
+                <p class="sample-note pkg-grid-note" id="pkgFootnote">Coroplast prices from our price sheet — wholesale based on <span class="sz">4’<span class="x x-ft">×</span>8’</span> sheets. Cutting fee for custom shapes: $50 per sheet. Card prices update with the sides you pick.</p>
+                <p class="calc-ink">Ink colors: <strong>Full color included</strong> — every sign prints in full color, no per-color charges.</p>
               </div>
-              <div class="calc-main">
-                <div class="calc-fields">
-                  <input type="hidden" id="calcMaterial" value="coroplast" />
-                  <div>
-                    <label class="f-label" for="calcSize">Size</label>
-                    <select class="f-input" id="calcSize"></select>
+              </div>
+              <!-- STEP 2 — how many -->
+              <div class="step-block">
+                <div class="step-head"><span class="step-num" aria-hidden="true">2</span><h3 class="display step-title">How many? <span class="step-title-hl">Buy more, save more!</span></h3></div>
+                <div class="qty-zone">
+                  <label class="f-label" for="calcQty">Quantity</label>
+                  <div class="qty-stepper">
+                    <button type="button" class="qty-step-btn" id="qtyMinus" aria-label="Decrease quantity">&minus;</button>
+                    <input class="f-input qty-input" id="calcQty" type="number" min="10" step="1" value="10" aria-describedby="calcQtyNote" />
+                    <button type="button" class="qty-step-btn" id="qtyPlus" aria-label="Increase quantity">+</button>
                   </div>
-                  <div>
-                    <label class="f-label" for="calcSides">Number of sides</label>
-                    <select class="f-input" id="calcSides">
-                      <option value="0">Single Sided</option>
-                      <option value="1">Double Sided</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label class="f-label" for="calcQty">Quantity</label>
-                    <input class="f-input" id="calcQty" type="number" min="10" step="1" value="10" aria-describedby="calcQtyNote" />
-                    <p class="qty-note" id="calcQtyNote"></p>
-                  </div>
-                  <div id="calcStakesField">
+                  <p class="qty-note" id="calcQtyNote"></p>
+                  <p class="cp-note" id="calcPriceNote"></p>
+                </div>
+                <div class="tier-zone">
+                  <span class="f-label" id="tierLabel">Or tap a quantity — volume prices</span>
+                  <div class="tier-chips" id="ladderGrid" role="group" aria-labelledby="tierLabel"></div>
+                  <p class="ladder-note" id="ladderNote"></p>
+                </div>
+                <p class="custom-line">Need a custom size or a really big run? Call <a href="tel:+19567778300">(956) 777-8300</a> for special rates.</p>
+              </div>
+              <!-- STEP 3 — finishing touches -->
+              <div class="step-block">
+                <div class="step-head"><span class="step-num" aria-hidden="true">3</span><h3 class="display step-title">Finishing touches <span class="step-opt">(optional)</span></h3></div>
+                <div class="addon-rows">
+                  <div class="addon-row" id="calcStakesField">
                     <label class="f-label" for="calcStakes">H-Stakes</label>
                     <select class="f-input" id="calcStakes">
                       <option value="0">No H-Stakes</option>
@@ -1021,7 +1146,7 @@
                       <option value="30">30” H-Stake +$2.70/sign</option>
                     </select>
                   </div>
-                  <div id="calcGrommetsField">
+                  <div class="addon-row" id="calcGrommetsField">
                     <label class="f-label" for="calcGrommets">Grommets</label>
                     <select class="f-input" id="calcGrommets">
                       <option value="none">No Grommets</option>
@@ -1031,34 +1156,22 @@
                       <option value="all">All Corners +$0.90/sign</option>
                     </select>
                   </div>
-                  <p class="calc-ink">Ink colors: <strong>Full color included</strong> — every sign prints in full color, no per-color charges.</p>
-                </div>
-                <div class="calc-price" aria-live="polite">
-                  <div class="cp-row"><span>Price each:</span><strong id="calcEach">$6.95</strong></div>
-                  <div class="cp-row cp-total"><span>Total:</span><strong id="calcTotal">$69.50</strong></div>
-                  <p class="cp-note" id="calcPriceNote"></p>
                 </div>
               </div>
-              <div class="ladder">
-                <p class="ladder-title display">Buy More, <span class="hl">Save More!</span></p>
-                <div class="ladder-grid" id="ladderGrid"></div>
-                <p class="ladder-pitch">Hit the sheet quantity and the per-sign price drops — stock up and save.</p>
-                <p class="ladder-note" id="ladderNote"></p>
-              </div>
-              <div class="calc-actions">
-                <button type="button" class="btn black" data-open-designer>Design Online</button>
-                <a class="btn" href="#checkout" id="calcEasy">Easy order</a>
-                <a class="btn ghost" href="#pickup">Request custom quote</a>
-              </div>
+              <!-- hidden state mirrors: the visible controls are the size cards, the sides toggle, and the Step 2 quantity -->
+              <input type="hidden" id="calcMaterial" value="coroplast" />
+              <select id="calcSize" hidden aria-hidden="true" tabindex="-1"></select>
+              <select id="calcSides" hidden aria-hidden="true" tabindex="-1">
+                <option value="0">Single Sided</option>
+                <option value="1">Double Sided</option>
+              </select>
+              <span id="calcEach" hidden>$6.95</span>
+              <span id="calcTotal" hidden>$69.50</span>
             </div>
             <!-- checkout zone of the merged order panel -->
             <div class="co-zone" id="checkout">
-            <p class="display co-material" id="coMaterialName">Coroplast</p>
-            <div class="section-head">
-              <span class="kicker">Demo checkout</span>
-              <h2 class="display">Almost <em>done.</em></h2>
-              <p>Tell us who's picking up and drop in your artwork. We'll text you when your signs are ready for pickup.</p>
-            </div>
+            <div class="step-head"><span class="step-num" aria-hidden="true">4</span><h3 class="display step-title">Your details &amp; artwork</h3></div>
+            <p class="step4-sub">Tell us who's picking up and drop in your artwork. We'll text you when your signs are ready for pickup.</p>
             <div class="checkout-grid">
               <form class="form-panel" id="checkoutForm" novalidate>
                 <div class="form-grid">
@@ -1102,9 +1215,8 @@
                   <div class="full">
                     <span class="f-label" id="artLabel">Artwork</span>
                     <div class="art-req">
-                      <p class="art-req-head">We require print ready artwork.</p>
-                      <p>Print-ready means <strong>300 DPI at full size</strong> — your file sized exactly to your sign, at 100% scale. PDF, vector, or a high-resolution image all work.</p>
-                      <p>Don't have artwork? If we design it for you, that's an extra fee — <strong>new design work runs $95–$295</strong> and <strong>artwork corrections $50–$75 per file</strong>. Or <button type="button" class="art-req-link" data-open-designer>design your own online — free</button> with our Design Online tool.</p>
+                      <p class="art-req-head">We require print ready artwork — 300 DPI at full size.</p>
+                      <p>No artwork? Design help is an extra fee (new design <strong>$95–$295</strong>, corrections <strong>$50–$75</strong>), or <button type="button" class="art-req-link" data-open-designer>design your own online — free</button>.</p>
                     </div>
                     <div class="dropzone" id="dropzone" role="button" tabindex="0" aria-label="Upload artwork: drop files here or activate to browse files" aria-describedby="dzSub">
                       <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V5m0 0l-4 4m4-4l4 4"/><path d="M4 17v1.5A2.5 2.5 0 0 0 6.5 21h11A2.5 2.5 0 0 0 20 18.5V17"/></svg>
@@ -1617,6 +1729,8 @@
           var discNote = document.getElementById("sumDiscNote");
           if (discNote) discNote.classList.toggle("show", unit !== p.price);
           sumTotal.textContent = money(unit * q);
+          var pkParts = String((coPackage && coPackage.value) || "s24-1").split("-");
+          updateLiveStrip(SIZE_LABELS[pkParts[0]] + " " + MATERIALS[currentMaterial].label + " \u00B7 " + (pkParts[1] === "2" ? "2 sides" : "1 side"), q, unit, unit * q);
         }
 
         function buildPackageOptions() {
@@ -1655,10 +1769,12 @@
             (currentMode === "onepc"
               ? "1 pc prices. "
               : "wholesale based on <span class=\"sz\">4\u2019<span class=\"x x-ft\">\u00D7</span>8\u2019</span> sheets. ") +
-            "Cutting fee for custom shapes: $" + m.cuttingFee + " per sheet. Headline price is for 1 side; 2-side prices are on each quick pick.";
+            "Cutting fee for custom shapes: $" + m.cuttingFee + " per sheet. Card prices update with the sides you pick.";
           buildPackageOptions();
           applyQtyMin(resetQty);
           renderSummary();
+          renderSizeCards();
+          updateSidesToggle();
         }
 
         function setMode(mode) {
@@ -1682,7 +1798,8 @@
             btns[i].setAttribute("aria-pressed", btns[i].getAttribute("data-material") === key ? "true" : "false");
           }
           document.getElementById("pkgKicker").textContent = m.label + " packages";
-          document.getElementById("coMaterialName").textContent = m.label;
+          var cmnEl = document.getElementById("coMaterialName");
+          if (cmnEl) cmnEl.textContent = m.label;
           var blurbEl = document.getElementById("matBlurb");
           if (m.blurb) {
             blurbEl.innerHTML = m.blurb;
@@ -2109,6 +2226,7 @@
            size's pieces-per-sheet count; at/above it, the wholesale
            price run through the volume curve. */
         function calcSignPrice(entry, sideIdx, qty) {
+          if (currentMode === "onepc") return entry.pc[sideIdx];
           return qty >= entry.pps ? curvedPrice(entry.ws[sideIdx], qty) : entry.pc[sideIdx];
         }
         /* Price each = curved sign price + the selected adders. */
@@ -2195,9 +2313,11 @@
           var each = calcEach(entry, sideIdx, qty);
           document.getElementById("calcEach").textContent = money(each);
           document.getElementById("calcTotal").textContent = money(each * qty);
-          var discRate = qty >= entry.pps ? volumeDiscountRate(qty) : 0;
+          var discRate = currentMode === "onepc" ? 0 : (qty >= entry.pps ? volumeDiscountRate(qty) : 0);
           document.getElementById("calcPriceNote").textContent =
-            (discRate > 0
+            (currentMode === "onepc"
+              ? "1 pc price \u2014 the single-sign price, no minimum."
+              : discRate > 0
               ? "Volume discount applied \u2014 " + Math.round(discRate * 100) + "% off the wholesale per-piece price at this quantity."
               : entry.pps === 1
                 ? "Full-sheet size \u2014 wholesale price at any quantity."
@@ -2216,6 +2336,8 @@
           document.getElementById("ladderNote").textContent = entry.pps === 1
             ? "A 4\u2019\u00D78\u2019 is a full sheet all by itself, so it\u2019s the wholesale price from the first sign \u2014 and volume discounts kick in at 25+."
             : "Prices drop to the wholesale per-piece rate at " + entry.pps + " pc \u2014 one full 4\u2019\u00D78\u2019 sheet\u2019s worth of signs \u2014 and keep dropping at 25, 50, 100 and beyond.";
+          renderSizeCards();
+          updateSidesToggle();
         }
         /* Clicking a ladder tier sets the quantity to that tier, run
            through the same minimum/pairs validation as typed entries —
@@ -2224,7 +2346,7 @@
         document.getElementById("ladderGrid").addEventListener("click", function (e) {
           var btn = e.target && e.target.closest ? e.target.closest("[data-tier]") : null;
           if (!btn) return;
-          calcFreeQty = false;
+          calcFreeQty = currentMode === "onepc";
           calcQtyEl.value = btn.getAttribute("data-tier");
           calcQtyEl.value = calcQtyVal();
           renderCalc();
@@ -2240,8 +2362,8 @@
         calcSidesEl.addEventListener("change", function () { calcFreeQty = false; calcQtyEl.value = calcQtyVal(); renderCalc(); syncCheckoutFromCalc(); });
         calcStakesEl.addEventListener("change", function () { renderCalc(); syncCheckoutFromCalc(); });
         calcGrommetsEl.addEventListener("change", function () { renderCalc(); syncCheckoutFromCalc(); });
-        calcQtyEl.addEventListener("input", function () { calcFreeQty = false; renderCalc(); syncCheckoutFromCalc(); });
-        calcQtyEl.addEventListener("change", function () { calcFreeQty = false; calcQtyEl.value = calcQtyVal(); renderCalc(); syncCheckoutFromCalc(); });
+        calcQtyEl.addEventListener("input", function () { calcFreeQty = currentMode === "onepc"; renderCalc(); syncCheckoutFromCalc(); });
+        calcQtyEl.addEventListener("change", function () { calcFreeQty = currentMode === "onepc"; calcQtyEl.value = calcQtyVal(); renderCalc(); syncCheckoutFromCalc(); });
         buildCalcSizes();
         renderCalc();
 
@@ -2283,8 +2405,9 @@
             "<div class=\"row\"><span>Pickup</span><span>RGV shop</span></div>";
           sumLines.innerHTML = lines;
           var discNote = document.getElementById("sumDiscNote");
-          if (discNote) discNote.classList.toggle("show", qty >= entry.pps && volumeDiscountRate(qty) > 0);
+          if (discNote) discNote.classList.toggle("show", currentMode !== "onepc" && qty >= entry.pps && volumeDiscountRate(qty) > 0);
           sumTotal.textContent = money(each * qty);
+          updateLiveStrip(entry.label + " " + m.label + " \u00B7 " + (sideIdx ? "2 sides" : "1 side"), qty, each, each * qty);
         }
         /* Push the table's configuration into the checkout: substrate
            (via setMaterial, so the cards, the giant headline, and the
@@ -2351,9 +2474,88 @@
         /* Easy order: the checkout is the lower half of this same
            panel now — sync it to the table's configuration and let the
            anchor's href="#checkout" do the short scroll. */
-        document.getElementById("calcEasy").addEventListener("click", function () {
+        var calcEasyEl = document.getElementById("calcEasy");
+        if (calcEasyEl) calcEasyEl.addEventListener("click", function () {
           syncCheckoutFromCalc();
         });
+
+        /* ============ four-step flow: live strip, size cards, sides toggle, steppers ============
+           One decision per step. The strip at the top of the panel is the
+           single live price readout (the Step 4 summary card is its
+           receipt); the size cards are the only way to pick a size. */
+        function updateLiveStrip(desc, qty, each, total) {
+          var el = document.getElementById("stripText");
+          if (el) el.textContent = desc + " \u00B7 Qty " + qty + " \u2014 " + money(each) + " each \u00B7 TOTAL " + money(total);
+        }
+        function renderSizeCards() {
+          var grid = document.getElementById("sizeGrid");
+          if (!grid || typeof CALC_DATA === "undefined" || !CALC_DATA[currentMaterial]) return;
+          var sideIdx = calcSidesEl && calcSidesEl.value === "1" ? 1 : 0;
+          var html = "";
+          CALC_DATA[currentMaterial].sizes.forEach(function (s) {
+            var price = currentMode === "onepc" ? s.pc[sideIdx] : s.ws[sideIdx];
+            var badges = "";
+            if (s.feat) badges += "<span class=\"sc-badge\">Popular</span>";
+            if (s.key === "s48") badges += "<span class=\"sc-badge sc-badge--deal\">Best deal \u00B7 Full sheet</span>";
+            var min = currentMode === "onepc" ? "Single-sign price" : s.key === "s44" ? "Sold in pairs \u00B7 2 pc minimum" : s.pps > 1 ? s.pps + " pc minimum" : "No minimum";
+            html += "<button type=\"button\" class=\"size-card" + (s.key === "s48" ? " featured" : "") + "\" data-sizecard=\"" + s.key + "\" aria-pressed=\"" + (s.key === calcSizeKey ? "true" : "false") + "\"><span class=\"sc-badges\">" + badges + "</span><span class=\"sc-size\">" + s.label + "</span><span class=\"sc-price\">" + money(price) + "</span><span class=\"sc-sub\">per sign \u00B7 " + (sideIdx ? "2 sides" : "1 side") + "</span><span class=\"sc-min\">" + min + "</span></button>";
+          });
+          grid.innerHTML = html;
+        }
+        function updateSidesToggle() {
+          var v = calcSidesEl ? calcSidesEl.value : "0";
+          document.querySelectorAll(".sides-btn").forEach(function (b) {
+            b.setAttribute("aria-pressed", b.getAttribute("data-sides") === v ? "true" : "false");
+          });
+        }
+        function selectSize(key) {
+          calcSizeKey = key;
+          if (calcSizeEl) calcSizeEl.value = key;
+          if (currentMode === "onepc") {
+            calcFreeQty = true;
+            calcQtyEl.value = 1;
+          } else {
+            calcFreeQty = false;
+            applyCalcQtyRules(true);
+          }
+          renderCalc();
+          syncCheckoutFromCalc();
+          renderSizeCards();
+        }
+        var sizeGridEl = document.getElementById("sizeGrid");
+        if (sizeGridEl) sizeGridEl.addEventListener("click", function (e) {
+          var btn = e.target && e.target.closest ? e.target.closest("[data-sizecard]") : null;
+          if (btn) selectSize(btn.getAttribute("data-sizecard"));
+        });
+        document.querySelectorAll(".sides-btn").forEach(function (b) {
+          b.addEventListener("click", function () {
+            calcSidesEl.value = b.getAttribute("data-sides");
+            calcFreeQty = currentMode === "onepc";
+            renderCalc();
+            syncCheckoutFromCalc();
+            updateSidesToggle();
+            renderSizeCards();
+          });
+        });
+        function stepQuantity(delta) {
+          var entry = calcEntry();
+          var isOne = currentMode === "onepc";
+          var step = entry.key === "s44" && !isOne ? 2 : 1;
+          var min = isOne ? 1 : calcMinQty(entry);
+          var cur = isOne ? Math.max(1, Math.round(Number(calcQtyEl.value)) || 1) : calcQtyVal();
+          var next = cur + delta * step;
+          if (step > 1) next = Math.round(next / step) * step;
+          if (next < min) next = min;
+          if (next > 5000) next = 5000;
+          calcQtyEl.value = next;
+          calcFreeQty = isOne;
+          renderCalc();
+          syncCheckoutFromCalc();
+        }
+        var qtyMinusEl = document.getElementById("qtyMinus");
+        if (qtyMinusEl) qtyMinusEl.addEventListener("click", function () { stepQuantity(-1); });
+        var qtyPlusEl = document.getElementById("qtyPlus");
+        if (qtyPlusEl) qtyPlusEl.addEventListener("click", function () { stepQuantity(1); });
 
         /* ================= demo designer =================
            A self-contained preview toy: it reads the packages state
