@@ -1041,6 +1041,7 @@
       }
       .sc-badge--deal { background: var(--black); color: var(--green); }
       .sc-size { font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; text-transform: uppercase; font-size: 32px; line-height: 1; white-space: nowrap; }
+      .sc-hint { font-size: 15px; font-weight: 500; line-height: 1.35; }
       .sc-min {
         font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; text-transform: uppercase;
         letter-spacing: 0.03em; font-size: 14.5px; margin-top: 4px;
@@ -1103,6 +1104,21 @@
         .qty-input { width: 112px; min-height: 54px; }
         .sides-btn { padding: 10px 18px; }
       }
+
+      /* ---------- what are you making? entry tiles ---------- */
+      .making {
+        border: 2px solid var(--black); border-radius: 16px; padding: 22px 24px;
+        margin-bottom: 18px; background: var(--white); scroll-margin-top: calc(var(--head-h, 87px) + 92px);
+      }
+      .making-title {
+        font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; text-transform: uppercase;
+        font-size: clamp(28px, 3.8vw, 40px); line-height: 1.05;
+      }
+      .making-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 18px; }
+      .make-tile { min-height: 108px; }
+      .making-note { font-size: 17px; font-weight: 600; margin-top: 16px; }
+      @media (max-width: 960px) { .making-grid { grid-template-columns: repeat(2, 1fr); } }
+      @media (max-width: 640px) { .making { padding: 18px 16px; } .making-grid { grid-template-columns: 1fr; } .make-tile { min-height: 0; } }
 
       /* ---------- easy order view ---------- */
       [hidden] { display: none !important; }
@@ -1686,6 +1702,37 @@
           <button type="button" class="btn small" id="cartBarCheckout" hidden>Check out</button>
         </div>
 
+        <div class="making" id="makingTiles" hidden>
+          <h3 class="display making-title">What are you making?</h3>
+          <div class="making-grid" role="group" aria-label="What are you making?">
+            <button type="button" class="mat-opt make-tile" data-making="realestate">
+              <span class="mo-name">Real Estate Sign</span>
+              <span class="mo-sub">Coroplast &middot; 24&Prime;&times;18&Prime; &middot; wholesale sheet qty</span>
+            </button>
+            <button type="button" class="mat-opt make-tile" data-making="yard">
+              <span class="mo-name">Yard Sign</span>
+              <span class="mo-sub">Coroplast &middot; 24&Prime;&times;18&Prime; &middot; just one sign</span>
+            </button>
+            <button type="button" class="mat-opt make-tile" data-making="business">
+              <span class="mo-name">Business / Job Site Sign</span>
+              <span class="mo-sub">Coroplast &middot; 4&prime;&times;4&prime; &middot; wholesale sheet qty</span>
+            </button>
+            <button type="button" class="mat-opt make-tile" data-making="big">
+              <span class="mo-name">Big Sign</span>
+              <span class="mo-sub">Coroplast &middot; 4&prime;&times;8&prime; &middot; wholesale sheet qty</span>
+            </button>
+            <button type="button" class="mat-opt make-tile" data-making="indoor">
+              <span class="mo-name">Indoor / Presentation Sign</span>
+              <span class="mo-sub">Foamboard &middot; 24&Prime;&times;36&Prime; &middot; just one sign</span>
+            </button>
+            <button type="button" class="mat-opt make-tile" data-making="scratch">
+              <span class="mo-name">Not sure &mdash; start from scratch</span>
+              <span class="mo-sub">Start with a blank wizard &mdash; pick everything yourself</span>
+            </button>
+          </div>
+          <p class="making-note">Pick the closest one &mdash; you can change everything in the next steps.</p>
+        </div>
+
         <div id="wizardSteps">
           <!-- STEP 1 · buy mode -->
           <div class="wiz-step" data-wstep="1">
@@ -2118,15 +2165,41 @@
 
         var eoView = "wizard";
         var eoReturnPanel = "wizard";
+        var tilesActive = false;
+        function showMakingTiles() {
+          tilesActive = true;
+          var t = document.getElementById("makingTiles");
+          if (t) t.hidden = false;
+          var ws = document.getElementById("wizardSteps");
+          if (ws) ws.hidden = true;
+          var added = document.getElementById("wizAdded");
+          if (added) added.hidden = true;
+          var co = document.getElementById("eoCheckout");
+          if (co) co.hidden = true;
+          eoView = "wizard";
+        }
+        function hideMakingTiles() {
+          tilesActive = false;
+          var t = document.getElementById("makingTiles");
+          if (t) t.hidden = true;
+        }
         function showWizardView() {
           eoView = "wizard";
           var co = document.getElementById("eoCheckout");
           if (co) co.hidden = true;
+          if (tilesActive) {
+            var t = document.getElementById("makingTiles");
+            if (t) t.hidden = false;
+            document.getElementById("wizardSteps").hidden = true;
+            return;
+          }
+          hideMakingTiles();
           var added = document.getElementById("wizAdded");
           if (added && added.hidden) document.getElementById("wizardSteps").hidden = false;
         }
         function showCheckoutView() {
           if (!cart.length) { showWizardView(); return; }
+          hideMakingTiles();
           var addedEl = document.getElementById("wizAdded");
           var stepsEl = document.getElementById("wizardSteps");
           if (addedEl && !addedEl.hidden) eoReturnPanel = "added";
@@ -2149,6 +2222,7 @@
           document.body.classList.add("easyorder-open");
           document.getElementById("eoConfirm").classList.remove("show");
           if (preload) applyPreload(preload);
+          else { resetWizard(); showMakingTiles(); }
           showWizardView();
           renderCart();
           window.scrollTo(0, 0);
@@ -2319,6 +2393,14 @@
           updateAddToCartVisibility();
         }
 
+        var SIZE_HINTS = {
+          s1812: "Small add-on / rider sign",
+          s24: "The standard real estate &amp; yard sign",
+          s2424: "Square sign \u2014 promos &amp; notices",
+          s2436: "Large yard or presentation sign",
+          s44: "Job-site & business sign",
+          s48: "Full sheet \u2014 the big one"
+        };
         function renderWizSizes() {
           var grid = document.getElementById("wSizeGrid");
           if (!grid) return;
@@ -2329,7 +2411,8 @@
             if (s.feat) badges += "<span class=\"sc-badge\">\u2605 Popular</span>";
             if (s.key === "s48") badges += "<span class=\"sc-badge sc-badge--deal\">Best deal \u00B7 Full sheet</span>";
             var min = wiz.mode === "onepc" ? "No minimum" : s.key === "s44" ? "Sold in pairs \u00B7 2 pc minimum" : s.pps > 1 ? s.pps + " pc minimum" : "No minimum";
-            html += "<button type=\"button\" class=\"size-card" + (s.key === "s48" ? " featured" : "") + "\" data-sizecard=\"" + s.key + "\" aria-pressed=\"" + (s.key === wiz.sizeKey ? "true" : "false") + "\">" + (badges ? "<span class=\"sc-badges\">" + badges + "</span>" : "") + "<span class=\"sc-size\">" + s.label + "</span><span class=\"sc-min\">" + min + "</span></button>";
+            var hint = SIZE_HINTS[s.key] ? "<span class=\"sc-hint\">" + SIZE_HINTS[s.key] + "</span>" : "";
+            html += "<button type=\"button\" class=\"size-card" + (s.key === "s48" ? " featured" : "") + "\" data-sizecard=\"" + s.key + "\" aria-pressed=\"" + (s.key === wiz.sizeKey ? "true" : "false") + "\">" + (badges ? "<span class=\"sc-badges\">" + badges + "</span>" : "") + "<span class=\"sc-size\">" + s.label + "</span>" + hint + "<span class=\"sc-min\">" + min + "</span></button>";
           });
           grid.innerHTML = html;
         }
@@ -2521,6 +2604,7 @@
         document.getElementById("wAddContinue").addEventListener("click", function () { completeStep(5); });
 
         function applyPreload(p) {
+          hideMakingTiles();
           editingIndex = -1;
           wiz = freshWizard();
           resetArtwork();
@@ -2541,6 +2625,7 @@
           renderWizard();
         }
         function resetWizard() {
+          hideMakingTiles();
           editingIndex = -1;
           wiz = freshWizard();
           resetArtwork();
@@ -2549,6 +2634,43 @@
           hideWizMsg();
           renderWizard();
         }
+
+        /* ================= "What are you making?" entry tiles =================
+           A plain-English front door for a FRESH Build Your Sign open.
+           A preset tile pre-loads buy mode, material (+ Coroplast
+           thickness) and size through the same applyPreload path the
+           designer uses, so steps 1-3 land answered and collapsed and
+           Step 4 opens with the mode's default quantity and a price
+           already forming. "Start from scratch" just reveals the
+           fresh wizard exactly as it was. Pre-loaded flows from
+           elsewhere (designer, cart edit) never pass through here. */
+        var MAKING_PRESETS = {
+          realestate: { mode: "wholesale", material: "coroplast", thickness: "4", size: "s24", sides: 0 },
+          yard: { mode: "onepc", material: "coroplast", thickness: "4", size: "s24", sides: 0 },
+          business: { mode: "wholesale", material: "coroplast", thickness: "4", size: "s44", sides: 0 },
+          big: { mode: "wholesale", material: "coroplast", thickness: "4", size: "s48", sides: 0 },
+          indoor: { mode: "onepc", material: "foamboard", size: "s2436", sides: 0 }
+        };
+        document.querySelectorAll("[data-making]").forEach(function (b) {
+          b.addEventListener("click", function () {
+            var key = b.getAttribute("data-making");
+            if (key === "scratch" || !MAKING_PRESETS[key]) {
+              hideMakingTiles();
+              eoView = "wizard";
+              document.getElementById("eoCheckout").hidden = true;
+              document.getElementById("wizardSteps").hidden = false;
+              document.getElementById("wizAdded").hidden = true;
+              renderWizard();
+              var first = document.querySelector('[data-wstep="1"]');
+              if (first) setTimeout(function () { first.scrollIntoView({ behavior: "smooth", block: "start" }); }, 40);
+              return;
+            }
+            applyPreload(MAKING_PRESETS[key]);
+            showWizardView();
+            var st4 = document.querySelector('[data-wstep="4"]');
+            if (st4) setTimeout(function () { st4.scrollIntoView({ behavior: "smooth", block: "start" }); }, 60);
+          });
+        });
 
         /* ================= artwork upload + resolution checker (in-memory only) ================= */
         var dropzone = document.getElementById("wDropzone");
@@ -2947,6 +3069,7 @@
         function cartTotal() { return cart.reduce(function (a, it) { return a + it.total; }, 0); }
         function startEditCartItem(idx) {
           var it = cart[idx]; if (!it) return;
+          hideMakingTiles();
           editingIndex = idx;
           wiz = freshWizard();
           wiz.mode = it.mode; wiz.material = it.material; wiz.thickness = it.thickness || "4";
@@ -3158,8 +3281,9 @@
         });
         document.getElementById("addAnotherBtn").addEventListener("click", function () {
           resetWizard();
-          var first = document.querySelector('[data-wstep="1"]');
-          if (first) first.scrollIntoView({ behavior: "smooth", block: "start" });
+          showMakingTiles();
+          var tiles = document.getElementById("makingTiles");
+          if (tiles) tiles.scrollIntoView({ behavior: "smooth", block: "start" });
         });
 
         var eoForm = document.getElementById("eoForm");
