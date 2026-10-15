@@ -1148,6 +1148,20 @@
       }
       .cart-line .cl-text { flex: 1; font-size: 17.5px; line-height: 1.45; min-width: 0; overflow-wrap: anywhere; }
       .cart-line .cl-total { font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; font-size: 21px; white-space: nowrap; font-variant-numeric: tabular-nums lining-nums; }
+      .cart-line .cl-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+      .cart-line .cl-side { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex: 0 0 auto; }
+      .cl-each { font-size: 15.5px; font-weight: 600; }
+      .cl-qty-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+      .cl-qty-label { font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; text-transform: uppercase; font-size: 15px; letter-spacing: 0.03em; }
+      .cl-qty-btn { width: 42px; height: 42px; flex: 0 0 auto; border: 2px solid var(--black); border-radius: 10px; background: var(--black); color: var(--green); font-size: 24px; font-weight: 700; line-height: 1; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+      .cl-qty-btn:active { background: var(--green); color: var(--black); }
+      .cl-qty-input { width: 76px; height: 42px; text-align: center; font-weight: 700; font-size: 17px; padding: 6px 8px; }
+      .cl-min-note { font-size: 14.5px; font-weight: 600; }
+      .cl-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+      .cl-actions .btn { min-height: 42px; }
+      .wiz-added-hint { border: 1.5px solid var(--black); border-left: 8px solid var(--green); border-radius: 10px; padding: 11px 14px; background: var(--white); }
+      .edit-banner { border: 2px solid var(--black); border-left: 10px solid var(--green); border-radius: 12px; padding: 13px 16px; font-weight: 700; font-size: 17.5px; margin-bottom: 18px; background: var(--white); }
+      @media (max-width: 640px) { .cart-line { flex-direction: column; } .cart-line .cl-side { flex-direction: row; align-items: center; justify-content: space-between; width: 100%; } }
       .eo-confirm-list { display: grid; gap: 7px; margin-top: 14px; font-size: 17.5px; }
       .eo-confirm-list .row { display: flex; justify-content: space-between; gap: 14px; }
       .eo-confirm-list .row span:last-child { font-weight: 700; white-space: nowrap; }
@@ -1709,24 +1723,27 @@
             </div>
           </div>
 
+          <div class="edit-banner" id="editBanner" hidden>Editing a cart item &mdash; change anything below, then Save changes. Cancel returns to your cart with nothing changed.</div>
           <div class="wiz-price" id="wizPriceLine"><span id="wizPriceText"></span></div>
           <button type="button" class="btn block" id="addToCartBtn" hidden style="font-size:21px;padding:16px 24px">Add to cart</button>
+          <button type="button" class="btn ghost block" id="cancelEditBtn" hidden style="font-size:18px;padding:13px 24px;margin-top:10px">Cancel &mdash; back to cart</button>
           <p class="form-error" id="wizMsg" role="alert"></p>
         </div>
 
         <div class="wiz-added" id="wizAdded" hidden>
           <h3>Added to cart ✓</h3>
           <p id="wizAddedText"></p>
+          <p class="wiz-added-hint" id="wizAddedHint" hidden>This sign still needs a design &mdash; you&rsquo;ll find a Design online button on it in your cart.</p>
           <div class="wiz-added-actions">
             <button type="button" class="btn black" id="addAnotherBtn">Add another sign</button>
             <button type="button" class="btn" id="addedCheckoutBtn">Check out</button>
           </div>
         </div>
 
-        <!-- CHECKOUT (same screen, below the wizard) -->
-        <div class="eo-checkout" id="eoCheckout">
-          <div class="step-head"><span class="step-num" aria-hidden="true">✓</span><h3 class="display step-title"><span class="sr-only">Checkout — </span>Checkout</h3></div>
-          <p class="eo-empty" id="eoEmpty" style="font-size:19px">Your cart is empty — build a sign above and hit <strong>Add to cart</strong>, and it&rsquo;ll show up here.</p>
+        <!-- CHECKOUT (separate view, reached via Check out) -->
+        <div class="eo-checkout" id="eoCheckout" hidden>
+          <button type="button" class="btn ghost small" id="eoCheckoutBack">&larr; Back to signs</button>
+          <div class="step-head" style="margin-top:20px"><span class="step-num" aria-hidden="true">✓</span><h3 class="display step-title"><span class="sr-only">Checkout — </span>Checkout</h3></div>
           <div id="eoCartWrap" hidden>
             <ul class="cart-lines" id="cartLines"></ul>
             <div class="sum-total">
@@ -1926,6 +1943,29 @@
         var easyOrderView = document.getElementById("easyOrderView");
         var eoScroll = 0;
 
+        var eoView = "wizard";
+        var eoReturnPanel = "wizard";
+        function showWizardView() {
+          eoView = "wizard";
+          var co = document.getElementById("eoCheckout");
+          if (co) co.hidden = true;
+          var added = document.getElementById("wizAdded");
+          if (added && added.hidden) document.getElementById("wizardSteps").hidden = false;
+        }
+        function showCheckoutView() {
+          if (!cart.length) { showWizardView(); return; }
+          var addedEl = document.getElementById("wizAdded");
+          var stepsEl = document.getElementById("wizardSteps");
+          if (addedEl && !addedEl.hidden) eoReturnPanel = "added";
+          else if (stepsEl && !stepsEl.hidden) eoReturnPanel = "wizard";
+          eoView = "checkout";
+          document.getElementById("wizardSteps").hidden = true;
+          document.getElementById("wizAdded").hidden = true;
+          var co = document.getElementById("eoCheckout");
+          co.hidden = false;
+          renderCart();
+          setTimeout(function () { co.scrollIntoView({ behavior: "smooth", block: "start" }); }, 40);
+        }
         function openEasyOrder(preload) {
           campaignView.hidden = true;
           document.body.classList.remove("campaign-open");
@@ -1936,6 +1976,7 @@
           document.body.classList.add("easyorder-open");
           document.getElementById("eoConfirm").classList.remove("show");
           if (preload) applyPreload(preload);
+          showWizardView();
           renderCart();
           window.scrollTo(0, 0);
           document.getElementById("eoBack").focus();
@@ -1984,19 +2025,31 @@
           }
           return e;
         }
-        /* Finishing touches exist for Coroplast and Max Metal only.
-           Foamboard takes neither H-Stakes nor grommets, so the step is
-           skipped entirely for Foamboard and the artwork step renumbers. */
-        function hasFinishingStep() { return wiz.material !== "foamboard"; }
-        /* Flute direction is a Coroplast-only question, and never for the
-           full 4'x8' sheet. */
-        function needsFlute() { return wiz.material === "coroplast" && !!wiz.sizeKey && wiz.sizeKey !== "s48"; }
+        /* Finishing touches: Foamboard takes neither stakes nor
+           grommets, and 10mm Coroplast takes none either — wire
+           H-stakes are sized for 4mm flutes and don't work in 10mm,
+           and 10mm is too heavy to grommet (shops drill holes
+           instead). Both skip the step entirely, like Foamboard,
+           and the artwork step renumbers. 4mm Coroplast and Max
+           Metal finishing is unchanged. */
+        function hasFinishingStep() {
+          if (wiz.material === "foamboard") return false;
+          if (wiz.material === "coroplast" && wiz.thickness === "10") return false;
+          return !!wiz.material ? wiz.material !== "foamboard" : true;
+        }
+        /* Flute direction is a 4mm Coroplast-only question, and
+           never for the full 4'x8' sheet or for 10mm. */
+        function needsFlute() { return wiz.material === "coroplast" && wiz.thickness !== "10" && !!wiz.sizeKey && wiz.sizeKey !== "s48"; }
         function displayStepNum(n) { return (!hasFinishingStep() && n === 6) ? 5 : n; }
-        /* State hygiene: clear whatever the current material/size makes
-           impossible, and default the flute to Vertical when it applies. */
+        /* State hygiene: clear whatever the current material/size
+           makes impossible, and default the flute to Vertical when
+           it applies. Switching thickness 4mm -> 10mm clears any
+           stakes/grommets/flute already answered. */
         function syncFinishingState() {
           if (wiz.material !== "coroplast") { wiz.stakes = "0"; wiz.flute = null; }
           if (wiz.material === "foamboard") { wiz.stakes = "0"; wiz.grommets = "none"; wiz.flute = null; }
+          if (wiz.material === "coroplast" && wiz.thickness === "10") { wiz.stakes = "0"; wiz.grommets = "none"; wiz.flute = null; }
+          if (!hasFinishingStep() && wiz.material) { wiz.stakes = wiz.material === "maxmetal" ? wiz.stakes : "0"; if (wiz.material !== "maxmetal") wiz.grommets = "none"; wiz.flute = null; }
           if (wiz.material === "coroplast" && wiz.sizeKey === "s48") { wiz.flute = null; }
           if (needsFlute() && !wiz.flute) { wiz.flute = "vertical"; }
         }
@@ -2074,7 +2127,7 @@
           var about = document.getElementById("wMatAboutText");
           if (about) about.textContent = wiz.material ? MATERIALS[wiz.material].blurb : "";
           var flute = document.getElementById("wMatAboutFlute");
-          if (flute) { flute.hidden = wiz.material !== "coroplast"; flute.textContent = FLUTE_TEXT; }
+          if (flute) { flute.hidden = !(wiz.material === "coroplast" && wiz.thickness !== "10"); flute.textContent = FLUTE_TEXT; }
           renderWizSizes();
           renderWizQty(true);
           renderWizAdders();
@@ -2283,6 +2336,7 @@
         document.getElementById("wAddContinue").addEventListener("click", function () { completeStep(5); });
 
         function applyPreload(p) {
+          editingIndex = -1;
           wiz = freshWizard();
           resetArtwork();
           wiz.mode = p.mode === "onepc" ? "onepc" : "wholesale";
@@ -2302,6 +2356,7 @@
           renderWizard();
         }
         function resetWizard() {
+          editingIndex = -1;
           wiz = freshWizard();
           resetArtwork();
           document.getElementById("wizardSteps").hidden = false;
@@ -2317,6 +2372,8 @@
         var artStatus = document.getElementById("wArtStatus");
         var artBranch = null;   // null | "yes" | "no" — the step-6 fork answer
         var artNoChoice = null; // null | "later" | "design" — the Not-yet follow-up
+        var artDesignDone = false;
+        var artDesignStarted = false;
         var artworkFiles = []; // {id, file, name, size, kind, width, height, dpi, roundedDpi, isPass, printLabel}
         var artworkSeq = 0;
 
@@ -2417,7 +2474,7 @@
           });
           renderArtworkFork();
           if (artBranch === "no" && artNoChoice === "later") artStatus.textContent = "Artwork: you\u2019ll provide it later \u2014 email it to info@signs2go.us when you\u2019re ready and we\u2019ll match it to your order.";
-          else if (artBranch === "no" && artNoChoice === "design") artStatus.textContent = "Artwork: design it online \u2014 hit Add to Cart below and the designer opens with this sign\u2019s size and material already loaded. Add first, design right after.";
+          else if (artBranch === "no" && artNoChoice === "design") artStatus.textContent = "Artwork: design it online \u2014 add this sign to your cart first, then use the Design online button on it in your cart. The designer opens with this sign\u2019s size and material already loaded.";
           else if (artBranch === "no") artStatus.textContent = "";
           else if (!artworkFiles.length) { artStatus.textContent = ""; }
           else if (artworkFiles.some(function (e) { return e.kind === "raster" && !e.isPass; })) artStatus.textContent = "\u26A0 One or more files are below the 300 DPI print standard \u2014 see the warning above. You can still add this sign to your cart; the flag rides along on the item.";
@@ -2568,6 +2625,7 @@
         document.querySelectorAll("[data-artchoice]").forEach(function (b) {
           b.addEventListener("click", function () {
             artNoChoice = b.getAttribute("data-artchoice") === "design" ? "design" : "later";
+            if (artNoChoice === "design") { artDesignDone = false; artDesignStarted = false; }
             renderArtworkList();
           });
         });
@@ -2575,13 +2633,28 @@
         function resetArtwork() {
           artBranch = null;
           artNoChoice = null;
+          artDesignDone = false;
+          artDesignStarted = false;
           artworkFiles = [];
           artFile.value = "";
           renderArtworkList();
         }
+        function restoreArtwork(aw) {
+          resetArtwork();
+          if (!aw) return;
+          if (aw.type === "later") { artBranch = "no"; artNoChoice = "later"; }
+          else if (aw.type === "design") { artBranch = "no"; artNoChoice = "design"; artDesignDone = !!aw.done; artDesignStarted = !!(aw.started || aw.state === "not-finished"); if (aw.done) artDesignStarted = true; }
+          else if (aw.type === "files") {
+            artBranch = "yes";
+            artworkFiles = (aw.files || []).map(function (f) {
+              return { id: ++artworkSeq, file: null, name: f.name, size: 0, kind: f.kind, width: 0, height: 0, dpi: f.roundedDpi || 0, roundedDpi: f.roundedDpi || 0, isPass: !!f.isPass, printLabel: getCurrentPrintSize().label, printKey: getCurrentPrintSize().key };
+            });
+          }
+          renderArtworkList();
+        }
         function snapshotArtwork() {
           if (artBranch === "no") {
-            if (artNoChoice === "design") return { type: "design", done: false, files: [] };
+            if (artNoChoice === "design") return { type: "design", done: !!artDesignDone, started: !!artDesignStarted, state: artDesignDone ? "done" : (artDesignStarted ? "not-finished" : "not-started"), files: [] };
             return { type: "later", files: [] };
           }
           return {
@@ -2593,7 +2666,7 @@
         }
         function artworkSummaryText(aw) {
           if (!aw || aw.type === "later") return "you\u2019ll provide it later";
-          if (aw.type === "design") return aw.done ? "Designed online" : "design online (not finished)";
+          if (aw.type === "design") return aw.done ? "Designed online" : ((aw.started || aw.state === "not-finished") ? "design online \u2014 not finished" : "design online \u2014 not started");
           return aw.files.map(function (f) {
             if (f.kind === "vector") return f.name + " \u2713 print-ready";
             if (f.kind === "proof") return f.name + " \u2014 checked at proof";
@@ -2614,9 +2687,14 @@
           }
           return artworkComplete();
         }
+        var editingIndex = -1;
         function updateAddToCartVisibility() {
           var btn = document.getElementById("addToCartBtn");
-          if (btn) btn.hidden = !wizardReadyForCart();
+          if (btn) { btn.hidden = !wizardReadyForCart(); btn.textContent = editingIndex >= 0 ? "Save changes" : "Add to cart"; }
+          var cancelBtn = document.getElementById("cancelEditBtn");
+          if (cancelBtn) cancelBtn.hidden = editingIndex < 0;
+          var banner = document.getElementById("editBanner");
+          if (banner) banner.hidden = editingIndex < 0;
         }
         /* Cart/checkout label for a material: 10mm Coroplast is named
            out ("Coroplast 10mm"); everything else is the plain label. */
@@ -2625,12 +2703,87 @@
         }
         function itemDesc(it) {
           var parts = [it.qty + " \u00D7 " + it.sizeLabel + " " + matLabelFor(it) + " sign", it.sides ? "2 sides" : "1 side"];
-          var adds = adderLabelsFor(it.stakes, it.grommets);
-          if (adds.length) parts.push(adds.join(" + "));
-          if (it.flute && it.material === "coroplast" && it.sizeKey !== "s48") parts.push("Flutes: " + it.flute);
+          var is10 = it.material === "coroplast" && it.thickness === "10";
+          if (!is10) {
+            var adds = adderLabelsFor(it.stakes, it.grommets);
+            if (adds.length) parts.push(adds.join(" + "));
+            if (it.flute && it.material === "coroplast" && it.sizeKey !== "s48") parts.push("Flutes: " + it.flute);
+          }
           return parts.join(" \u00B7 ");
         }
+        function entryForItem(it) {
+          var e = entryFor(it.material, it.sizeKey);
+          if (!e) return null;
+          if (it.material === "coroplast" && it.thickness === "10") {
+            var t = CORO10[it.sizeKey];
+            if (t) return { key: e.key, label: e.label, ws: t.ws, pc: t.pc, pps: e.pps, feat: e.feat };
+          }
+          return e;
+        }
+        function itemMinQty(it) { var e = entryForItem(it); if (!e) return 1; return it.mode === "onepc" ? 1 : e.pps; }
+        function itemStepQty(it) { var e = entryForItem(it); if (!e) return 1; return it.mode === "onepc" ? 1 : (e.key === "s44" ? 2 : 1); }
+        function normalizeItemQty(it, raw) {
+          var e = entryForItem(it); if (!e) return 1;
+          var min = itemMinQty(it), step = itemStepQty(it);
+          var q = Math.round(Number(raw));
+          if (!isFinite(q)) q = min;
+          if (step > 1) q = Math.round(q / step) * step;
+          if (q < min) q = min;
+          if (q > 5000) q = 5000 - (5000 % step);
+          return q;
+        }
+        function itemAdders(it) {
+          if (it.material === "coroplast" && it.thickness === "10") return 0;
+          if (it.material === "foamboard") return 0;
+          return (STAKES_ADD[it.stakes] || 0) + (GROMMETS_ADD[it.grommets] || 0);
+        }
+        function repriceItem(it) {
+          var e = entryForItem(it); if (!e) return;
+          it.qty = normalizeItemQty(it, it.qty);
+          it.sizeLabel = e.label;
+          var signEach = signPriceFor(e, it.sides, it.qty, it.mode);
+          it.each = signEach + itemAdders(it);
+          it.total = it.each * it.qty;
+        }
+        function itemMinNote(it) {
+          if (it.mode === "onepc") return "";
+          var e = entryForItem(it); if (!e) return "";
+          if (e.key === "s44") return "Sold in pairs \u00B7 2 pc minimum for this size";
+          if (e.pps > 1) return e.pps + " pc minimum for this size";
+          return "";
+        }
+        function needsDesignButton(it) {
+          if (!it.artwork) return false;
+          if (it.artwork.type === "files") return false;
+          if (it.artwork.type === "design") return !it.artwork.done;
+          if (it.artwork.type === "later") return true;
+          return false;
+        }
         function cartTotal() { return cart.reduce(function (a, it) { return a + it.total; }, 0); }
+        function startEditCartItem(idx) {
+          var it = cart[idx]; if (!it) return;
+          editingIndex = idx;
+          wiz = freshWizard();
+          wiz.mode = it.mode; wiz.material = it.material; wiz.thickness = it.thickness || "4";
+          wiz.sizeKey = it.sizeKey; wiz.sides = it.sides; wiz.qty = it.qty;
+          wiz.stakes = it.stakes || "0"; wiz.grommets = it.grommets || "none"; wiz.flute = it.flute || null;
+          syncFinishingState();
+          wiz.answered[1] = true; wiz.answered[2] = true; wiz.answered[3] = true; wiz.answered[4] = true;
+          wiz.answered[5] = hasFinishingStep();
+          wiz.reached = 6;
+          wiz.open = 0;
+          restoreArtwork(it.artwork);
+          wiz.answered[6] = artworkComplete();
+          eoView = "wizard";
+          document.getElementById("eoCheckout").hidden = true;
+          document.getElementById("wizardSteps").hidden = false;
+          document.getElementById("wizAdded").hidden = true;
+          hideWizMsg();
+          renderWizard();
+          updateAddToCartVisibility();
+          var first = document.querySelector('[data-wstep="1"]');
+          if (first) first.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
         function renderCart() {
           var n = cart.length;
           var bar = document.getElementById("cartBarText");
@@ -2639,20 +2792,58 @@
           document.getElementById("cartBarCheckout").hidden = n === 0;
           var headBadge = document.getElementById("headCartBadge");
           if (headBadge) { headBadge.textContent = String(n); headBadge.hidden = n === 0; }
-          var empty = document.getElementById("eoEmpty");
           var wrap = document.getElementById("eoCartWrap");
-          if (n === 0) { empty.hidden = false; wrap.hidden = true; return; }
-          empty.hidden = true;
+          if (n === 0) {
+            wrap.hidden = true;
+            var confirmShown = document.getElementById("eoConfirm").classList.contains("show");
+            if (eoView === "checkout" && !confirmShown) showWizardView();
+            return;
+          }
           wrap.hidden = false;
-          document.getElementById("eoConfirm").classList.remove("show");
+          if (eoView !== "checkout") { /* keep confirm hidden logic below only in checkout */ }
+          else document.getElementById("eoConfirm").classList.remove("show");
           var list = document.getElementById("cartLines");
           list.innerHTML = "";
           cart.forEach(function (it, idx) {
+            repriceItem(it);
             var li = document.createElement("li");
             li.className = "cart-line";
+            li.setAttribute("data-cart-index", String(idx));
+            var main = document.createElement("div"); main.className = "cl-main";
             var txt = document.createElement("div");
             txt.className = "cl-text";
             txt.textContent = itemDesc(it) + " \u00B7 Artwork: " + artworkSummaryText(it.artwork);
+            main.appendChild(txt);
+            var eachLine = document.createElement("div"); eachLine.className = "cl-each";
+            eachLine.textContent = money(it.each) + " each \u00D7 " + it.qty + " = " + money(it.total);
+            eachLine.setAttribute("data-cl-each", "");
+            main.appendChild(eachLine);
+            var qtyRow = document.createElement("div"); qtyRow.className = "cl-qty-row";
+            var qLabel = document.createElement("span"); qLabel.className = "cl-qty-label"; qLabel.textContent = "Qty"; qtyRow.appendChild(qLabel);
+            var minus = document.createElement("button"); minus.type = "button"; minus.className = "cl-qty-btn"; minus.textContent = "\u2212"; minus.setAttribute("aria-label", "Decrease quantity"); minus.setAttribute("data-cart-qty-minus", String(idx));
+            minus.addEventListener("click", function () { var step = itemStepQty(it); it.qty = normalizeItemQty(it, it.qty - step); repriceItem(it); renderCart(); });
+            qtyRow.appendChild(minus);
+            var qInput = document.createElement("input"); qInput.type = "number"; qInput.className = "f-input cl-qty-input"; qInput.value = it.qty; qInput.min = itemMinQty(it); qInput.step = itemStepQty(it); qInput.setAttribute("aria-label", "Quantity for " + itemDesc(it)); qInput.setAttribute("data-cart-qty-input", String(idx));
+            qInput.addEventListener("input", function () { var v = Math.round(Number(qInput.value)); if (isFinite(v) && v >= 1) { it.qty = normalizeItemQty(it, v); repriceItem(it); txt.textContent = itemDesc(it) + " \u00B7 Artwork: " + artworkSummaryText(it.artwork); qInput.setAttribute("aria-label", "Quantity for " + itemDesc(it)); eachLine.textContent = money(it.each) + " each \u00D7 " + it.qty + " = " + money(it.total); var totEl = li.querySelector(".cl-total"); if (totEl) totEl.textContent = money(it.total); document.getElementById("cartGrandTotal").textContent = money(cartTotal()); var barEl = document.getElementById("cartBarText"); barEl.innerHTML = "Your cart \u00B7 " + cart.length + (cart.length === 1 ? " item" : " items") + " \u00B7 <span class=\"cb-amt\">" + money(cartTotal()) + "</span>"; } });
+            qInput.addEventListener("change", function () { var nq = normalizeItemQty(it, qInput.value); if (nq !== it.qty) { it.qty = nq; repriceItem(it); renderCart(); } else { qInput.value = it.qty; } });
+            qtyRow.appendChild(qInput);
+            var plus = document.createElement("button"); plus.type = "button"; plus.className = "cl-qty-btn"; plus.textContent = "+"; plus.setAttribute("aria-label", "Increase quantity"); plus.setAttribute("data-cart-qty-plus", String(idx));
+            plus.addEventListener("click", function () { var step = itemStepQty(it); it.qty = normalizeItemQty(it, it.qty + step); repriceItem(it); renderCart(); });
+            qtyRow.appendChild(plus);
+            var noteText = itemMinNote(it);
+            if (noteText) { var note = document.createElement("span"); note.className = "cl-min-note"; note.textContent = noteText; note.setAttribute("data-cl-min-note", ""); qtyRow.appendChild(note); }
+            main.appendChild(qtyRow);
+            var actions = document.createElement("div"); actions.className = "cl-actions";
+            var editBtn = document.createElement("button"); editBtn.type = "button"; editBtn.className = "btn ghost small"; editBtn.textContent = "Edit"; editBtn.setAttribute("data-cart-edit", String(idx));
+            editBtn.addEventListener("click", function () { startEditCartItem(idx); });
+            actions.appendChild(editBtn);
+            if (needsDesignButton(it)) {
+              var dBtn = document.createElement("button"); dBtn.type = "button"; dBtn.className = "btn small"; dBtn.textContent = "Design online"; dBtn.setAttribute("data-cart-design", String(idx));
+              dBtn.addEventListener("click", function () { openDesignerForCartItem(idx); });
+              actions.appendChild(dBtn);
+            }
+            main.appendChild(actions);
+            var side = document.createElement("div"); side.className = "cl-side";
             var tot = document.createElement("div");
             tot.className = "cl-total";
             tot.textContent = money(it.total);
@@ -2663,18 +2854,30 @@
             rm.setAttribute("aria-label", "Remove " + itemDesc(it) + " from cart");
             rm.setAttribute("title", "Remove from cart");
             rm.addEventListener("click", function () { cart.splice(idx, 1); renderCart(); });
-            li.appendChild(txt);
-            li.appendChild(tot);
-            li.appendChild(rm);
+            side.appendChild(tot); side.appendChild(rm);
+            li.appendChild(main);
+            li.appendChild(side);
             list.appendChild(li);
           });
           document.getElementById("cartGrandTotal").textContent = money(cartTotal());
         }
-        function scrollToCheckout() {
-          document.getElementById("eoCheckout").scrollIntoView({ behavior: "smooth", block: "start" });
-        }
+        function scrollToCheckout() { showCheckoutView(); }
         document.getElementById("cartBarCheckout").addEventListener("click", scrollToCheckout);
         document.getElementById("addedCheckoutBtn").addEventListener("click", scrollToCheckout);
+        document.getElementById("eoCheckoutBack").addEventListener("click", function () {
+          eoView = "wizard";
+          document.getElementById("eoCheckout").hidden = true;
+          var added = document.getElementById("wizAdded");
+          if (eoReturnPanel === "added" && added) {
+            added.hidden = false;
+            document.getElementById("wizardSteps").hidden = true;
+            added.scrollIntoView({ behavior: "smooth", block: "start" });
+            return;
+          }
+          document.getElementById("wizardSteps").hidden = false;
+          if (added) added.hidden = true;
+          window.scrollTo(0, 0);
+        });
         document.getElementById("headCartBtn").addEventListener("click", function () {
           openEasyOrder(null);
           if (cart.length) setTimeout(scrollToCheckout, 80);
@@ -2738,33 +2941,35 @@
           }
           var e = wizEntry();
           var q = wizQty();
-          var each = wizEach();
           syncFinishingState();
+          var each = wizEach();
           var item = {
             mode: wiz.mode, material: wiz.material, thickness: wiz.material === "coroplast" ? wiz.thickness : "4", sizeKey: wiz.sizeKey, sizeLabel: e.label,
-            sides: wiz.sides, qty: q, stakes: wiz.stakes, grommets: wiz.grommets,
+            sides: wiz.sides, qty: q, stakes: (wiz.material === "coroplast" && wiz.thickness === "10") ? "0" : wiz.stakes, grommets: (wiz.material === "coroplast" && wiz.thickness === "10") ? "none" : wiz.grommets,
             flute: needsFlute() ? wiz.flute : null,
             each: each, total: each * q, artwork: snapshotArtwork()
           };
+          if (editingIndex >= 0 && cart[editingIndex]) {
+            cart[editingIndex] = item;
+            editingIndex = -1;
+            renderCart();
+            resetWizard();
+            showCheckoutView();
+            return;
+          }
           cart.push(item);
           renderCart();
           document.getElementById("wizAddedText").textContent = itemDesc(item) + " \u2014 " + money(item.total);
+          var hint = document.getElementById("wizAddedHint");
+          if (hint) hint.hidden = !(item.artwork && item.artwork.type === "design" && !item.artwork.done);
           document.getElementById("wizardSteps").hidden = true;
           document.getElementById("wizAdded").hidden = false;
-          if (item.artwork && item.artwork.type === "design") {
-            /* Design-online items detour straight into the designer,
-               pre-loaded with this item's material and size; the item
-               is already in the cart either way it turns out. */
-            dzDetourItem = item;
-            dzPrevMaterial = currentMaterial;
-            dzPrevMode = currentMode;
-            currentMaterial = item.material;
-            currentMode = item.mode;
-            openDesigner();
-            dzSetSize(item.sizeKey);
-            return;
-          }
           document.getElementById("cartBar").scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+        document.getElementById("cancelEditBtn").addEventListener("click", function () {
+          editingIndex = -1;
+          resetWizard();
+          showCheckoutView();
         });
         document.getElementById("addAnotherBtn").addEventListener("click", function () {
           resetWizard();
@@ -2837,9 +3042,14 @@
             : "";
           cart = [];
           renderCart();
-          document.getElementById("eoEmpty").hidden = true;
           document.getElementById("eoCartWrap").hidden = true;
+          document.getElementById("eoCheckout").hidden = false;
+          eoView = "checkout";
           resetWizard();
+          document.getElementById("eoCheckout").hidden = false;
+          eoView = "checkout";
+          document.getElementById("wizardSteps").hidden = true;
+          document.getElementById("wizAdded").hidden = true;
           var confirmBox = document.getElementById("eoConfirm");
           confirmBox.classList.add("show");
           confirmBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
@@ -2854,19 +3064,38 @@
         var dzScroll = 0;
         var dzReturnEasy = false;
         var dzEasyScroll = 0;
-        /* Design-online detour state: the cart item waiting on the
-           designer, plus the package globals to restore afterwards. */
+        /* Design-online state: a cart-bound item (dzCartItem) opened
+           from its cart line, plus the legacy detour reference kept
+           for compatibility, and the globals to restore afterwards. */
         var dzDetourItem = null;
+        var dzCartItem = null;
+        var dzCartIndex = -1;
+        var dzThickness = "4";
         var dzPrevMaterial = "coroplast";
         var dzPrevMode = "wholesale";
-        var DZ_RATIOS = { s24: "4 / 3", s44: "1 / 1", s48: "2 / 1" };
+        var DZ_RATIOS = { s24: "4 / 3", s44: "1 / 1", s48: "2 / 1", s1812: "3 / 2", s2424: "1 / 1", s2436: "2 / 3" };
 
         function dzPrice() {
           var m = MATERIALS[currentMaterial];
-          var price = activePrices(m)[dzSize][0];
+          var priceKey = DZ_RATIOS[dzSize] && MATERIALS[currentMaterial].prices[dzSize] ? dzSize : "s24";
+          var price = activePrices(m)[priceKey][0];
+          if (currentMaterial === "coroplast" && dzThickness === "10") {
+            var t10 = CORO10[priceKey];
+            if (t10) price = currentMode === "onepc" ? t10.pc[0] : t10.ws[0];
+          }
           document.getElementById("dzPrice").textContent =
-            SIZE_LABELS[dzSize] + " " + m.label + " \u00B7 1 side \u00B7 " + money(price) + " each " +
+            SIZE_LABELS[priceKey] + " " + m.label + (currentMaterial === "coroplast" && dzThickness === "10" ? " 10mm" : "") + " \u00B7 1 side \u00B7 " + money(price) + " each " +
             (currentMode === "onepc" ? "\u2014 1 pc price" : "at sheet quantity");
+        }
+        function openDesignerForCartItem(idx) {
+          var it = cart[idx]; if (!it) return;
+          dzCartItem = it; dzCartIndex = idx;
+          dzPrevMaterial = currentMaterial; dzPrevMode = currentMode;
+          currentMaterial = it.material; currentMode = it.mode; dzThickness = it.thickness || "4";
+          var useBtn = document.getElementById("dzUse");
+          if (useBtn) useBtn.textContent = "Use this design \u2014 back to cart";
+          openDesigner();
+          dzSetSize(it.sizeKey);
         }
         function dzSetSize(key) {
           dzSize = DZ_RATIOS[key] ? key : "s24";
@@ -2877,6 +3106,7 @@
           dzPrice();
         }
         function openDesigner() {
+          if (!dzCartItem) { var useBtn0 = document.getElementById("dzUse"); if (useBtn0 && !dzDetourItem) useBtn0.textContent = "Use this design \u2014 go to Easy Order"; dzThickness = "4"; }
           dzScroll = window.scrollY || window.pageYOffset || 0;
           if (!easyOrderView.hidden) {
             dzReturnEasy = true;
@@ -2895,10 +3125,17 @@
         function closeDesigner() {
           designerView.hidden = true;
           document.body.classList.remove("designer-open");
+          if (dzCartItem) {
+            if (dzCartItem.artwork && dzCartItem.artwork.type === "design" && !dzCartItem.artwork.done) {
+              dzCartItem.artwork = { type: "design", done: false, started: true, state: "not-finished", files: [] };
+              renderCart();
+            }
+            dzCartItem = null; dzCartIndex = -1;
+            currentMaterial = dzPrevMaterial;
+            currentMode = dzPrevMode;
+            dzThickness = "4";
+          }
           if (dzDetourItem) {
-            /* Leaving the designer ends the detour either way; the
-               item keeps whatever artwork status it already has
-               ("Designed online" only if Use was clicked first). */
             dzDetourItem = null;
             currentMaterial = dzPrevMaterial;
             currentMode = dzPrevMode;
@@ -2947,15 +3184,25 @@
           document.getElementById("dzLine2Out").textContent = this.value ? this.value : DZ_SAMPLE_2;
         });
         document.getElementById("dzUse").addEventListener("click", function () {
+          if (dzCartItem) {
+            dzCartItem.artwork = { type: "design", done: true, started: true, state: "done", files: [] };
+            var savedItem = dzCartItem;
+            dzCartItem = null; dzCartIndex = -1;
+            renderCart();
+            closeDesigner();
+            showCheckoutView();
+            return;
+          }
           if (dzDetourItem) {
-            dzDetourItem.artwork = { type: "design", done: true, files: [] };
+            dzDetourItem.artwork = { type: "design", done: true, started: true, state: "done", files: [] };
             renderCart();
             closeDesigner();
             document.getElementById("cartBar").scrollIntoView({ behavior: "smooth", block: "start" });
             return;
           }
+          var useSize = DZ_RATIOS[dzSize] && SIZE_LABELS[dzSize] ? dzSize : "s24";
           closeDesigner();
-          openEasyOrder({ mode: currentMode, material: currentMaterial, size: dzSize, sides: 0 });
+          openEasyOrder({ mode: currentMode, material: currentMaterial, size: useSize, sides: 0 });
         });
 
         /* ================= campaign signs quote view ================= */
