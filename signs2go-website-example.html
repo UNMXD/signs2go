@@ -464,9 +464,21 @@
 
       .dropzone {
         border: 2px dashed var(--line-strong); border-radius: 12px; padding: 26px 20px;
-        text-align: center; background: var(--wash); transition: border-color 0.15s ease, background 0.15s ease;
+        text-align: center; background: var(--wash); cursor: pointer;
+        transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
       }
-      .dropzone.drag { border-color: var(--black); background: var(--white); }
+      .dropzone:hover { border-color: var(--black); }
+      .dropzone:focus-visible { outline: 3px solid var(--green); outline-offset: 3px; }
+      .dropzone.drag, .dropzone.drag-over, .dropzone.is-dragging {
+        border: 2px solid var(--green); border-style: solid;
+        background: #EFFFC2; background: rgba(172, 229, 14, 0.22);
+        box-shadow: 0 0 0 4px var(--green), 0 0 0 7px var(--black), inset 0 0 0 2px var(--white);
+        transition: none;
+      }
+      .dropzone.drag .dz-title, .dropzone.drag-over .dz-title, .dropzone.is-dragging .dz-title { color: var(--black); }
+      .dropzone.drag .dz-drop-hint, .dropzone.drag-over .dz-drop-hint, .dropzone.is-dragging .dz-drop-hint { display: block; }
+      .dz-drop-hint { display: none; font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; font-size: 18px; margin-top: 8px; }
+      .dz-browse { text-decoration: underline; text-decoration-color: var(--green); text-decoration-thickness: 2px; text-underline-offset: 3px; cursor: pointer; font-weight: 700; }
       .dropzone svg { margin: 0 auto 10px; }
       .dropzone .dz-title { font-weight: 700; font-size: 18.5px; }
       .dropzone .dz-sub { font-size: 15px; color: var(--ink-55); margin-top: 3px; }
@@ -482,6 +494,12 @@
         border-radius: 8px; padding: 6px 12px; font-weight: 600; font-size: 15px;
       }
       .dz-remove:hover { border-color: var(--black); }
+      .dz-remove-x {
+        width: 38px; height: 38px; padding: 0; border-radius: 50%;
+        display: inline-flex; align-items: center; justify-content: center;
+        font-size: 24px; font-weight: 700; line-height: 1;
+      }
+      .dz-remove-x:hover { background: var(--black); color: var(--green); border-color: var(--black); }
       .art-req {
         border: 2px solid var(--black); border-left: 10px solid var(--green);
         border-radius: 12px; padding: 16px 18px; margin-bottom: 14px; background: var(--white);
@@ -496,6 +514,27 @@
       .art-later { margin-top: 12px; font-size: 16px; }
       .art-later button { background: none; border: none; padding: 0; font-weight: 700; text-decoration: underline; text-decoration-color: var(--green); text-decoration-thickness: 2px; text-underline-offset: 3px; color: var(--black); }
       .art-status { font-size: 15.5px; color: var(--ink-55); margin-top: 8px; }
+      .res-list { display: grid; gap: 12px; margin-top: 14px; }
+      .res-item { border: 1.5px solid var(--black); border-radius: 12px; padding: 14px 16px; background: var(--white); text-align: left; }
+      .res-item--pass { border-left: 10px solid var(--green); }
+      .res-item--low { border: 2px solid var(--black); border-left: 10px solid #DC2626; background: #FFF7ED; }
+      .res-item--neutral { border-left: 10px solid var(--black); }
+      .res-item--error { border-left: 10px solid #DC2626; background: #FEF2F2; }
+      .res-head { display: flex; align-items: flex-start; gap: 12px; }
+      .res-head .fn { font-weight: 700; font-size: 17px; overflow-wrap: anywhere; line-height: 1.3; }
+      .res-head .fs { font-size: 14.5px; color: var(--ink-55); margin-top: 2px; overflow-wrap: anywhere; }
+      .res-verdict { font-weight: 700; font-size: 16.5px; line-height: 1.45; margin-top: 8px; overflow-wrap: anywhere; }
+      .res-item--pass .res-verdict { color: var(--black); }
+      .res-item--low .res-verdict { color: #7C2D12; }
+      .res-detail { font-size: 15.5px; line-height: 1.55; margin-top: 6px; }
+      .res-detail button { background: none; border: none; padding: 0; font-weight: 700; text-decoration: underline; text-decoration-color: var(--green); text-decoration-thickness: 2px; text-underline-offset: 3px; color: var(--black); cursor: pointer; font: inherit; font-weight: 700; }
+      .sum-artwork { border-top: 1px solid var(--line); margin-top: 14px; padding-top: 12px; display: grid; gap: 7px; font-size: 15.5px; line-height: 1.45; }
+      .sum-artwork:empty { display: none; }
+      .sum-art-line { overflow-wrap: anywhere; }
+      .sum-art-line strong { font-weight: 700; }
+      .sum-art-line--low { background: #FFF7ED; border: 1.5px solid var(--black); border-left: 8px solid #DC2626; border-radius: 8px; padding: 8px 10px; }
+      .sum-art-line--pass { background: var(--white); border: 1.5px solid var(--black); border-left: 8px solid var(--green); border-radius: 8px; padding: 8px 10px; }
+      .sum-art-line--neutral, .sum-art-line--error { border: 1.5px solid var(--black); border-radius: 8px; padding: 8px 10px; }
 
       .summary-card { border: 1.5px solid var(--black); border-radius: var(--radius); padding: 26px; background: var(--white); position: sticky; top: 96px; }
       .summary-card h3 { font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; text-transform: uppercase; font-size: 26px; }
@@ -1044,20 +1083,14 @@
                       <p>Print-ready means <strong>300 DPI at full size</strong> — your file sized exactly to your sign, at 100% scale. PDF, vector, or a high-resolution image all work.</p>
                       <p>Don't have artwork? If we design it for you, that's an extra fee — <strong>new design work runs $95–$295</strong> and <strong>artwork corrections $50–$75 per file</strong>. Or <button type="button" class="art-req-link" data-open-designer>design your own online — free</button> with our Design Online tool.</p>
                     </div>
-                    <div class="dropzone" id="dropzone">
+                    <div class="dropzone" id="dropzone" role="button" tabindex="0" aria-label="Upload artwork: drop files here or activate to browse files" aria-describedby="dzSub">
                       <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V5m0 0l-4 4m4-4l4 4"/><path d="M4 17v1.5A2.5 2.5 0 0 0 6.5 21h11A2.5 2.5 0 0 0 20 18.5V17"/></svg>
-                      <div class="dz-title">Drop your artwork here, or <label for="artFile" style="text-decoration:underline;text-decoration-color:#ACE50E;text-decoration-thickness:2px;text-underline-offset:3px;cursor:pointer;font-weight:700">browse files</label></div>
-                      <div class="dz-sub">PDF, PNG, JPG, SVG or AI · print-ready at 100% size is perfect</div>
-                      <input class="sr-only" id="artFile" type="file" accept=".pdf,.png,.jpg,.jpeg,.svg,.ai" aria-labelledby="artLabel" />
+                      <div class="dz-title">Drag &amp; drop your artwork here, or <span class="dz-browse">browse files</span></div>
+                      <div class="dz-drop-hint" aria-hidden="true">Let go to add your file</div>
+                      <div class="dz-sub" id="dzSub">Tap or click to browse on mobile · PDF, PNG, JPG, GIF, WebP, SVG, AI or EPS · We check raster images instantly against the 300 DPI print standard at your selected sign size. You can add more than one file.</div>
+                      <input class="sr-only" id="artFile" type="file" accept=".pdf,.png,.jpg,.jpeg,.gif,.webp,.svg,.ai,.eps" multiple aria-labelledby="artLabel" tabindex="-1" />
                     </div>
-                    <div class="dz-file" id="dzFile">
-                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2" fill="#ACE50E" stroke="#000000" stroke-width="1.6"/><path d="M8 9h8M8 13h8M8 17h5" stroke="#000000" stroke-width="1.6" stroke-linecap="round"/></svg>
-                      <div style="min-width:0">
-                        <div class="fn" id="dzName">artwork.pdf</div>
-                        <div class="fs" id="dzSize">Ready to print</div>
-                      </div>
-                      <button class="dz-remove" type="button" id="dzRemove">Remove</button>
-                    </div>
+                    <div class="res-list" id="dzList" aria-live="polite"></div>
                     <p class="art-later" id="artLaterRow">No artwork yet? <button type="button" id="artLaterBtn">We'll help — send a proof first</button></p>
                     <p class="art-status" id="artStatus" role="status"></p>
                   </div>
@@ -1081,6 +1114,7 @@
                   </div>
                 </div>
                 <div class="sum-lines" id="sumLines"></div>
+                <div class="sum-artwork" id="sumArtwork" aria-live="polite"></div>
                 <p class="qty-note" id="sumDiscNote">Volume discount applied</p>
                 <div class="sum-total">
                   <span class="t-label">Total</span>
@@ -1550,52 +1584,282 @@
           driveSource = "packages"; coQty.value = currentQty(); syncTableFromPackages(); renderSummary();
         });
 
-        /* ================= artwork upload (in-memory only) ================= */
+        /* ================= artwork upload + resolution checker (in-memory only, no file leaves the device) ================= */
         var dropzone = document.getElementById("dropzone");
         var artFile = document.getElementById("artFile");
-        var dzFile = document.getElementById("dzFile");
-        var dzName = document.getElementById("dzName");
-        var dzSize = document.getElementById("dzSize");
-        var dzRemove = document.getElementById("dzRemove");
+        var dzList = document.getElementById("dzList");
+        var sumArtwork = document.getElementById("sumArtwork");
         var artStatus = document.getElementById("artStatus");
-        var artwork = null; // { name, size } or "later"
+        var artwork = null; // { name, size } or "later" — kept in sync with artworkFiles for the demo submit message
+        var artworkFiles = []; // {id, file, name, size, kind, width, height, dpi, roundedDpi, isPass, printLabel}
+        var artworkSeq = 0;
+        var PKG_DIMS = { s24: { w: 24, h: 18 }, s44: { w: 48, h: 48 }, s48: { w: 48, h: 96 } };
+        var CALC_DIMS = { s1812: { w: 18, h: 12 }, s24: { w: 24, h: 18 }, s2424: { w: 24, h: 24 }, s2436: { w: 24, h: 36 }, s44: { w: 48, h: 48 }, s48: { w: 48, h: 96 } };
 
-        function showArtwork(file) {
-          artwork = { name: file.name, size: file.size };
-          dzName.textContent = file.name;
-          dzSize.textContent = file.size > 1048576
-            ? (file.size / 1048576).toFixed(1) + " MB \u00B7 ready to print"
-            : Math.max(1, Math.round(file.size / 1024)) + " KB \u00B7 ready to print";
-          dzFile.classList.add("show");
-          dropzone.style.display = "none";
-          artStatus.textContent = "Artwork attached. We'll check it before printing and flag anything that won't print clean.";
+        function getCurrentPrintSize() {
+          try {
+            if (typeof driveSource !== "undefined" && driveSource === "calc") {
+              var sel = document.getElementById("calcSize");
+              var key = sel ? sel.value : "s24";
+              var dims = CALC_DIMS[key] || PKG_DIMS.s24;
+              var label = "24\u201D\u00D718\u201D";
+              if (sel && sel.options && sel.selectedIndex >= 0) label = sel.options[sel.selectedIndex].textContent.trim();
+              else if (CALC_DIMS[key]) label = dims.w + "\u201D\u00D7" + dims.h + "\u201D";
+              // Normalize foot sizes to the site's label style
+              if (key === "s44") label = "4\u2019\u00D74\u2019";
+              if (key === "s48") label = "4\u2019\u00D78\u2019";
+              return { w: dims.w, h: dims.h, label: label, key: "calc:" + key };
+            }
+          } catch (e) {}
+          var pk = "s24";
+          try { pk = packageSizeKey(); } catch (e2) {}
+          var pd = PKG_DIMS[pk] || PKG_DIMS.s24;
+          var pl = (typeof SIZE_LABELS !== "undefined" && SIZE_LABELS[pk]) ? SIZE_LABELS[pk] : "24\u201D\u00D718\u201D";
+          return { w: pd.w, h: pd.h, label: pl, key: "pkg:" + pk };
         }
+        function effectiveDpi(imgW, imgH, printW, printH) {
+          var a = Math.min(imgW / printW, imgH / printH);
+          var b = Math.min(imgW / printH, imgH / printW);
+          return Math.max(a, b);
+        }
+        function computeVerdict(entry) {
+          var s = getCurrentPrintSize();
+          entry.printLabel = s.label;
+          entry.printKey = s.key;
+          if (entry.width && entry.height) {
+            entry.dpi = effectiveDpi(entry.width, entry.height, s.w, s.h);
+            entry.roundedDpi = Math.round(entry.dpi);
+            entry.isPass = entry.dpi >= 300;
+          }
+        }
+        function formatBytes(n) {
+          if (n > 1048576) return (n / 1048576).toFixed(1) + " MB";
+          return Math.max(1, Math.round(n / 1024)) + " KB";
+        }
+        function classifyFile(file) {
+          var name = (file.name || "").toLowerCase();
+          var ext = name.indexOf(".") >= 0 ? name.split(".").pop() : "";
+          var type = (file.type || "").toLowerCase();
+          if (ext === "svg" || type === "image/svg+xml") return "vector";
+          if (ext === "pdf" || ext === "ai" || ext === "eps" || type === "application/pdf" || type === "application/postscript" || type.indexOf("illustrator") >= 0) return "proof";
+          return "raster";
+        }
+        function syncArtworkVar() {
+          if (!artworkFiles.length) { if (artwork !== "later") artwork = null; return; }
+          var names = artworkFiles.map(function (e) { return e.name; }).join(", ");
+          var total = artworkFiles.reduce(function (a, e) { return a + (e.size || 0); }, 0);
+          artwork = { name: names, size: total };
+        }
+        function verdictText(entry) {
+          if (entry.kind === "vector") return "\u2713 Print-ready \u2014 " + entry.name + " is a vector file \u2014 resolution-independent, always print-ready.";
+          if (entry.kind === "proof") return "We\u2019ll verify this file\u2019s resolution when we proof it.";
+          if (entry.kind === "error") return "Couldn\u2019t read that file \u2014 please try another file. We couldn\u2019t check its resolution, so we won\u2019t guess.";
+          if (entry.kind === "checking") return "Checking resolution\u2026";
+          if (entry.isPass) return "\u2713 Print-ready \u2014 " + entry.name + " is about " + entry.roundedDpi + " DPI at " + entry.printLabel + ".";
+          return "\u26A0 Low resolution \u2014 " + entry.name + " is about " + entry.roundedDpi + " DPI at your " + entry.printLabel + " size, below the 300 DPI print standard. It may print soft or blurry.";
+        }
+        function summaryLineText(entry) {
+          if (entry.kind === "vector") return "Artwork: " + entry.name + " \u2014 \u2713 print-ready (vector)";
+          if (entry.kind === "proof") return "Artwork: " + entry.name + " \u2014 checked at proof.";
+          if (entry.kind === "error") return "Artwork: " + entry.name + " \u2014 couldn\u2019t read file";
+          if (entry.kind === "checking") return "Artwork: " + entry.name + " \u2014 checking\u2026";
+          if (entry.isPass) return "Artwork: " + entry.name + " \u2014 \u2713 print-ready (\u2248" + entry.roundedDpi + " DPI)";
+          return "Artwork: " + entry.name + " \u2014 \u26A0 low resolution (\u2248" + entry.roundedDpi + " DPI)";
+        }
+        function renderSummaryArtwork() {
+          if (!sumArtwork) return;
+          sumArtwork.innerHTML = "";
+          artworkFiles.forEach(function (entry) {
+            var div = document.createElement("div");
+            var cls = entry.kind === "vector" || (entry.kind === "raster" && entry.isPass) ? "pass" : entry.kind === "raster" ? "low" : entry.kind === "error" ? "error" : "neutral";
+            div.className = "sum-art-line sum-art-line--" + cls;
+            div.setAttribute("data-art-summary", entry.name);
+            div.textContent = summaryLineText(entry);
+            sumArtwork.appendChild(div);
+          });
+        }
+        function renderArtworkList() {
+          if (!dzList) return;
+          dzList.innerHTML = "";
+          artworkFiles.forEach(function (entry) {
+            var item = document.createElement("div");
+            var cls = entry.kind === "vector" || (entry.kind === "raster" && entry.isPass) ? "pass" : entry.kind === "raster" ? "low" : entry.kind === "error" ? "error" : "neutral";
+            if (entry.kind === "checking") cls = "neutral";
+            item.className = "res-item res-item--" + cls;
+            item.setAttribute("data-res-file", entry.name);
+            var head = document.createElement("div"); head.className = "res-head";
+            var metaWrap = document.createElement("div"); metaWrap.style.minWidth = "0"; metaWrap.style.flex = "1";
+            var fn = document.createElement("div"); fn.className = "fn"; fn.textContent = entry.name;
+            var fs = document.createElement("div"); fs.className = "fs";
+            var fsText = formatBytes(entry.size || 0);
+            if (entry.width && entry.height) fsText += " \u00B7 " + entry.width + " \u00D7 " + entry.height + " px \u00B7 at " + entry.printLabel;
+            else if (entry.kind === "vector") fsText += " \u00B7 Vector (SVG)";
+            else if (entry.kind === "proof") fsText += " \u00B7 Checked at proof";
+            fs.textContent = fsText;
+            metaWrap.appendChild(fn); metaWrap.appendChild(fs);
+            var rm = document.createElement("button"); rm.type = "button"; rm.className = "dz-remove dz-remove-x"; rm.textContent = "\u00D7"; rm.setAttribute("aria-label", "Remove " + entry.name); rm.setAttribute("title", "Remove " + entry.name); rm.setAttribute("data-remove-file", entry.name);
+            rm.addEventListener("click", function (ev) {
+              if (ev) { ev.preventDefault(); ev.stopPropagation(); }
+              artworkFiles = artworkFiles.filter(function (e) { return e.id !== entry.id; });
+              if (!artworkFiles.length && artwork !== "later") artwork = null;
+              syncArtworkVar(); renderArtworkList();
+            });
+            head.appendChild(metaWrap); head.appendChild(rm);
+            item.appendChild(head);
+            var v = document.createElement("p"); v.className = "res-verdict"; v.textContent = verdictText(entry); item.appendChild(v);
+            if (entry.kind === "raster" && !entry.isPass) {
+              var d = document.createElement("p"); d.className = "res-detail";
+              d.innerHTML = "Your options: <strong>upload a larger file instead</strong> using the dropzone above, or <strong>keep this file and proceed anyway</strong> \u2014 your choice, we won\u2019t block your order. This low-resolution flag is on your order summary so the shop sees it. Need help? If we design or fix it for you, that\u2019s an extra fee \u2014 <strong>new design $95\u2013$295</strong>, <strong>corrections $50\u2013$75 per file</strong>. Or ";
+              var b = document.createElement("button"); b.type = "button"; b.textContent = "design your own online \u2014 free";
+              b.addEventListener("click", function () { var t = document.querySelector("[data-open-designer]"); if (t) t.click(); });
+              d.appendChild(b);
+              d.appendChild(document.createTextNode(" with our Design Online tool."));
+              item.appendChild(d);
+            } else if (entry.kind === "raster" && entry.isPass) {
+              var d2 = document.createElement("p"); d2.className = "res-detail"; d2.textContent = "This file meets the 300 DPI print standard at your selected size. If you change to a larger sign size, we\u2019ll re-check it automatically.";
+              item.appendChild(d2);
+            } else if (entry.kind === "proof") {
+              var d3 = document.createElement("p"); d3.className = "res-detail"; d3.textContent = entry.name + " \u2014 we can\u2019t reliably measure PDF, AI or EPS resolution in the browser, so there\u2019s no fake verdict here. We\u2019ll verify it when we proof your order.";
+              item.appendChild(d3);
+            } else if (entry.kind === "error") {
+              var d4 = document.createElement("p"); d4.className = "res-detail"; d4.textContent = "That file couldn\u2019t be decoded as an image in your browser. Try a JPG, PNG, GIF or WebP, or send a PDF/vector file and we\u2019ll check it at proof.";
+              item.appendChild(d4);
+            } else if (entry.kind === "vector") {
+              var d5 = document.createElement("p"); d5.className = "res-detail"; d5.textContent = "Vector file \u2014 resolution-independent, always print-ready at any sign size.";
+              item.appendChild(d5);
+            }
+            dzList.appendChild(item);
+          });
+          renderSummaryArtwork();
+          // Overall status line
+          if (!artworkFiles.length) { artStatus.textContent = ""; }
+          else if (artworkFiles.some(function (e) { return e.kind === "raster" && !e.isPass; })) artStatus.textContent = "\u26A0 One or more files are below the 300 DPI print standard \u2014 see the warning above. You can still place your order; the flag is on your order summary.";
+          else if (artworkFiles.some(function (e) { return e.kind === "error"; })) artStatus.textContent = "One file couldn\u2019t be read \u2014 try another file and we\u2019ll check it right away.";
+          else if (artworkFiles.every(function (e) { return e.kind === "vector" || (e.kind === "raster" && e.isPass); })) artStatus.textContent = "Artwork checked \u2014 print-ready at your selected sign size.";
+          else artStatus.textContent = "Artwork attached. PDF, AI and EPS files will have their resolution verified when we proof them.";
+        }
+        function recheckArtwork() {
+          var changed = false;
+          artworkFiles.forEach(function (entry) {
+            if (entry.kind === "raster" && entry.width) {
+              var old = entry.roundedDpi + "|" + entry.printLabel + "|" + entry.isPass;
+              computeVerdict(entry);
+              var nw = entry.roundedDpi + "|" + entry.printLabel + "|" + entry.isPass;
+              if (old !== nw) changed = true;
+            }
+          });
+          // Also update printLabel display for non-raster (size context not needed, but keep list fresh if size key changed)
+          if (changed) renderArtworkList(); else renderSummaryArtwork();
+          return changed;
+        }
+        // Stay live: poll the selected size — catches table, package, ladder, and designer changes without missing a path
+        var lastPrintKey = getCurrentPrintSize().key + "|" + (typeof driveSource !== "undefined" ? driveSource : "");
+        setInterval(function () {
+          var k = getCurrentPrintSize().key + "|" + (typeof driveSource !== "undefined" ? driveSource : "");
+          if (k !== lastPrintKey) { lastPrintKey = k; artworkFiles.forEach(function (e) { if (e.kind === "raster") computeVerdict(e); }); renderArtworkList(); }
+        }, 350);
+        function addArtworkFiles(fileList) {
+          if (!fileList || !fileList.length) return;
+          if (artwork === "later") artwork = null;
+          var files = Array.prototype.slice.call(fileList);
+          files.forEach(function (file) {
+            var kind0 = classifyFile(file);
+            var entry = { id: ++artworkSeq, file: file, name: file.name || "artwork", size: file.size || 0, kind: kind0 === "raster" ? "checking" : kind0, width: 0, height: 0, dpi: 0, roundedDpi: 0, isPass: false, printLabel: getCurrentPrintSize().label, printKey: getCurrentPrintSize().key };
+            artworkFiles.push(entry);
+            syncArtworkVar(); renderArtworkList();
+            if (kind0 === "vector" || kind0 === "proof") { renderArtworkList(); return; }
+            // Raster: decode locally to get true pixel dimensions (ignore any DPI tag in the file)
+            var url = null;
+            try { url = URL.createObjectURL(file); } catch (e) { entry.kind = "error"; renderArtworkList(); return; }
+            var img = new Image();
+            img.onload = function () {
+              try { URL.revokeObjectURL(url); } catch (e) {}
+              if (!img.naturalWidth || !img.naturalHeight) { entry.kind = "error"; renderArtworkList(); return; }
+              entry.width = img.naturalWidth; entry.height = img.naturalHeight; entry.kind = "raster"; computeVerdict(entry); renderArtworkList();
+            };
+            img.onerror = function () {
+              try { URL.revokeObjectURL(url); } catch (e) {}
+              // Some decodable types need a second chance via createImageBitmap
+              if (window.createImageBitmap) {
+                window.createImageBitmap(file).then(function (bmp) { entry.width = bmp.width; entry.height = bmp.height; entry.kind = "raster"; computeVerdict(entry); if (bmp.close) bmp.close(); renderArtworkList(); }).catch(function () { entry.kind = "error"; renderArtworkList(); });
+              } else { entry.kind = "error"; renderArtworkList(); }
+            };
+            img.src = url;
+          });
+        }
+        function showArtwork(file) { addArtworkFiles([file]); }
+        /* ---- ONE code path for every route: browse picker AND drag-and-drop both call handleArtworkFiles ---- */
+        function handleArtworkFiles(fileList) { addArtworkFiles(fileList); }
+        function getDroppedFiles(e) {
+          var dt = e && e.dataTransfer;
+          if (!dt) return [];
+          if (dt.files && dt.files.length) return dt.files;
+          if (dt.items && dt.items.length) {
+            var out = [];
+            for (var i = 0; i < dt.items.length; i++) {
+              var it = dt.items[i];
+              if (it && it.kind === "file") { var f = null; try { f = it.getAsFile && it.getAsFile(); } catch (err) {} if (f) out.push(f); }
+            }
+            return out;
+          }
+          return [];
+        }
+        // Browse / click route (the only route on touch devices — fully functional there)
         artFile.addEventListener("change", function () {
-          if (artFile.files && artFile.files[0]) showArtwork(artFile.files[0]);
+          if (artFile.files && artFile.files.length) handleArtworkFiles(artFile.files);
+          artFile.value = "";
         });
-        ["dragenter", "dragover"].forEach(function (ev) {
-          dropzone.addEventListener(ev, function (e) { e.preventDefault(); dropzone.classList.add("drag"); });
+        artFile.addEventListener("click", function (e) { e.stopPropagation(); });
+        function openArtworkPicker() { artFile.click(); }
+        dropzone.addEventListener("click", function (e) {
+          if (e.target === artFile) return; // the input's own click must not re-trigger the picker
+          openArtworkPicker();
         });
-        ["dragleave", "drop"].forEach(function (ev) {
-          dropzone.addEventListener(ev, function (e) { e.preventDefault(); dropzone.classList.remove("drag"); });
+        dropzone.addEventListener("keydown", function (e) {
+          if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") { e.preventDefault(); openArtworkPicker(); }
+        });
+        // Drag-and-drop: visible brand highlight, with an enter/leave counter so moving over child elements doesn't flicker it off
+        var dzDragDepth = 0;
+        function dzSetDrag(on) {
+          dropzone.classList.toggle("drag", !!on);
+          dropzone.classList.toggle("drag-over", !!on);
+          dropzone.classList.toggle("is-dragging", !!on);
+          if (!on) dzDragDepth = 0;
+        }
+        dropzone.addEventListener("dragenter", function (e) {
+          e.preventDefault(); dzDragDepth++; dzSetDrag(true);
+          if (e.dataTransfer) { try { e.dataTransfer.dropEffect = "copy"; } catch (err) {} }
+        });
+        dropzone.addEventListener("dragover", function (e) {
+          e.preventDefault(); dzSetDrag(true);
+          if (e.dataTransfer) { try { e.dataTransfer.dropEffect = "copy"; } catch (err) {} }
+        });
+        dropzone.addEventListener("dragleave", function (e) {
+          e.preventDefault(); dzDragDepth = Math.max(0, dzDragDepth - 1);
+          if (dzDragDepth === 0) dzSetDrag(false);
         });
         dropzone.addEventListener("drop", function (e) {
-          var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
-          if (f) showArtwork(f);
+          e.preventDefault(); e.stopPropagation(); dzSetDrag(false);
+          var fs = getDroppedFiles(e);
+          if (fs && fs.length) handleArtworkFiles(fs);
         });
-        dzRemove.addEventListener("click", function () {
-          artwork = null; artFile.value = "";
-          dzFile.classList.remove("show");
-          dropzone.style.display = "";
-          artStatus.textContent = "";
+        // Page-level guard: a file dropped anywhere — including anywhere in the checkout area outside the dropzone — must never navigate away or open in the tab
+        ["dragenter", "dragover", "dragleave", "drop"].forEach(function (ev) {
+          document.addEventListener(ev, function (e) { e.preventDefault(); });
+          window.addEventListener(ev, function (e) { e.preventDefault(); });
         });
+        document.addEventListener("drop", function () { dzSetDrag(false); });
+        // Expose the shared handler + drag state for audit verification
+        window.__s2gDrop = { handleFiles: handleArtworkFiles, openPicker: openArtworkPicker, isDragging: function () { return dropzone.classList.contains("drag"); } };
         document.getElementById("artLaterBtn").addEventListener("click", function () {
           artwork = "later";
-          dzFile.classList.remove("show");
-          dropzone.style.display = "";
+          artworkFiles = [];
           artFile.value = "";
+          renderArtworkList();
           artStatus.textContent = "No problem \u2014 we'll email you a proof link after you place the order, and nothing prints until you approve it.";
         });
+        // Expose for audit / debugging without changing behaviour
+        window.__s2gResCheck = { getFiles: function () { return artworkFiles; }, recheck: recheckArtwork, effectiveDpi: effectiveDpi, getSize: getCurrentPrintSize };
 
         /* ================= checkout submit ================= */
         var form = document.getElementById("checkoutForm");
