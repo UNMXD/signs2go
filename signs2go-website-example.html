@@ -923,7 +923,7 @@
       }
       @media (prefers-reduced-motion: reduce) {
         html { scroll-behavior: auto; }
-        .btn, .product-card, .choice, .order-chip { transition: none; }
+        .btn, .product-card, .choice, .order-chip, .mat-opt, .thick-opt { transition: none; }
         .p-step.current .p-dot::after { animation: none; }
       }
 
@@ -1094,12 +1094,36 @@
       .mat-opt {
         text-align: left; border: 2px solid var(--black); border-radius: 14px; background: var(--white);
         color: var(--black); padding: 16px 18px; cursor: pointer; font: inherit; width: 100%;
+        transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease, color 0.15s ease;
       }
-      .mat-opt:hover { box-shadow: inset 0 0 0 2px var(--black); }
-      .mat-opt[aria-pressed="true"] { background: rgba(172, 229, 14, 0.22); box-shadow: inset 0 0 0 2.5px var(--black); }
+      /* Each material lights up in its own color on hover, so the three
+         options stand apart: Coroplast in brand green, Max Metal in
+         black, Foamboard in dark grey (a black tint). */
+      .mat-opt[data-wmat="coroplast"]:not([aria-pressed="true"]):hover { transform: translateY(-2px); box-shadow: inset 0 0 0 3px var(--green), 0 10px 22px rgba(172, 229, 14, 0.40); }
+      .mat-opt[data-wmat="maxmetal"]:not([aria-pressed="true"]):hover { transform: translateY(-2px); box-shadow: inset 0 0 0 3px var(--black), 0 10px 22px rgba(0, 0, 0, 0.38); }
+      .mat-opt[data-wmat="foamboard"]:not([aria-pressed="true"]):hover { transform: translateY(-2px); box-shadow: inset 0 0 0 3px #3d3d3d, 0 10px 22px rgba(0, 0, 0, 0.28); }
+      /* And each keeps its own tint when selected: green fill for
+         Coroplast, black fill with white text for Max Metal, a strong
+         black outline with a light fill for Foamboard. */
+      .mat-opt[data-wmat="coroplast"][aria-pressed="true"] { background: rgba(172, 229, 14, 0.30); box-shadow: inset 0 0 0 3px var(--green), inset 0 0 0 5.5px var(--black); }
+      .mat-opt[data-wmat="maxmetal"][aria-pressed="true"] { background: var(--black); color: var(--white); box-shadow: inset 0 0 0 3px var(--black), inset 0 0 0 5.5px var(--white); }
+      .mat-opt[data-wmat="foamboard"][aria-pressed="true"] { background: rgba(0, 0, 0, 0.07); box-shadow: inset 0 0 0 3.5px var(--black); }
       .mo-name { display: block; font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; text-transform: uppercase; font-size: 22px; line-height: 1.1; }
       .mo-sub { display: block; font-size: 15.5px; margin-top: 4px; }
       .wiz-about { margin-top: 14px; }
+      /* Coroplast thickness sub-choice (Step 2, Coroplast only) */
+      .thick-field { margin-top: 16px; }
+      .thick-field .f-label { display: block; margin-bottom: 8px; }
+      .thick-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+      .thick-opt {
+        text-align: left; border: 2px solid var(--black); border-radius: 14px; background: var(--white);
+        color: var(--black); padding: 14px 16px; cursor: pointer; font: inherit; width: 100%;
+        transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+      }
+      .thick-opt:not([aria-pressed="true"]):hover { transform: translateY(-2px); box-shadow: inset 0 0 0 3px var(--green), 0 10px 22px rgba(172, 229, 14, 0.40); }
+      .thick-opt[aria-pressed="true"] { background: rgba(172, 229, 14, 0.30); box-shadow: inset 0 0 0 3px var(--green), inset 0 0 0 5.5px var(--black); }
+      .to-name { display: block; font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; text-transform: uppercase; font-size: 20px; line-height: 1.1; }
+      .to-sub { display: block; font-size: 15px; margin-top: 3px; }
       .wiz-continue { margin-top: 22px; }
       .wiz-price {
         display: none; background: var(--green); color: var(--black);
@@ -1131,6 +1155,7 @@
       .foot-eo-btn:hover { text-decoration: underline; text-decoration-color: var(--green); text-decoration-thickness: 2px; }
       @media (max-width: 640px) {
         .mat-opts { grid-template-columns: 1fr; }
+        .thick-opts { grid-template-columns: 1fr; }
         .wiz-step { padding: 18px 16px; }
         .wiz-title { font-size: 21px; }
         .cart-bar { padding: 10px 14px; top: calc(var(--head-h, 87px) + 8px); }
@@ -1524,6 +1549,19 @@
                   <span class="mo-sub">3/16&rdquo; foam board · High Quality Interior Signs</span>
                 </button>
               </div>
+              <div class="thick-field" id="wThickField" hidden>
+                <span class="f-label" id="wThickLabel">Coroplast thickness</span>
+                <div class="thick-opts" role="group" aria-labelledby="wThickLabel">
+                  <button type="button" class="thick-opt" data-wthick="4" aria-pressed="true">
+                    <span class="to-name">4mm &mdash; Standard</span>
+                    <span class="to-sub">The classic fluted board &mdash; our standard yard &amp; job-site sign</span>
+                  </button>
+                  <button type="button" class="thick-opt" data-wthick="10" aria-pressed="false">
+                    <span class="to-name">10mm &mdash; Heavy Duty</span>
+                    <span class="to-sub">Thicker and stiffer, no light shines through &mdash; priced at 2&times; the 4mm price</span>
+                  </button>
+                </div>
+              </div>
               <details class="mat-about wiz-about" id="wMatAbout">
                 <summary>About this material</summary>
                 <p class="mat-blurb" id="wMatAboutText"></p>
@@ -1815,6 +1853,18 @@
             { key: "s48", label: "4\u2019\u00D78\u2019", ws: [129.95, 179.95], pc: [129.95, 179.95], pps: 1, feat: "s48" }
           ]
         };
+        /* Coroplast 10mm prices: exactly 2x the 4mm table, same
+           structure (ws = wholesale per-piece, pc = 1 pc price,
+           [1-side, 2-side]). Minimums (pps) and size labels come from
+           the 4mm entries — identical for both thicknesses. */
+        var CORO10 = {
+          s1812: { ws: [9.90, 13.90], pc: [20.00, 30.00] },
+          s24: { ws: [13.90, 19.90], pc: [40.00, 50.00] },
+          s2424: { ws: [17.90, 25.90], pc: [50.00, 60.00] },
+          s2436: { ws: [29.90, 41.90], pc: [60.00, 70.00] },
+          s44: { ws: [79.90, 109.90], pc: [120.00, 160.00] },
+          s48: { ws: [139.90, 199.90], pc: [139.90, 199.90] }
+        };
         var CALC_TIERS = [1, 5, 10, 25, 50, 100, 200, 500, 1000, 2000];
         var CALC_DIMS = { s1812: { w: 18, h: 12 }, s24: { w: 24, h: 18 }, s2424: { w: 24, h: 24 }, s2436: { w: 24, h: 36 }, s44: { w: 48, h: 48 }, s48: { w: 48, h: 96 } };
         /* Per-sign adders, never discounted by the volume curve.
@@ -1912,7 +1962,7 @@
         var cart = [];
         function freshWizard() {
           return {
-            mode: null, material: null, sizeKey: null, sides: 0, qty: null,
+            mode: null, material: null, thickness: "4", sizeKey: null, sides: 0, qty: null,
             stakes: "0", grommets: "none", flute: null,
             answered: { 1: false, 2: false, 3: false, 4: false, 5: false, 6: false },
             open: 1, reached: 1
@@ -1920,7 +1970,20 @@
         }
         wiz = freshWizard();
 
-        function wizEntry() { return wiz.material && wiz.sizeKey ? entryFor(wiz.material, wiz.sizeKey) : null; }
+        /* The wizard's active price entry. For Coroplast at 10mm the
+           wholesale/1pc prices swap to the CORO10 table; size label,
+           pieces-per-sheet minimum and featured flag stay the 4mm
+           entry's — they're the same for both thicknesses. */
+        function wizEntry() {
+          if (!wiz.material || !wiz.sizeKey) return null;
+          var e = entryFor(wiz.material, wiz.sizeKey);
+          if (!e) return null;
+          if (wiz.material === "coroplast" && wiz.thickness === "10") {
+            var t = CORO10[wiz.sizeKey];
+            if (t) return { key: e.key, label: e.label, ws: t.ws, pc: t.pc, pps: e.pps, feat: e.feat };
+          }
+          return e;
+        }
         /* Finishing touches exist for Coroplast and Max Metal only.
            Foamboard takes neither H-Stakes nor grommets, so the step is
            skipped entirely for Foamboard and the artwork step renumbers. */
@@ -1956,7 +2019,7 @@
 
         function wizSummaryText(n) {
           if (n === 1) return wiz.mode === "onepc" ? "One Sign \u2014 single-sign price, no minimum" : "Wholesale (sheet qty) \u2014 lowest per-sign prices, minimums apply";
-          if (n === 2) return MATERIALS[wiz.material].label;
+          if (n === 2) return MATERIALS[wiz.material].label + (wiz.material === "coroplast" ? " \u00B7 " + wiz.thickness + "mm" : "");
           if (n === 3) { var e = wizEntry(); return e ? e.label + " \u00B7 " + (wiz.sides ? "2 sides" : "1 side") : ""; }
           if (n === 4) return "Qty " + wizQty() + " \u00B7 " + money(wizEach()) + " each";
           if (n === 5) { var l = adderLabelsFor(wiz.stakes, wiz.grommets); if (needsFlute() && wiz.flute) l.push("Flutes: " + wiz.flute); return l.length ? l.join(" \u00B7 ") : "No add-ons"; }
@@ -1997,6 +2060,11 @@
           document.querySelectorAll("[data-wmat]").forEach(function (b) {
             b.setAttribute("aria-pressed", b.getAttribute("data-wmat") === wiz.material ? "true" : "false");
           });
+          document.querySelectorAll("[data-wthick]").forEach(function (b) {
+            b.setAttribute("aria-pressed", b.getAttribute("data-wthick") === wiz.thickness ? "true" : "false");
+          });
+          var thickField = document.getElementById("wThickField");
+          if (thickField) thickField.hidden = wiz.material !== "coroplast";
           document.querySelectorAll("[data-wsides]").forEach(function (b) {
             b.setAttribute("aria-pressed", b.getAttribute("data-wsides") === String(wiz.sides) ? "true" : "false");
           });
@@ -2116,6 +2184,31 @@
               wiz.answered[3] = false;
               wiz.qty = null;
             }
+            if (key === "coroplast") {
+              /* Coroplast asks one more question right here — 4mm or
+                 10mm — so the step stays open on the thickness choice
+                 instead of collapsing; tapping a thickness completes
+                 the step (see the thickness handler below). */
+              wiz.answered[2] = true;
+              if (wiz.reached < 2) wiz.reached = 2;
+              wiz.open = 2;
+              renderWizard();
+              var st2 = document.querySelector('[data-wstep="2"]');
+              if (st2) st2.scrollIntoView({ behavior: "smooth", block: "start" });
+              return;
+            }
+            completeStep(2);
+          });
+        });
+        /* Thickness lives inside Step 2 with the material: it only
+           shows for Coroplast, defaults to 4mm, and the pick survives
+           switching material away and back. Tapping one completes
+           Step 2 (the step stays open on this choice after Coroplast
+           is picked), and changing it later reprices everything
+           downstream through wizEntry(), like a material change does. */
+        document.querySelectorAll("[data-wthick]").forEach(function (b) {
+          b.addEventListener("click", function () {
+            wiz.thickness = b.getAttribute("data-wthick") === "10" ? "10" : "4";
             completeStep(2);
           });
         });
@@ -2194,6 +2287,7 @@
           resetArtwork();
           wiz.mode = p.mode === "onepc" ? "onepc" : "wholesale";
           wiz.material = p.material;
+          if (p.thickness) wiz.thickness = p.thickness === "10" ? "10" : "4";
           wiz.sizeKey = entryFor(p.material, p.size) ? p.size : CALC_DATA[p.material][0].key;
           wiz.sides = p.sides ? 1 : 0;
           wiz.answered[1] = true;
@@ -2524,8 +2618,13 @@
           var btn = document.getElementById("addToCartBtn");
           if (btn) btn.hidden = !wizardReadyForCart();
         }
+        /* Cart/checkout label for a material: 10mm Coroplast is named
+           out ("Coroplast 10mm"); everything else is the plain label. */
+        function matLabelFor(it) {
+          return MATERIALS[it.material].label + (it.material === "coroplast" && it.thickness === "10" ? " 10mm" : "");
+        }
         function itemDesc(it) {
-          var parts = [it.qty + " \u00D7 " + it.sizeLabel + " " + MATERIALS[it.material].label + " sign", it.sides ? "2 sides" : "1 side"];
+          var parts = [it.qty + " \u00D7 " + it.sizeLabel + " " + matLabelFor(it) + " sign", it.sides ? "2 sides" : "1 side"];
           var adds = adderLabelsFor(it.stakes, it.grommets);
           if (adds.length) parts.push(adds.join(" + "));
           if (it.flute && it.material === "coroplast" && it.sizeKey !== "s48") parts.push("Flutes: " + it.flute);
@@ -2642,7 +2741,7 @@
           var each = wizEach();
           syncFinishingState();
           var item = {
-            mode: wiz.mode, material: wiz.material, sizeKey: wiz.sizeKey, sizeLabel: e.label,
+            mode: wiz.mode, material: wiz.material, thickness: wiz.material === "coroplast" ? wiz.thickness : "4", sizeKey: wiz.sizeKey, sizeLabel: e.label,
             sides: wiz.sides, qty: q, stakes: wiz.stakes, grommets: wiz.grommets,
             flute: needsFlute() ? wiz.flute : null,
             each: each, total: each * q, artwork: snapshotArtwork()
