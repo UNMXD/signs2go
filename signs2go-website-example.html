@@ -847,6 +847,33 @@
         .cq-summary dt { min-width: 0; }
       }
 
+      /* ---------- political signs wizard (same populate-as-you-go
+         pattern as Build Your Sign: one question open at a time,
+         answered steps collapse to a summary line with an Edit) ---------- */
+      .cq-wiz { max-width: 880px; }
+      .cq-step.is-locked { display: none; }
+      .cq-step.is-done .wiz-body { display: none; }
+      .cq-step:not(.is-open) .wiz-body { display: none; }
+      .cq-opts { display: grid; gap: 12px; }
+      .cq-opts.five { grid-template-columns: repeat(5, 1fr); }
+      .cq-opts.four { grid-template-columns: 1fr 1fr; }
+      .cq-opts.three { grid-template-columns: repeat(3, 1fr); }
+      .cq-opts.two { grid-template-columns: 1fr 1fr; }
+      .cq-opt { text-align: center; }
+      .cq-opt .mo-name { font-size: 26px; }
+      .cq-opt.left { text-align: left; }
+      .cq-opt.left .mo-name { font-size: 20px; line-height: 1.2; }
+      .cq-group + .cq-group { margin-top: 24px; }
+      .cq-group .f-label { display: block; margin-bottom: 10px; }
+      .cq-date { max-width: 340px; }
+      .cq-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 22px; }
+      .cq-note { font-size: 16.5px; margin-top: 16px; max-width: 44em; }
+      @media (max-width: 640px) {
+        .cq-opts.five { grid-template-columns: 1fr 1fr; }
+        .cq-opts.four, .cq-opts.three { grid-template-columns: 1fr; }
+        .cq-date { max-width: none; }
+      }
+
       @media (max-width: 960px) {
         .calc-main, .dz-grid { grid-template-columns: 1fr; }
         .ladder-grid { grid-template-columns: repeat(5, 1fr); }
@@ -1401,82 +1428,176 @@
     </section>
 
     <!-- ================= CAMPAIGN SIGNS QUOTE ================= -->
-    <section class="campaign" id="campaignView" hidden aria-label="Campaign signs — custom quote request">
+    <section class="campaign" id="campaignView" hidden aria-label="Political signs — custom quote request">
       <div class="wrap">
         <button type="button" class="btn ghost small" id="cqBack">&larr; Back to site</button>
         <div class="section-head" style="margin-top:26px;margin-bottom:26px">
           <span class="kicker">Custom quote</span>
-          <h2 class="display">Campaign <em>signs.</em></h2>
+          <h2 class="display">Political <em>signs.</em></h2>
           <p>Running for office? Tell us about your run — answer a few quick questions and we'll quote your signs fast.</p>
         </div>
-        <form class="form-panel cq-panel" id="campaignForm" novalidate>
-          <div class="form-grid">
-            <div>
-              <label class="f-label" for="cqName">Your name *</label>
-              <input class="f-input" id="cqName" type="text" autocomplete="name" placeholder="e.g. Alex Rivera" />
-            </div>
-            <div>
-              <label class="f-label" for="cqCampaign">Campaign / candidate name</label>
-              <input class="f-input" id="cqCampaign" type="text" autocomplete="organization" placeholder="e.g. Rivera for City Council" />
-            </div>
-            <div>
-              <label class="f-label" for="cqPhone">Phone * <span class="opt">(for your quote)</span></label>
-              <input class="f-input" id="cqPhone" type="tel" autocomplete="tel" placeholder="(956) 555-0134" />
-            </div>
-            <div>
-              <label class="f-label" for="cqEmail">Email</label>
-              <input class="f-input" id="cqEmail" type="email" autocomplete="email" placeholder="you@example.com" />
-            </div>
-            <div>
-              <label class="f-label" for="cqQty">How many signs do you need?</label>
-              <input class="f-input" id="cqQty" type="number" min="1" step="1" placeholder="e.g. 250" />
-              <p class="f-hint">A rough count is fine — 50, 100, 250, 500, 1,000+. We'll fine-tune it when we call.</p>
-            </div>
-            <div>
-              <label class="f-label" for="cqDate">When do you need them by?</label>
-              <input class="f-input" id="cqDate" type="date" />
-            </div>
-            <div class="full">
-              <span class="f-label" id="cqSizesLabel">What sizes?</span>
-              <div class="cq-checks two" role="group" aria-labelledby="cqSizesLabel">
-                <label class="cq-check"><input type="checkbox" name="cqSize" value="24”×18”" /> <span class="sz">24”<span class="x x-in">×</span>18”</span></label>
-                <label class="cq-check"><input type="checkbox" name="cqSize" value="4’×4’" /> <span class="sz">4’<span class="x x-ft">×</span>4’</span></label>
-                <label class="cq-check"><input type="checkbox" name="cqSize" value="4’×8’" /> <span class="sz">4’<span class="x x-ft">×</span>8’</span></label>
-                <label class="cq-check"><input type="checkbox" name="cqSize" value="A mix / not sure yet" /> A mix / not sure yet</label>
+        <form class="cq-wiz" id="campaignForm" novalidate>
+          <!-- STEP 1 · how many -->
+          <div class="wiz-step cq-step" data-cqstep="1">
+            <div class="wiz-head">
+              <span class="step-num" aria-hidden="true">1</span>
+              <div class="wiz-head-text">
+                <h3 class="wiz-title">How many signs do you need?</h3>
+                <p class="wiz-summary" data-cqsummary="1" hidden></p>
               </div>
+              <button type="button" class="btn ghost small wiz-edit" data-cqedit="1" hidden>Edit</button>
             </div>
-            <div>
-              <label class="f-label" for="cqSides">One-sided or two-sided?</label>
-              <select class="f-input" id="cqSides">
-                <option>Two-sided</option>
-                <option>One-sided</option>
-                <option>Not sure yet</option>
-              </select>
-            </div>
-            <div>
-              <span class="f-label" id="cqStakesLabel">Do you need H-stakes?</span>
-              <div class="cq-checks" role="radiogroup" aria-labelledby="cqStakesLabel">
-                <label class="cq-check"><input type="radio" name="cqStakes" value="Yes" /> Yes</label>
-                <label class="cq-check"><input type="radio" name="cqStakes" value="No" /> No</label>
-                <label class="cq-check"><input type="radio" name="cqStakes" value="Not sure" /> Not sure</label>
+            <div class="wiz-body">
+              <div class="cq-opts five" role="group" aria-label="How many signs do you need?">
+                <button type="button" class="mat-opt cq-opt" data-cqqty="50" aria-pressed="false"><span class="mo-name">50</span></button>
+                <button type="button" class="mat-opt cq-opt" data-cqqty="100" aria-pressed="false"><span class="mo-name">100</span></button>
+                <button type="button" class="mat-opt cq-opt" data-cqqty="250" aria-pressed="false"><span class="mo-name">250</span></button>
+                <button type="button" class="mat-opt cq-opt" data-cqqty="500" aria-pressed="false"><span class="mo-name">500</span></button>
+                <button type="button" class="mat-opt cq-opt" data-cqqty="1,000+" aria-pressed="false"><span class="mo-name">1,000+</span></button>
               </div>
-            </div>
-            <div class="full">
-              <span class="f-label" id="cqArtLabel">Do you have print-ready artwork?</span>
-              <div class="cq-checks" role="radiogroup" aria-labelledby="cqArtLabel">
-                <label class="cq-check"><input type="radio" name="cqArt" value="Yes — print-ready artwork" /> Yes — I have print-ready artwork</label>
-                <label class="cq-check"><input type="radio" name="cqArt" value="Need design help (extra fee)" /> No — I'd like design help</label>
-                <label class="cq-check"><input type="radio" name="cqArt" value="Will design online (free)" /> I'll design my own online</label>
-              </div>
-              <p class="f-hint">We require print-ready artwork — 300 DPI at full size. If we design it for you, that's an extra fee; designing your own with our Design Online tool is free.</p>
-            </div>
-            <div class="full">
-              <label class="f-label" for="cqNotes">Anything else we should know? <span class="opt">(optional)</span></label>
-              <textarea class="f-input" id="cqNotes" placeholder="District or area, your colors, signs along busy roads that need to read from both directions…"></textarea>
+              <p class="f-hint">A rough count is fine — we'll fine-tune it when we call.</p>
             </div>
           </div>
+
+          <!-- STEP 2 · need-by date -->
+          <div class="wiz-step cq-step is-locked" data-cqstep="2">
+            <div class="wiz-head">
+              <span class="step-num" aria-hidden="true">2</span>
+              <div class="wiz-head-text">
+                <h3 class="wiz-title">When do you need them by?</h3>
+                <p class="wiz-summary" data-cqsummary="2" hidden></p>
+              </div>
+              <button type="button" class="btn ghost small wiz-edit" data-cqedit="2" hidden>Edit</button>
+            </div>
+            <div class="wiz-body">
+              <label class="f-label" for="cqDate">Need-by date</label>
+              <input class="f-input cq-date" id="cqDate" type="date" />
+            </div>
+          </div>
+
+          <!-- STEP 3 · sizes (multi-select) -->
+          <div class="wiz-step cq-step is-locked" data-cqstep="3">
+            <div class="wiz-head">
+              <span class="step-num" aria-hidden="true">3</span>
+              <div class="wiz-head-text">
+                <h3 class="wiz-title">What sizes?</h3>
+                <p class="wiz-summary" data-cqsummary="3" hidden></p>
+              </div>
+              <button type="button" class="btn ghost small wiz-edit" data-cqedit="3" hidden>Edit</button>
+            </div>
+            <div class="wiz-body">
+              <div class="cq-opts four" role="group" aria-label="What sizes? Pick all that apply">
+                <button type="button" class="mat-opt cq-opt" data-cqsize="24”×18”" aria-pressed="false"><span class="mo-name"><span class="sz">24”<span class="x x-in">×</span>18”</span></span></button>
+                <button type="button" class="mat-opt cq-opt" data-cqsize="4’×4’" aria-pressed="false"><span class="mo-name"><span class="sz">4’<span class="x x-ft">×</span>4’</span></span></button>
+                <button type="button" class="mat-opt cq-opt" data-cqsize="4’×8’" aria-pressed="false"><span class="mo-name"><span class="sz">4’<span class="x x-ft">×</span>8’</span></span></button>
+                <button type="button" class="mat-opt cq-opt" data-cqsize="A mix / not sure yet" aria-pressed="false"><span class="mo-name">A mix / not sure yet</span></button>
+              </div>
+              <p class="f-hint">Pick as many as you like.</p>
+              <button type="button" class="btn black wiz-continue" id="cqSizesContinue" hidden>Continue</button>
+            </div>
+          </div>
+
+          <!-- STEP 4 · sides & stakes -->
+          <div class="wiz-step cq-step is-locked" data-cqstep="4">
+            <div class="wiz-head">
+              <span class="step-num" aria-hidden="true">4</span>
+              <div class="wiz-head-text">
+                <h3 class="wiz-title">Sides &amp; stakes</h3>
+                <p class="wiz-summary" data-cqsummary="4" hidden></p>
+              </div>
+              <button type="button" class="btn ghost small wiz-edit" data-cqedit="4" hidden>Edit</button>
+            </div>
+            <div class="wiz-body">
+              <div class="cq-group">
+                <span class="f-label" id="cqSidesLabel">Sides</span>
+                <div class="cq-opts two" role="group" aria-labelledby="cqSidesLabel">
+                  <button type="button" class="mat-opt cq-opt" data-cqsides="One-sided" aria-pressed="false"><span class="mo-name">One-sided</span></button>
+                  <button type="button" class="mat-opt cq-opt" data-cqsides="Two-sided" aria-pressed="false"><span class="mo-name">Two-sided</span></button>
+                </div>
+              </div>
+              <div class="cq-group">
+                <span class="f-label" id="cqStakesLabel">Do you need H-stakes?</span>
+                <div class="cq-opts three" role="group" aria-labelledby="cqStakesLabel">
+                  <button type="button" class="mat-opt cq-opt" data-cqstakes="Yes" aria-pressed="false"><span class="mo-name">Yes</span></button>
+                  <button type="button" class="mat-opt cq-opt" data-cqstakes="No" aria-pressed="false"><span class="mo-name">No</span></button>
+                  <button type="button" class="mat-opt cq-opt" data-cqstakes="Not sure" aria-pressed="false"><span class="mo-name">Not sure</span></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 5 · artwork -->
+          <div class="wiz-step cq-step is-locked" data-cqstep="5">
+            <div class="wiz-head">
+              <span class="step-num" aria-hidden="true">5</span>
+              <div class="wiz-head-text">
+                <h3 class="wiz-title">Artwork</h3>
+                <p class="wiz-summary" data-cqsummary="5" hidden></p>
+              </div>
+              <button type="button" class="btn ghost small wiz-edit" data-cqedit="5" hidden>Edit</button>
+            </div>
+            <div class="wiz-body">
+              <div class="cq-opts three" role="group" aria-label="Artwork">
+                <button type="button" class="mat-opt cq-opt left" data-cqart="I have print-ready artwork" aria-pressed="false"><span class="mo-name">I have print-ready artwork</span></button>
+                <button type="button" class="mat-opt cq-opt left" data-cqart="I need design help" aria-pressed="false"><span class="mo-name">I need design help</span></button>
+                <button type="button" class="mat-opt cq-opt left" data-cqart="I'll design my own online" aria-pressed="false"><span class="mo-name">I'll design my own online</span></button>
+              </div>
+              <p class="cq-note">We require print-ready artwork — 300 DPI at full size. If we design it for you, that's an extra fee; designing your own with our Design Online tool is free.</p>
+            </div>
+          </div>
+
+          <!-- STEP 6 · anything else (optional) -->
+          <div class="wiz-step cq-step is-locked" data-cqstep="6">
+            <div class="wiz-head">
+              <span class="step-num" aria-hidden="true">6</span>
+              <div class="wiz-head-text">
+                <h3 class="wiz-title">Anything else we should know? <span class="step-opt">(optional)</span></h3>
+                <p class="wiz-summary" data-cqsummary="6" hidden></p>
+              </div>
+              <button type="button" class="btn ghost small wiz-edit" data-cqedit="6" hidden>Edit</button>
+            </div>
+            <div class="wiz-body">
+              <label class="f-label" for="cqNotes">Notes <span class="opt">(optional)</span></label>
+              <textarea class="f-input" id="cqNotes" placeholder="District or area, your colors, signs along busy roads that need to read from both directions…"></textarea>
+              <div class="cq-actions">
+                <button type="button" class="btn black" id="cqNotesContinue">Continue</button>
+                <button type="button" class="btn ghost" id="cqNotesSkip">Skip</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 7 · your info -->
+          <div class="wiz-step cq-step is-locked" data-cqstep="7">
+            <div class="wiz-head">
+              <span class="step-num" aria-hidden="true">7</span>
+              <div class="wiz-head-text">
+                <h3 class="wiz-title">Your info</h3>
+              </div>
+            </div>
+            <div class="wiz-body">
+              <div class="form-grid">
+                <div>
+                  <label class="f-label" for="cqName">Your name *</label>
+                  <input class="f-input" id="cqName" type="text" autocomplete="name" placeholder="e.g. Alex Rivera" />
+                </div>
+                <div>
+                  <label class="f-label" for="cqCampaign">Campaign / candidate name</label>
+                  <input class="f-input" id="cqCampaign" type="text" autocomplete="organization" placeholder="e.g. Rivera for City Council" />
+                </div>
+                <div>
+                  <label class="f-label" for="cqPhone">Phone * <span class="opt">(for your quote)</span></label>
+                  <input class="f-input" id="cqPhone" type="tel" autocomplete="tel" placeholder="(956) 555-0134" />
+                </div>
+                <div>
+                  <label class="f-label" for="cqEmail">Email</label>
+                  <input class="f-input" id="cqEmail" type="email" autocomplete="email" placeholder="you@example.com" />
+                </div>
+              </div>
+            </div>
+          </div>
+
           <p class="form-error" id="cqError" role="alert"></p>
-          <button class="btn block" type="submit" style="margin-top:20px">Request my quote</button>
+          <button class="btn block" type="submit" id="cqSubmitBtn" hidden style="margin-top:20px">Request my quote</button>
           <p class="sample-note" style="margin-top:12px;text-align:center">Demo form — nothing is sent or stored. On the live site, this request goes straight to the shop.</p>
         </form>
         <div class="confirm cq-panel" id="cqConfirm" role="status">
@@ -3248,11 +3369,133 @@
             return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
           });
         }
-        function cqChecked(name) {
-          var out = [];
-          cqForm.querySelectorAll("input[name='" + name + "']:checked").forEach(function (i) { out.push(i.value); });
-          return out;
+        /* ---- political signs wizard state: same populate-as-you-go
+           pattern as Build Your Sign, but no pricing anywhere — a
+           person still quotes this one. ---- */
+        var cq = {
+          qty: null, date: "", sizes: [], sides: null, stakes: null, art: null,
+          answered: { 1: false, 2: false, 3: false, 4: false, 5: false, 6: false },
+          open: 1, reached: 1
+        };
+        function cqDateText() {
+          if (!cq.date) return "";
+          var d = new Date(cq.date + "T12:00:00");
+          if (isNaN(d.getTime())) return "";
+          return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" });
         }
+        function cqSummaryText(n) {
+          if (n === 1) return cq.qty ? cq.qty + " signs" : "";
+          if (n === 2) return cqDateText() ? "Need by " + cqDateText() : "";
+          if (n === 3) return cq.sizes.join(", ");
+          if (n === 4) return (cq.sides || "") + (cq.stakes ? " \u00B7 H-stakes: " + cq.stakes : "");
+          if (n === 5) return cq.art || "";
+          if (n === 6) { var t = document.getElementById("cqNotes").value.trim(); return t || "No notes"; }
+          return "";
+        }
+        function cqSyncSubmit() {
+          var btn = document.getElementById("cqSubmitBtn");
+          if (!btn) return;
+          var ready = cq.reached >= 7 &&
+            document.getElementById("cqName").value.trim() &&
+            document.getElementById("cqPhone").value.trim();
+          btn.hidden = !ready;
+        }
+        function renderCq() {
+          for (var n = 1; n <= 7; n++) {
+            var step = document.querySelector('[data-cqstep="' + n + '"]');
+            if (!step) continue;
+            var done = !!cq.answered[n];
+            var collapsed = done && cq.open !== n;
+            step.classList.toggle("is-locked", n > cq.reached);
+            step.classList.toggle("is-done", collapsed);
+            step.classList.toggle("is-open", cq.open === n);
+            var sum = step.querySelector("[data-cqsummary]");
+            var edit = step.querySelector("[data-cqedit]");
+            if (sum) { sum.hidden = !collapsed; if (done) sum.textContent = cqSummaryText(n); }
+            if (edit) { edit.hidden = !collapsed; }
+          }
+          document.querySelectorAll("[data-cqqty]").forEach(function (b) {
+            b.setAttribute("aria-pressed", b.getAttribute("data-cqqty") === cq.qty ? "true" : "false");
+          });
+          document.querySelectorAll("[data-cqsize]").forEach(function (b) {
+            b.setAttribute("aria-pressed", cq.sizes.indexOf(b.getAttribute("data-cqsize")) >= 0 ? "true" : "false");
+          });
+          document.querySelectorAll("[data-cqsides]").forEach(function (b) {
+            b.setAttribute("aria-pressed", b.getAttribute("data-cqsides") === cq.sides ? "true" : "false");
+          });
+          document.querySelectorAll("[data-cqstakes]").forEach(function (b) {
+            b.setAttribute("aria-pressed", b.getAttribute("data-cqstakes") === cq.stakes ? "true" : "false");
+          });
+          document.querySelectorAll("[data-cqart]").forEach(function (b) {
+            b.setAttribute("aria-pressed", b.getAttribute("data-cqart") === cq.art ? "true" : "false");
+          });
+          var sizesBtn = document.getElementById("cqSizesContinue");
+          if (sizesBtn) sizesBtn.hidden = cq.sizes.length === 0;
+          cqSyncSubmit();
+        }
+        function completeCqStep(n) {
+          cq.answered[n] = true;
+          cq.reached = Math.max(cq.reached, Math.min(7, n + 1));
+          var next = 0;
+          for (var i = 1; i <= 6; i++) { if (!cq.answered[i]) { next = i; break; } }
+          cq.open = next || 7;
+          if (cq.open > cq.reached) cq.reached = cq.open;
+          renderCq();
+          var target = document.querySelector('[data-cqstep="' + cq.open + '"]');
+          if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+        document.querySelectorAll("[data-cqedit]").forEach(function (b) {
+          b.addEventListener("click", function () {
+            cq.open = Number(b.getAttribute("data-cqedit"));
+            renderCq();
+            var target = document.querySelector('[data-cqstep="' + cq.open + '"]');
+            if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+        document.querySelectorAll("[data-cqqty]").forEach(function (b) {
+          b.addEventListener("click", function () {
+            cq.qty = b.getAttribute("data-cqqty");
+            completeCqStep(1);
+          });
+        });
+        document.getElementById("cqDate").addEventListener("change", function () {
+          cq.date = this.value;
+          if (cq.date) completeCqStep(2); else renderCq();
+        });
+        document.querySelectorAll("[data-cqsize]").forEach(function (b) {
+          b.addEventListener("click", function () {
+            var v = b.getAttribute("data-cqsize");
+            var i = cq.sizes.indexOf(v);
+            if (i >= 0) cq.sizes.splice(i, 1); else cq.sizes.push(v);
+            renderCq();
+          });
+        });
+        document.getElementById("cqSizesContinue").addEventListener("click", function () {
+          if (cq.sizes.length) completeCqStep(3);
+        });
+        document.querySelectorAll("[data-cqsides]").forEach(function (b) {
+          b.addEventListener("click", function () {
+            cq.sides = b.getAttribute("data-cqsides");
+            if (cq.sides && cq.stakes) completeCqStep(4); else renderCq();
+          });
+        });
+        document.querySelectorAll("[data-cqstakes]").forEach(function (b) {
+          b.addEventListener("click", function () {
+            cq.stakes = b.getAttribute("data-cqstakes");
+            if (cq.sides && cq.stakes) completeCqStep(4); else renderCq();
+          });
+        });
+        document.querySelectorAll("[data-cqart]").forEach(function (b) {
+          b.addEventListener("click", function () {
+            cq.art = b.getAttribute("data-cqart");
+            completeCqStep(5);
+          });
+        });
+        document.getElementById("cqNotesContinue").addEventListener("click", function () { completeCqStep(6); });
+        document.getElementById("cqNotesSkip").addEventListener("click", function () { completeCqStep(6); });
+        document.getElementById("cqName").addEventListener("input", cqSyncSubmit);
+        document.getElementById("cqPhone").addEventListener("input", cqSyncSubmit);
+        renderCq();
         function cqRow(label, value) {
           if (!value) return;
           var row = document.createElement("div");
@@ -3276,28 +3519,19 @@
             (name ? document.getElementById("cqPhone") : document.getElementById("cqName")).focus();
             return;
           }
-          var qty = document.getElementById("cqQty").value.trim();
-          var dateVal = document.getElementById("cqDate").value;
-          var dateText = "";
-          if (dateVal) {
-            var d = new Date(dateVal + "T12:00:00");
-            if (!isNaN(d.getTime())) dateText = d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" });
-          }
-          var stakes = cqChecked("cqStakes");
-          var art = cqChecked("cqArt");
-          cqConfirmText.innerHTML = "Thanks, <strong>" + cqEsc(name.split(" ")[0]) + "</strong> \u2014 your campaign sign quote request is in. We'll call <strong>" + cqEsc(phone) + "</strong> with your quote.";
+          cqConfirmText.innerHTML = "Thanks, <strong>" + cqEsc(name.split(" ")[0]) + "</strong> \u2014 your political sign quote request is in. We'll call <strong>" + cqEsc(phone) + "</strong> with your quote.";
           cqSummary.innerHTML = "";
+          cqRow("Signs needed", cq.qty ? cq.qty + " signs" : "");
+          cqRow("Need by", cqDateText());
+          cqRow("Sizes", cq.sizes.join(", "));
+          cqRow("Sides", cq.sides || "");
+          cqRow("H-stakes", cq.stakes || "");
+          cqRow("Artwork", cq.art || "");
+          cqRow("Notes", document.getElementById("cqNotes").value.trim());
           cqRow("Name", name);
           cqRow("Campaign", document.getElementById("cqCampaign").value.trim());
           cqRow("Phone", phone);
           cqRow("Email", document.getElementById("cqEmail").value.trim());
-          cqRow("Signs needed", qty);
-          cqRow("Sizes", cqChecked("cqSize").join(", "));
-          cqRow("Sides", document.getElementById("cqSides").value);
-          cqRow("H-stakes", stakes.length ? stakes[0] : "");
-          cqRow("Need by", dateText);
-          cqRow("Artwork", art.length ? art[0] : "");
-          cqRow("Notes", document.getElementById("cqNotes").value.trim());
           cqConfirm.classList.add("show");
           cqConfirm.scrollIntoView({ behavior: "smooth", block: "nearest" });
         });
