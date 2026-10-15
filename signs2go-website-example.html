@@ -1565,6 +1565,26 @@
                 <button type="button" class="mat-opt cq-opt left" data-cqart="I need design help" aria-pressed="false"><span class="mo-name">I need design help</span></button>
                 <button type="button" class="mat-opt cq-opt left" data-cqart="I'll design my own online" aria-pressed="false"><span class="mo-name">I'll design my own online</span></button>
               </div>
+              <div id="cqArtUpload" hidden>
+                <div id="cqArtDzWrap">
+                  <div class="dropzone" id="cqDropzone" role="button" tabindex="0" aria-label="Upload your print-ready artwork: drop files here or activate to browse files" aria-describedby="cqDzSub" style="margin-top:18px">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V5m0 0l-4 4m4-4l4 4"/><path d="M4 17v1.5A2.5 2.5 0 0 0 6.5 21h11A2.5 2.5 0 0 0 20 18.5V17"/></svg>
+                    <div class="dz-title">Drag &amp; drop your artwork here, or <span class="dz-browse">browse files</span></div>
+                    <div class="dz-drop-hint" aria-hidden="true">Let go to add your file</div>
+                    <div class="dz-sub" id="cqDzSub">Tap or click to browse · PDF, PNG, JPG, GIF, WebP, SVG, AI or EPS · We check raster images instantly against the 300 DPI print standard at your largest sign size. You can add more than one file.</div>
+                    <input class="sr-only" id="cqArtFile" type="file" accept=".pdf,.png,.jpg,.jpeg,.gif,.webp,.svg,.ai,.eps" multiple tabindex="-1" />
+                  </div>
+                  <p class="f-hint" id="cqDzSizeNote"></p>
+                  <div class="res-list" id="cqDzList" aria-live="polite"></div>
+                  <p class="art-status" id="cqArtStatus" role="status"></p>
+                  <p class="art-later">Rather send it after you get your quote? <button type="button" id="cqArtLaterBtn">I&rsquo;ll send the file later instead</button></p>
+                  <p class="sample-note" style="margin-top:10px">Demo — files are checked right here in your browser; nothing is uploaded and no file leaves your device.</p>
+                </div>
+                <div id="cqArtLaterState" hidden>
+                  <p class="cq-note">No problem — send the file once you have your quote. Email it to <strong>info@signs2go.us</strong> and we&rsquo;ll match it to your request.</p>
+                  <p class="art-later"><button type="button" id="cqArtUploadInstead">Upload a file instead</button></p>
+                </div>
+              </div>
               <p class="cq-note">We require print-ready artwork — 300 DPI at full size. If we design it for you, that's an extra fee; designing your own with our Design Online tool is free.</p>
             </div>
           </div>
@@ -3412,7 +3432,7 @@
           if (n === 3) return cq.sizes.join(", ");
           if (n === 4) return cq.colors ? "Colors: " + cq.colors : "";
           if (n === 5) return (cq.sides || "") + (cq.stakes ? " \u00B7 H-stakes: " + cq.stakes : "");
-          if (n === 6) return cq.art || "";
+          if (n === 6) return cq.art ? "Artwork: " + cqArtworkStatusInner() : "";
           if (n === 7) { var t = document.getElementById("cqNotes").value.trim(); return t || "No notes"; }
           return "";
         }
@@ -3456,6 +3476,8 @@
           document.querySelectorAll("[data-cqart]").forEach(function (b) {
             b.setAttribute("aria-pressed", b.getAttribute("data-cqart") === cq.art ? "true" : "false");
           });
+          var cqUp = document.getElementById("cqArtUpload");
+          if (cqUp) cqUp.hidden = cq.art !== "I have print-ready artwork";
           var sizesBtn = document.getElementById("cqSizesContinue");
           if (sizesBtn) sizesBtn.hidden = cq.sizes.length === 0;
           cqSyncSubmit();
@@ -3495,10 +3517,11 @@
             var i = cq.sizes.indexOf(v);
             if (i >= 0) cq.sizes.splice(i, 1); else cq.sizes.push(v);
             renderCq();
+            cqRecheckArtwork();
           });
         });
         document.getElementById("cqSizesContinue").addEventListener("click", function () {
-          if (cq.sizes.length) completeCqStep(3);
+          if (cq.sizes.length) { completeCqStep(3); cqRecheckArtwork(); }
         });
         document.querySelectorAll("[data-cqcolor]").forEach(function (b) {
           b.addEventListener("click", function () {
@@ -3521,13 +3544,251 @@
         document.querySelectorAll("[data-cqart]").forEach(function (b) {
           b.addEventListener("click", function () {
             cq.art = b.getAttribute("data-cqart");
-            completeCqStep(6);
+            if (cq.art === "I have print-ready artwork") {
+              /* Choosing print-ready artwork reveals the same uploader
+                 as Build Your Sign — the step completes only once a
+                 file is added or "send later" is picked. */
+              cqRenderArtworkList();
+              if (cqArtStepComplete()) completeCqStep(6); else renderCq();
+            } else {
+              completeCqStep(6);
+            }
           });
         });
         document.getElementById("cqNotesContinue").addEventListener("click", function () { completeCqStep(7); });
         document.getElementById("cqNotesSkip").addEventListener("click", function () { completeCqStep(7); });
         document.getElementById("cqName").addEventListener("input", cqSyncSubmit);
         document.getElementById("cqPhone").addEventListener("input", cqSyncSubmit);
+
+        /* ---- step 6 artwork uploader: the same drag-and-drop +
+           resolution checker as Build Your Sign, revealed when the
+           visitor says they have print-ready artwork. Raster files
+           are checked against the largest size picked in step 3
+           (24″×18″ when only "A mix / not sure yet" is picked).
+           In-memory only — files never leave the device. ---- */
+        var cqArtFiles = []; // {id, file, name, size, kind, width, height, dpi, roundedDpi, isPass, printLabel}
+        var cqArtSeq = 0;
+        var cqArtLater = false;
+        var cqDropzone = document.getElementById("cqDropzone");
+        var cqArtFileInput = document.getElementById("cqArtFile");
+        var cqDzList = document.getElementById("cqDzList");
+        var cqArtStatus = document.getElementById("cqArtStatus");
+        var cqDzSizeNote = document.getElementById("cqDzSizeNote");
+
+        function cqPrintSize() {
+          var dims = {};
+          dims["24\u201D\u00D718\u201D"] = { w: 24, h: 18 };
+          dims["4\u2019\u00D74\u2019"] = { w: 48, h: 48 };
+          dims["4\u2019\u00D78\u2019"] = { w: 48, h: 96 };
+          var best = null;
+          cq.sizes.forEach(function (s) {
+            var d = dims[s];
+            if (d && (!best || d.w * d.h > best.w * best.h)) best = { w: d.w, h: d.h, label: s, fallback: false };
+          });
+          if (!best) best = { w: 24, h: 18, label: "24\u201D\u00D718\u201D", fallback: true };
+          return best;
+        }
+        function cqComputeVerdict(entry) {
+          var s = cqPrintSize();
+          entry.printLabel = s.label;
+          if (entry.width && entry.height) {
+            entry.dpi = effectiveDpi(entry.width, entry.height, s.w, s.h);
+            entry.roundedDpi = Math.round(entry.dpi);
+            entry.isPass = entry.dpi >= 300;
+          }
+        }
+        function cqArtworkStatusInner() {
+          if (cq.art !== "I have print-ready artwork") return cq.art || "";
+          if (cqArtLater) return "will send the file later";
+          if (!cqArtFiles.length) return cq.art;
+          var lows = cqArtFiles.filter(function (e) { return e.kind === "raster" && !e.isPass; });
+          if (lows.length) {
+            var minLow = Math.min.apply(null, lows.map(function (e) { return e.roundedDpi; }));
+            return "file added \u2014 low resolution (" + minLow + " DPI), we\u2019ll need a bigger file";
+          }
+          var passes = cqArtFiles.filter(function (e) { return e.kind === "raster" && e.isPass; });
+          if (passes.length) {
+            var minPass = Math.min.apply(null, passes.map(function (e) { return e.roundedDpi; }));
+            return "print-ready file added \u2014 about " + minPass + " DPI";
+          }
+          if (cqArtFiles.some(function (e) { return e.kind === "vector"; })) return "print-ready file added \u2014 vector file";
+          if (cqArtFiles.some(function (e) { return e.kind === "proof"; })) return "file added \u2014 we\u2019ll verify it at proof";
+          if (cqArtFiles.some(function (e) { return e.kind === "error"; })) return "file added \u2014 we couldn\u2019t read it, we\u2019ll follow up";
+          return "file added \u2014 checking resolution\u2026";
+        }
+        function cqArtStepComplete() {
+          if (cq.art === "I have print-ready artwork") return cqArtFiles.length > 0 || cqArtLater;
+          return !!cq.art;
+        }
+        function cqSyncArtStep() {
+          if (cq.art !== "I have print-ready artwork") return;
+          if (cqArtStepComplete()) {
+            if (cq.open === 6) completeCqStep(6); else renderCq();
+          } else if (cq.answered[6]) {
+            cq.answered[6] = false;
+            cq.open = 6;
+            renderCq();
+          } else {
+            renderCq();
+          }
+        }
+        function cqRenderArtworkList() {
+          if (!cqDzList) return;
+          cqDzList.innerHTML = "";
+          cqArtFiles.forEach(function (entry) {
+            var item = document.createElement("div");
+            var cls = entry.kind === "vector" || (entry.kind === "raster" && entry.isPass) ? "pass" : entry.kind === "raster" ? "low" : entry.kind === "error" ? "error" : "neutral";
+            item.className = "res-item res-item--" + cls;
+            item.setAttribute("data-cq-res-file", entry.name);
+            var head = document.createElement("div"); head.className = "res-head";
+            var metaWrap = document.createElement("div"); metaWrap.style.minWidth = "0"; metaWrap.style.flex = "1";
+            var fn = document.createElement("div"); fn.className = "fn"; fn.textContent = entry.name;
+            var fs = document.createElement("div"); fs.className = "fs";
+            var fsText = formatBytes(entry.size || 0);
+            if (entry.width && entry.height) fsText += " \u00B7 " + entry.width + " \u00D7 " + entry.height + " px \u00B7 at " + entry.printLabel;
+            else if (entry.kind === "vector") fsText += " \u00B7 Vector (SVG)";
+            else if (entry.kind === "proof") fsText += " \u00B7 Checked at proof";
+            fs.textContent = fsText;
+            metaWrap.appendChild(fn); metaWrap.appendChild(fs);
+            var rm = document.createElement("button"); rm.type = "button"; rm.className = "dz-remove dz-remove-x"; rm.textContent = "\u00D7"; rm.setAttribute("aria-label", "Remove " + entry.name); rm.setAttribute("title", "Remove " + entry.name); rm.setAttribute("data-cq-remove-file", entry.name);
+            rm.addEventListener("click", function (ev) {
+              if (ev) { ev.preventDefault(); ev.stopPropagation(); }
+              cqArtFiles = cqArtFiles.filter(function (e) { return e.id !== entry.id; });
+              cqRenderArtworkList();
+              cqSyncArtStep();
+            });
+            head.appendChild(metaWrap); head.appendChild(rm);
+            item.appendChild(head);
+            var v = document.createElement("p"); v.className = "res-verdict"; v.textContent = verdictText(entry); item.appendChild(v);
+            if (entry.kind === "raster" && !entry.isPass) {
+              var d = document.createElement("p"); d.className = "res-detail";
+              d.textContent = "Your options: upload a larger file instead using the dropzone above, or keep this file and send your quote request anyway \u2014 your choice, we won\u2019t block it. This low-resolution flag rides along on your request so the shop sees it, and we\u2019ll talk it through when we call with your quote.";
+              item.appendChild(d);
+            } else if (entry.kind === "raster" && entry.isPass) {
+              var d2 = document.createElement("p"); d2.className = "res-detail"; d2.textContent = "This file meets the 300 DPI print standard at your largest size. If you go back and pick a larger size, we\u2019ll re-check it automatically.";
+              item.appendChild(d2);
+            } else if (entry.kind === "proof") {
+              var d3 = document.createElement("p"); d3.className = "res-detail"; d3.textContent = entry.name + " \u2014 we can\u2019t reliably measure PDF, AI or EPS resolution in the browser, so there\u2019s no fake verdict here. We\u2019ll verify it when we proof your signs.";
+              item.appendChild(d3);
+            } else if (entry.kind === "error") {
+              var d4 = document.createElement("p"); d4.className = "res-detail"; d4.textContent = "That file couldn\u2019t be decoded as an image in your browser. Try a JPG, PNG, GIF or WebP, or send a PDF/vector file and we\u2019ll check it at proof.";
+              item.appendChild(d4);
+            } else if (entry.kind === "vector") {
+              var d5 = document.createElement("p"); d5.className = "res-detail"; d5.textContent = "Vector file \u2014 resolution-independent, always print-ready at any sign size.";
+              item.appendChild(d5);
+            }
+            cqDzList.appendChild(item);
+          });
+          if (cqArtStatus) {
+            if (cqArtLater) cqArtStatus.textContent = "";
+            else if (!cqArtFiles.length) cqArtStatus.textContent = "";
+            else if (cqArtFiles.some(function (e) { return e.kind === "raster" && !e.isPass; })) cqArtStatus.textContent = "\u26A0 One or more files are below the 300 DPI print standard \u2014 see the warning above. You can still send your quote request; the flag rides along on it.";
+            else if (cqArtFiles.some(function (e) { return e.kind === "error"; })) cqArtStatus.textContent = "One file couldn\u2019t be read \u2014 try another file and we\u2019ll check it right away.";
+            else if (cqArtFiles.every(function (e) { return e.kind === "vector" || (e.kind === "raster" && e.isPass); })) cqArtStatus.textContent = "Artwork checked \u2014 print-ready at your largest size.";
+            else cqArtStatus.textContent = "Artwork attached. PDF, AI and EPS files will have their resolution verified when we proof them.";
+          }
+          var dzWrap = document.getElementById("cqArtDzWrap");
+          var laterState = document.getElementById("cqArtLaterState");
+          if (dzWrap) dzWrap.hidden = cqArtLater;
+          if (laterState) laterState.hidden = !cqArtLater;
+          if (cqDzSizeNote) {
+            var ps = cqPrintSize();
+            cqDzSizeNote.textContent = ps.fallback
+              ? "You picked \u201CA mix / not sure yet\u201D, so files are checked against 24\u201D\u00D718\u201D."
+              : "Checked against your largest size, " + ps.label + ".";
+          }
+          /* Keep the collapsed step-6 summary line current — verdicts
+             resolve asynchronously after the step has completed. */
+          renderCq();
+        }
+        function cqRecheckArtwork() {
+          cqArtFiles.forEach(function (entry) {
+            if (entry.kind === "raster" && entry.width) cqComputeVerdict(entry);
+            else entry.printLabel = cqPrintSize().label;
+          });
+          cqRenderArtworkList();
+        }
+        function cqAddArtworkFiles(fileList) {
+          if (!fileList || !fileList.length) return;
+          cqArtLater = false;
+          var files = Array.prototype.slice.call(fileList);
+          files.forEach(function (file) {
+            var kind0 = classifyFile(file);
+            var entry = { id: ++cqArtSeq, file: file, name: file.name || "artwork", size: file.size || 0, kind: kind0 === "raster" ? "checking" : kind0, width: 0, height: 0, dpi: 0, roundedDpi: 0, isPass: false, printLabel: cqPrintSize().label };
+            cqArtFiles.push(entry);
+            cqRenderArtworkList();
+            if (kind0 === "vector" || kind0 === "proof") { cqRenderArtworkList(); return; }
+            var url = null;
+            try { url = URL.createObjectURL(file); } catch (e) { entry.kind = "error"; cqRenderArtworkList(); return; }
+            var img = new Image();
+            img.onload = function () {
+              try { URL.revokeObjectURL(url); } catch (e) {}
+              if (!img.naturalWidth || !img.naturalHeight) { entry.kind = "error"; cqRenderArtworkList(); return; }
+              entry.width = img.naturalWidth; entry.height = img.naturalHeight; entry.kind = "raster"; cqComputeVerdict(entry); cqRenderArtworkList();
+            };
+            img.onerror = function () {
+              try { URL.revokeObjectURL(url); } catch (e) {}
+              if (window.createImageBitmap) {
+                window.createImageBitmap(file).then(function (bmp) { entry.width = bmp.width; entry.height = bmp.height; entry.kind = "raster"; cqComputeVerdict(entry); if (bmp.close) bmp.close(); cqRenderArtworkList(); }).catch(function () { entry.kind = "error"; cqRenderArtworkList(); });
+              } else { entry.kind = "error"; cqRenderArtworkList(); }
+            };
+            img.src = url;
+          });
+          cqSyncArtStep();
+        }
+        if (cqDropzone && cqArtFileInput) {
+          cqArtFileInput.addEventListener("change", function () {
+            if (cqArtFileInput.files && cqArtFileInput.files.length) cqAddArtworkFiles(cqArtFileInput.files);
+            cqArtFileInput.value = "";
+          });
+          cqArtFileInput.addEventListener("click", function (e) { e.stopPropagation(); });
+          cqDropzone.addEventListener("click", function (e) {
+            if (e.target === cqArtFileInput) return;
+            cqArtFileInput.click();
+          });
+          cqDropzone.addEventListener("keydown", function (e) {
+            if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") { e.preventDefault(); cqArtFileInput.click(); }
+          });
+          var cqDzDragDepth = 0;
+          function cqDzSetDrag(on) {
+            cqDropzone.classList.toggle("drag", !!on);
+            cqDropzone.classList.toggle("drag-over", !!on);
+            cqDropzone.classList.toggle("is-dragging", !!on);
+            if (!on) cqDzDragDepth = 0;
+          }
+          cqDropzone.addEventListener("dragenter", function (e) {
+            e.preventDefault(); cqDzDragDepth++; cqDzSetDrag(true);
+            if (e.dataTransfer) { try { e.dataTransfer.dropEffect = "copy"; } catch (err) {} }
+          });
+          cqDropzone.addEventListener("dragover", function (e) {
+            e.preventDefault(); cqDzSetDrag(true);
+            if (e.dataTransfer) { try { e.dataTransfer.dropEffect = "copy"; } catch (err) {} }
+          });
+          cqDropzone.addEventListener("dragleave", function (e) {
+            e.preventDefault(); cqDzDragDepth = Math.max(0, cqDzDragDepth - 1);
+            if (cqDzDragDepth === 0) cqDzSetDrag(false);
+          });
+          cqDropzone.addEventListener("drop", function (e) {
+            e.preventDefault(); e.stopPropagation(); cqDzSetDrag(false);
+            var fs = getDroppedFiles(e);
+            if (fs && fs.length) cqAddArtworkFiles(fs);
+          });
+          document.addEventListener("drop", function () { cqDzSetDrag(false); });
+        }
+        var cqLaterBtn = document.getElementById("cqArtLaterBtn");
+        if (cqLaterBtn) cqLaterBtn.addEventListener("click", function () {
+          cqArtLater = true;
+          cqRenderArtworkList();
+          cqSyncArtStep();
+        });
+        var cqInsteadBtn = document.getElementById("cqArtUploadInstead");
+        if (cqInsteadBtn) cqInsteadBtn.addEventListener("click", function () {
+          cqArtLater = false;
+          cqRenderArtworkList();
+          cqSyncArtStep();
+        });
+        window.__s2gCqDrop = { handleFiles: cqAddArtworkFiles, getFiles: function () { return cqArtFiles; }, isDragging: function () { return !!cqDropzone && cqDropzone.classList.contains("drag"); } };
+        cqRenderArtworkList();
         renderCq();
         function cqRow(label, value) {
           if (!value) return;
@@ -3560,7 +3821,7 @@
           cqRow("Colors", cq.colors || "");
           cqRow("Sides", cq.sides || "");
           cqRow("H-stakes", cq.stakes || "");
-          cqRow("Artwork", cq.art || "");
+          cqRow("Artwork", cq.art ? cqArtworkStatusInner() : "");
           cqRow("Notes", document.getElementById("cqNotes").value.trim());
           cqRow("Name", name);
           cqRow("Campaign", document.getElementById("cqCampaign").value.trim());
