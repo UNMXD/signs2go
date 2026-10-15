@@ -650,6 +650,10 @@
       .btn.head-ghost { background: transparent; color: var(--white); border-color: var(--white); }
       .btn.head-ghost:hover { border-color: var(--green); color: var(--green); }
 
+      /* ---------- header campaign button ---------- */
+      .btn.head-campaign { background: var(--white); color: var(--black); border-color: var(--white); font-weight: 700; }
+      .btn.head-campaign:hover { background: var(--green); border-color: var(--green); }
+
       /* ---------- pricing table (calculator) ---------- */
       .calc-panel { border: 2px solid var(--black); border-radius: var(--radius); overflow: hidden; background: var(--white); }
       /* checkout zone of the merged order panel: same border, one unit —
@@ -725,6 +729,30 @@
       .swatch { width: 46px; height: 46px; border-radius: 10px; border: 2px solid var(--black); padding: 0; flex: 0 0 auto; }
       .swatch[aria-pressed="true"] { outline: 3px solid var(--green); outline-offset: 2px; }
 
+      /* ---------- campaign signs quote view ---------- */
+      .campaign[hidden] { display: none; }
+      body.campaign-open .site-head, body.campaign-open main, body.campaign-open .site-foot, body.campaign-open .designer { display: none; }
+      .campaign { padding: 26px 0 68px; background: var(--white); }
+      .cq-panel { max-width: 880px; }
+      .f-hint { font-size: 15px; color: var(--ink-55); margin-top: 7px; }
+      .cq-checks { display: grid; gap: 10px; }
+      .cq-checks.two { grid-template-columns: 1fr 1fr; }
+      .cq-check {
+        display: flex; align-items: center; gap: 10px; cursor: pointer;
+        border: 1.5px solid var(--line-strong); border-radius: 12px; padding: 12px 14px;
+        font-weight: 600; font-size: 16.5px; background: var(--white);
+      }
+      .cq-check:hover { border-color: var(--black); }
+      .cq-check input { width: 19px; height: 19px; flex: 0 0 auto; accent-color: var(--black); margin: 0; }
+      .cq-summary { margin-top: 16px; display: grid; gap: 7px; }
+      .cq-summary > div { display: flex; gap: 8px 14px; flex-wrap: wrap; font-size: 16.5px; }
+      .cq-summary dt { font-weight: 700; color: var(--black); min-width: 128px; }
+      .cq-summary dd { color: var(--ink-70); margin: 0; }
+      @media (max-width: 640px) {
+        .cq-checks.two { grid-template-columns: 1fr; }
+        .cq-summary dt { min-width: 0; }
+      }
+
       @media (max-width: 960px) {
         .calc-main, .dz-grid { grid-template-columns: 1fr; }
         .ladder-grid { grid-template-columns: repeat(5, 1fr); }
@@ -748,8 +776,8 @@
         .ladder-title { font-size: 40px; }
         .ladder-pitch { font-size: 19px; }
         .calc-actions .btn { flex: 1 1 100%; }
-        .site-head .wrap { gap: 12px; }
-        .head-actions { gap: 8px; }
+        .site-head .wrap { gap: 12px; flex-wrap: wrap; padding-top: 10px; padding-bottom: 10px; }
+        .head-actions { gap: 8px; flex-wrap: wrap; }
         .head-actions .btn { padding: 9px 13px; font-size: 15.5px; }
         .dz-stage { padding: 14px; }
       }
@@ -820,6 +848,7 @@
         <div class="head-actions">
           <a class="head-phone" href="tel:+19567778300">(956) 777-8300</a>
           <button type="button" class="btn small head-ghost" data-open-designer>Design Online</button>
+          <button type="button" class="btn small head-campaign" data-open-campaign>Campaign Signs</button>
           <a class="btn small" href="#packages">Start an order</a>
         </div>
       </div>
@@ -1285,6 +1314,98 @@
               <input class="f-input" id="dzLine2" type="text" placeholder="Add your phone or website" maxlength="60" autocomplete="tel" />
             </div>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= CAMPAIGN SIGNS QUOTE ================= -->
+    <section class="campaign" id="campaignView" hidden aria-label="Campaign signs — custom quote request">
+      <div class="wrap">
+        <button type="button" class="btn ghost small" id="cqBack">&larr; Back to site</button>
+        <div class="section-head" style="margin-top:26px;margin-bottom:26px">
+          <span class="kicker">Custom quote</span>
+          <h2 class="display">Campaign <em>signs.</em></h2>
+          <p>Running for office? Tell us about your run — answer a few quick questions and we'll quote your signs fast.</p>
+        </div>
+        <form class="form-panel cq-panel" id="campaignForm" novalidate>
+          <div class="form-grid">
+            <div>
+              <label class="f-label" for="cqName">Your name *</label>
+              <input class="f-input" id="cqName" type="text" autocomplete="name" placeholder="e.g. Alex Rivera" />
+            </div>
+            <div>
+              <label class="f-label" for="cqCampaign">Campaign / candidate name</label>
+              <input class="f-input" id="cqCampaign" type="text" autocomplete="organization" placeholder="e.g. Rivera for City Council" />
+            </div>
+            <div>
+              <label class="f-label" for="cqPhone">Phone * <span class="opt">(for your quote)</span></label>
+              <input class="f-input" id="cqPhone" type="tel" autocomplete="tel" placeholder="(956) 555-0134" />
+            </div>
+            <div>
+              <label class="f-label" for="cqEmail">Email</label>
+              <input class="f-input" id="cqEmail" type="email" autocomplete="email" placeholder="you@example.com" />
+            </div>
+            <div>
+              <label class="f-label" for="cqQty">How many signs do you need?</label>
+              <input class="f-input" id="cqQty" type="number" min="1" step="1" placeholder="e.g. 250" />
+              <p class="f-hint">A rough count is fine — 50, 100, 250, 500, 1,000+. We'll fine-tune it when we call.</p>
+            </div>
+            <div>
+              <label class="f-label" for="cqDate">When do you need them by?</label>
+              <input class="f-input" id="cqDate" type="date" />
+            </div>
+            <div class="full">
+              <span class="f-label" id="cqSizesLabel">What sizes?</span>
+              <div class="cq-checks two" role="group" aria-labelledby="cqSizesLabel">
+                <label class="cq-check"><input type="checkbox" name="cqSize" value="24”×18”" /> <span class="sz">24”<span class="x x-in">×</span>18”</span></label>
+                <label class="cq-check"><input type="checkbox" name="cqSize" value="4’×4’" /> <span class="sz">4’<span class="x x-ft">×</span>4’</span></label>
+                <label class="cq-check"><input type="checkbox" name="cqSize" value="4’×8’" /> <span class="sz">4’<span class="x x-ft">×</span>8’</span></label>
+                <label class="cq-check"><input type="checkbox" name="cqSize" value="A mix / not sure yet" /> A mix / not sure yet</label>
+              </div>
+            </div>
+            <div>
+              <label class="f-label" for="cqSides">One-sided or two-sided?</label>
+              <select class="f-input" id="cqSides">
+                <option>Two-sided</option>
+                <option>One-sided</option>
+                <option>Not sure yet</option>
+              </select>
+            </div>
+            <div>
+              <span class="f-label" id="cqStakesLabel">Do you need H-stakes?</span>
+              <div class="cq-checks" role="radiogroup" aria-labelledby="cqStakesLabel">
+                <label class="cq-check"><input type="radio" name="cqStakes" value="Yes" /> Yes</label>
+                <label class="cq-check"><input type="radio" name="cqStakes" value="No" /> No</label>
+                <label class="cq-check"><input type="radio" name="cqStakes" value="Not sure" /> Not sure</label>
+              </div>
+            </div>
+            <div class="full">
+              <span class="f-label" id="cqArtLabel">Do you have print-ready artwork?</span>
+              <div class="cq-checks" role="radiogroup" aria-labelledby="cqArtLabel">
+                <label class="cq-check"><input type="radio" name="cqArt" value="Yes — print-ready artwork" /> Yes — I have print-ready artwork</label>
+                <label class="cq-check"><input type="radio" name="cqArt" value="Need design help (extra fee)" /> No — I'd like design help</label>
+                <label class="cq-check"><input type="radio" name="cqArt" value="Will design online (free)" /> I'll design my own online</label>
+              </div>
+              <p class="f-hint">We require print-ready artwork — 300 DPI at full size. If we design it for you, that's an extra fee; designing your own with our Design Online tool is free.</p>
+            </div>
+            <div class="full">
+              <label class="f-label" for="cqNotes">Anything else we should know? <span class="opt">(optional)</span></label>
+              <textarea class="f-input" id="cqNotes" placeholder="District or area, your colors, signs along busy roads that need to read from both directions…"></textarea>
+            </div>
+          </div>
+          <p class="form-error" id="cqError" role="alert"></p>
+          <button class="btn block" type="submit" style="margin-top:20px">Request my quote</button>
+          <p class="sample-note" style="margin-top:12px;text-align:center">Demo form — nothing is sent or stored. On the live site, this request goes straight to the shop.</p>
+        </form>
+        <div class="confirm cq-panel" id="cqConfirm" role="status">
+          <div class="c-head">
+            <svg width="52" height="52" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10.5" fill="#ACE50E" stroke="#000000" stroke-width="1.6"/><path d="M7.5 12.5l3 3L16.5 9" stroke="#000000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <h3>Request in!</h3>
+          </div>
+          <p id="cqConfirmText"></p>
+          <dl class="cq-summary" id="cqSummary"></dl>
+          <button type="button" class="btn black" id="cqDone">Back to site</button>
+          <p class="sample-note" style="margin-top:14px">Demo form — this request wasn't sent anywhere. On the live site it goes straight to the shop.</p>
         </div>
       </div>
     </section>
@@ -2317,6 +2438,102 @@
           syncTableFromPackages();
           renderSummary();
           document.getElementById("checkout").scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+
+        /* ================= campaign signs quote view =================
+           Same view pattern as the designer: opening/closing only
+           toggles visibility + body class, so no page state is
+           disturbed and the scroll position is restored on close. */
+        var campaignView = document.getElementById("campaignView");
+        var cqScroll = 0;
+        function openCampaign() {
+          cqScroll = window.scrollY || window.pageYOffset || 0;
+          campaignView.hidden = false;
+          document.body.classList.add("campaign-open");
+          window.scrollTo(0, 0);
+          document.getElementById("cqBack").focus();
+        }
+        function closeCampaign() {
+          campaignView.hidden = true;
+          document.body.classList.remove("campaign-open");
+          window.scrollTo(0, cqScroll);
+        }
+        document.querySelectorAll("[data-open-campaign]").forEach(function (b) {
+          b.addEventListener("click", openCampaign);
+        });
+        document.getElementById("cqBack").addEventListener("click", closeCampaign);
+        document.getElementById("cqDone").addEventListener("click", closeCampaign);
+        document.addEventListener("keydown", function (e) {
+          if ((e.key === "Escape" || e.key === "Esc") && !campaignView.hidden) closeCampaign();
+        });
+
+        /* ================= campaign quote submit =================
+           Demo-honest like the checkout: validates name + phone,
+           then shows a confirmation summarizing the request on this
+           page only — nothing is sent or stored. */
+        var cqForm = document.getElementById("campaignForm");
+        var cqError = document.getElementById("cqError");
+        var cqConfirm = document.getElementById("cqConfirm");
+        var cqConfirmText = document.getElementById("cqConfirmText");
+        var cqSummary = document.getElementById("cqSummary");
+
+        function cqEsc(s) {
+          return String(s).replace(/[&<>"']/g, function (c) {
+            return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+          });
+        }
+        function cqChecked(name) {
+          var out = [];
+          cqForm.querySelectorAll("input[name='" + name + "']:checked").forEach(function (i) { out.push(i.value); });
+          return out;
+        }
+        function cqRow(label, value) {
+          if (!value) return;
+          var row = document.createElement("div");
+          var dt = document.createElement("dt");
+          dt.textContent = label;
+          var dd = document.createElement("dd");
+          dd.textContent = value;
+          row.appendChild(dt);
+          row.appendChild(dd);
+          cqSummary.appendChild(row);
+        }
+
+        cqForm.addEventListener("submit", function (e) {
+          e.preventDefault();
+          var name = document.getElementById("cqName").value.trim();
+          var phone = document.getElementById("cqPhone").value.trim();
+          cqError.classList.remove("show");
+          if (!name || !phone) {
+            cqError.textContent = "We need your name and a phone number \u2014 that's how we'll call or text you with your quote.";
+            cqError.classList.add("show");
+            (name ? document.getElementById("cqPhone") : document.getElementById("cqName")).focus();
+            return;
+          }
+          var qty = document.getElementById("cqQty").value.trim();
+          var dateVal = document.getElementById("cqDate").value;
+          var dateText = "";
+          if (dateVal) {
+            var d = new Date(dateVal + "T12:00:00");
+            if (!isNaN(d.getTime())) dateText = d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" });
+          }
+          var stakes = cqChecked("cqStakes");
+          var art = cqChecked("cqArt");
+          cqConfirmText.innerHTML = "Thanks, <strong>" + cqEsc(name.split(" ")[0]) + "</strong> \u2014 your campaign sign quote request is in. We'll call <strong>" + cqEsc(phone) + "</strong> with your quote.";
+          cqSummary.innerHTML = "";
+          cqRow("Name", name);
+          cqRow("Campaign", document.getElementById("cqCampaign").value.trim());
+          cqRow("Phone", phone);
+          cqRow("Email", document.getElementById("cqEmail").value.trim());
+          cqRow("Signs needed", qty);
+          cqRow("Sizes", cqChecked("cqSize").join(", "));
+          cqRow("Sides", document.getElementById("cqSides").value);
+          cqRow("H-stakes", stakes.length ? stakes[0] : "");
+          cqRow("Need by", dateText);
+          cqRow("Artwork", art.length ? art[0] : "");
+          cqRow("Notes", document.getElementById("cqNotes").value.trim());
+          cqConfirm.classList.add("show");
+          cqConfirm.scrollIntoView({ behavior: "smooth", block: "nearest" });
         });
 
         setMaterial("coroplast");
