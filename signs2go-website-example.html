@@ -1501,15 +1501,34 @@
             </div>
           </div>
 
-          <!-- STEP 4 · sides & stakes -->
+          <!-- STEP 4 · colors -->
           <div class="wiz-step cq-step is-locked" data-cqstep="4">
             <div class="wiz-head">
               <span class="step-num" aria-hidden="true">4</span>
               <div class="wiz-head-text">
-                <h3 class="wiz-title">Sides &amp; stakes</h3>
+                <h3 class="wiz-title">What colors?</h3>
                 <p class="wiz-summary" data-cqsummary="4" hidden></p>
               </div>
               <button type="button" class="btn ghost small wiz-edit" data-cqedit="4" hidden>Edit</button>
+            </div>
+            <div class="wiz-body">
+              <div class="cq-opts three" role="group" aria-label="What colors?">
+                <button type="button" class="mat-opt cq-opt" data-cqcolor="1-Color" aria-pressed="false"><span class="mo-name">1-Color</span></button>
+                <button type="button" class="mat-opt cq-opt" data-cqcolor="2-Color" aria-pressed="false"><span class="mo-name">2-Color</span></button>
+                <button type="button" class="mat-opt cq-opt" data-cqcolor="Full Color" aria-pressed="false"><span class="mo-name">Full Color</span></button>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 5 · sides & stakes -->
+          <div class="wiz-step cq-step is-locked" data-cqstep="5">
+            <div class="wiz-head">
+              <span class="step-num" aria-hidden="true">5</span>
+              <div class="wiz-head-text">
+                <h3 class="wiz-title">Sides &amp; stakes</h3>
+                <p class="wiz-summary" data-cqsummary="5" hidden></p>
+              </div>
+              <button type="button" class="btn ghost small wiz-edit" data-cqedit="5" hidden>Edit</button>
             </div>
             <div class="wiz-body">
               <div class="cq-group">
@@ -1530,15 +1549,15 @@
             </div>
           </div>
 
-          <!-- STEP 5 · artwork -->
-          <div class="wiz-step cq-step is-locked" data-cqstep="5">
+          <!-- STEP 6 · artwork -->
+          <div class="wiz-step cq-step is-locked" data-cqstep="6">
             <div class="wiz-head">
-              <span class="step-num" aria-hidden="true">5</span>
+              <span class="step-num" aria-hidden="true">6</span>
               <div class="wiz-head-text">
                 <h3 class="wiz-title">Artwork</h3>
-                <p class="wiz-summary" data-cqsummary="5" hidden></p>
+                <p class="wiz-summary" data-cqsummary="6" hidden></p>
               </div>
-              <button type="button" class="btn ghost small wiz-edit" data-cqedit="5" hidden>Edit</button>
+              <button type="button" class="btn ghost small wiz-edit" data-cqedit="6" hidden>Edit</button>
             </div>
             <div class="wiz-body">
               <div class="cq-opts three" role="group" aria-label="Artwork">
@@ -1550,15 +1569,15 @@
             </div>
           </div>
 
-          <!-- STEP 6 · anything else (optional) -->
-          <div class="wiz-step cq-step is-locked" data-cqstep="6">
+          <!-- STEP 7 · anything else (optional) -->
+          <div class="wiz-step cq-step is-locked" data-cqstep="7">
             <div class="wiz-head">
-              <span class="step-num" aria-hidden="true">6</span>
+              <span class="step-num" aria-hidden="true">7</span>
               <div class="wiz-head-text">
                 <h3 class="wiz-title">Anything else we should know? <span class="step-opt">(optional)</span></h3>
-                <p class="wiz-summary" data-cqsummary="6" hidden></p>
+                <p class="wiz-summary" data-cqsummary="7" hidden></p>
               </div>
-              <button type="button" class="btn ghost small wiz-edit" data-cqedit="6" hidden>Edit</button>
+              <button type="button" class="btn ghost small wiz-edit" data-cqedit="7" hidden>Edit</button>
             </div>
             <div class="wiz-body">
               <label class="f-label" for="cqNotes">Notes <span class="opt">(optional)</span></label>
@@ -1570,10 +1589,10 @@
             </div>
           </div>
 
-          <!-- STEP 7 · your info -->
-          <div class="wiz-step cq-step is-locked" data-cqstep="7">
+          <!-- STEP 8 · your info -->
+          <div class="wiz-step cq-step is-locked" data-cqstep="8">
             <div class="wiz-head">
-              <span class="step-num" aria-hidden="true">7</span>
+              <span class="step-num" aria-hidden="true">8</span>
               <div class="wiz-head-text">
                 <h3 class="wiz-title">Your info</h3>
               </div>
@@ -3377,8 +3396,8 @@
            pattern as Build Your Sign, but no pricing anywhere — a
            person still quotes this one. ---- */
         var cq = {
-          qty: null, date: "", sizes: [], sides: null, stakes: null, art: null,
-          answered: { 1: false, 2: false, 3: false, 4: false, 5: false, 6: false },
+          qty: null, date: "", sizes: [], colors: null, sides: null, stakes: null, art: null,
+          answered: { 1: false, 2: false, 3: false, 4: false, 5: false, 6: false, 7: false },
           open: 1, reached: 1
         };
         function cqDateText() {
@@ -3391,21 +3410,22 @@
           if (n === 1) return cq.qty ? cq.qty + " signs" : "";
           if (n === 2) return cqDateText() ? "Need by " + cqDateText() : "";
           if (n === 3) return cq.sizes.join(", ");
-          if (n === 4) return (cq.sides || "") + (cq.stakes ? " \u00B7 H-stakes: " + cq.stakes : "");
-          if (n === 5) return cq.art || "";
-          if (n === 6) { var t = document.getElementById("cqNotes").value.trim(); return t || "No notes"; }
+          if (n === 4) return cq.colors ? "Colors: " + cq.colors : "";
+          if (n === 5) return (cq.sides || "") + (cq.stakes ? " \u00B7 H-stakes: " + cq.stakes : "");
+          if (n === 6) return cq.art || "";
+          if (n === 7) { var t = document.getElementById("cqNotes").value.trim(); return t || "No notes"; }
           return "";
         }
         function cqSyncSubmit() {
           var btn = document.getElementById("cqSubmitBtn");
           if (!btn) return;
-          var ready = cq.reached >= 7 &&
+          var ready = cq.reached >= 8 &&
             document.getElementById("cqName").value.trim() &&
             document.getElementById("cqPhone").value.trim();
           btn.hidden = !ready;
         }
         function renderCq() {
-          for (var n = 1; n <= 7; n++) {
+          for (var n = 1; n <= 8; n++) {
             var step = document.querySelector('[data-cqstep="' + n + '"]');
             if (!step) continue;
             var done = !!cq.answered[n];
@@ -3424,6 +3444,9 @@
           document.querySelectorAll("[data-cqsize]").forEach(function (b) {
             b.setAttribute("aria-pressed", cq.sizes.indexOf(b.getAttribute("data-cqsize")) >= 0 ? "true" : "false");
           });
+          document.querySelectorAll("[data-cqcolor]").forEach(function (b) {
+            b.setAttribute("aria-pressed", b.getAttribute("data-cqcolor") === cq.colors ? "true" : "false");
+          });
           document.querySelectorAll("[data-cqsides]").forEach(function (b) {
             b.setAttribute("aria-pressed", b.getAttribute("data-cqsides") === cq.sides ? "true" : "false");
           });
@@ -3439,10 +3462,10 @@
         }
         function completeCqStep(n) {
           cq.answered[n] = true;
-          cq.reached = Math.max(cq.reached, Math.min(7, n + 1));
+          cq.reached = Math.max(cq.reached, Math.min(8, n + 1));
           var next = 0;
-          for (var i = 1; i <= 6; i++) { if (!cq.answered[i]) { next = i; break; } }
-          cq.open = next || 7;
+          for (var i = 1; i <= 7; i++) { if (!cq.answered[i]) { next = i; break; } }
+          cq.open = next || 8;
           if (cq.open > cq.reached) cq.reached = cq.open;
           renderCq();
           var target = document.querySelector('[data-cqstep="' + cq.open + '"]');
@@ -3477,26 +3500,32 @@
         document.getElementById("cqSizesContinue").addEventListener("click", function () {
           if (cq.sizes.length) completeCqStep(3);
         });
+        document.querySelectorAll("[data-cqcolor]").forEach(function (b) {
+          b.addEventListener("click", function () {
+            cq.colors = b.getAttribute("data-cqcolor");
+            completeCqStep(4);
+          });
+        });
         document.querySelectorAll("[data-cqsides]").forEach(function (b) {
           b.addEventListener("click", function () {
             cq.sides = b.getAttribute("data-cqsides");
-            if (cq.sides && cq.stakes) completeCqStep(4); else renderCq();
+            if (cq.sides && cq.stakes) completeCqStep(5); else renderCq();
           });
         });
         document.querySelectorAll("[data-cqstakes]").forEach(function (b) {
           b.addEventListener("click", function () {
             cq.stakes = b.getAttribute("data-cqstakes");
-            if (cq.sides && cq.stakes) completeCqStep(4); else renderCq();
+            if (cq.sides && cq.stakes) completeCqStep(5); else renderCq();
           });
         });
         document.querySelectorAll("[data-cqart]").forEach(function (b) {
           b.addEventListener("click", function () {
             cq.art = b.getAttribute("data-cqart");
-            completeCqStep(5);
+            completeCqStep(6);
           });
         });
-        document.getElementById("cqNotesContinue").addEventListener("click", function () { completeCqStep(6); });
-        document.getElementById("cqNotesSkip").addEventListener("click", function () { completeCqStep(6); });
+        document.getElementById("cqNotesContinue").addEventListener("click", function () { completeCqStep(7); });
+        document.getElementById("cqNotesSkip").addEventListener("click", function () { completeCqStep(7); });
         document.getElementById("cqName").addEventListener("input", cqSyncSubmit);
         document.getElementById("cqPhone").addEventListener("input", cqSyncSubmit);
         renderCq();
@@ -3528,6 +3557,7 @@
           cqRow("Signs needed", cq.qty ? cq.qty + " signs" : "");
           cqRow("Need by", cqDateText());
           cqRow("Sizes", cq.sizes.join(", "));
+          cqRow("Colors", cq.colors || "");
           cqRow("Sides", cq.sides || "");
           cqRow("H-stakes", cq.stakes || "");
           cqRow("Artwork", cq.art || "");
