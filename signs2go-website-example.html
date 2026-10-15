@@ -177,14 +177,14 @@
       /* ---------- build your sign entry (full-bleed brand green) ---------- */
       .build-sec { padding: 100px 0 104px; background: var(--green); color: var(--black); text-align: center; }
       .build-sec .build-inner { max-width: 900px; margin: 0 auto; }
-      .build-sec h2 { font-size: clamp(64px, 9.4vw, 122px); font-weight: 700; line-height: 1.0; }
+      .build-sec h2 { font-size: clamp(64px, 9.4vw, 122px); font-weight: 700; line-height: 1.16; }
       .build-sec h2 .hl {
         color: var(--green); font-style: italic;
         padding: 0 0.1em;
         background-image: linear-gradient(var(--black), var(--black));
         background-repeat: no-repeat;
-        background-position: center;
-        background-size: 100% 92%;
+        background-position: 50% 62%;
+        background-size: 100% 82%;
       }
       .build-sec .build-sub { font-size: 24px; line-height: 1.55; max-width: 660px; margin: 22px auto 0; }
       .build-sec .build-cta { margin-top: 38px; }
@@ -473,6 +473,7 @@
       /* ---------- how it works ---------- */
       .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
       .step-card { border-top: 4px solid var(--green); padding-top: 18px; }
+      .step-icon { display: block; width: 60px; height: 60px; margin-bottom: 14px; }
       .step-card .num {
         font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; font-size: 44px; line-height: 1;
       }
@@ -1278,16 +1279,19 @@
           </div>
           <div class="steps-grid">
             <div class="step-card">
+              <svg class="step-icon" viewBox="0 0 64 64" fill="none" stroke="#000000" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="9" width="40" height="28" rx="2" fill="#ffffff"/><path d="M12 20h20"/><path d="M12 27h13"/><path d="M25 37v17"/><path d="M13 57h24"/><path d="M36.6 27l5.8 4.2 12.5-17.1-5.8-4.2z" fill="#ACE50E"/><path d="M36 34l6.4-2.8-5.8-4.2z" fill="#ffffff"/></svg>
               <div class="num">01</div>
               <h3>Build your sign</h3>
               <p>Hit Build Your Sign — answer a few quick questions and watch it price itself. Wholesale by the sheet or just one sign — you pick.</p>
             </div>
             <div class="step-card">
+              <svg class="step-icon" viewBox="0 0 64 64" fill="none" stroke="#000000" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="8" width="50" height="38" rx="3" fill="#ffffff"/><circle cx="19" cy="19" r="4" fill="#ACE50E"/><path d="M11 42l11-14 8 8 8-7 15 13"/><path d="M32 60V45"/><path d="M24.5 51L32 43l7.5 8"/></svg>
               <div class="num">02</div>
               <h3>Upload your artwork</h3>
               <p>Drop in a print-ready file in Build Your Sign, or tell us you need a hand and we'll get a proof back to you before we print.</p>
             </div>
             <div class="step-card">
+              <svg class="step-icon" viewBox="0 0 64 64" fill="none" stroke="#000000" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="9" width="36" height="28" rx="2" fill="#ffffff"/><path d="M12 19h16"/><path d="M12 27h11"/><path d="M24 37v17"/><path d="M12 57h24"/><path d="M46 12c5.5 0 9 4.2 9 9.5 0 7-9 14.5-9 14.5s-9-7.5-9-14.5C37 16.2 40.5 12 46 12z" fill="#ACE50E"/><circle cx="46" cy="21.5" r="3.6" fill="#ffffff"/></svg>
               <div class="num">03</div>
               <h3>Pick it up today</h3>
               <p>We print it the same day and text you when it's ready. Swing by the shop and grab your stack.</p>
