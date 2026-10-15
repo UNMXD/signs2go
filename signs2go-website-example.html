@@ -943,9 +943,9 @@
       .size-zone { text-align: center; margin-top: 28px; }
       .size-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 16px; }
       .size-card {
-        position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+        position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
         border: 2px solid var(--black); border-radius: 16px; background: var(--white); color: var(--black);
-        padding: 18px 12px 15px; font: inherit; text-align: center; cursor: pointer; width: 100%; min-height: 138px;
+        padding: 18px 12px 15px; font: inherit; text-align: center; cursor: pointer; width: 100%; min-height: 126px;
       }
       .size-card:hover { box-shadow: inset 0 0 0 2px var(--black); }
       .size-card[aria-pressed="true"] { background: rgba(172, 229, 14, 0.22); box-shadow: inset 0 0 0 2.5px var(--black); }
@@ -957,9 +957,7 @@
         border: 1.5px solid var(--black); border-radius: 999px; padding: 3px 11px; background: var(--white); white-space: nowrap;
       }
       .sc-badge--deal { background: var(--green); }
-      .sc-size { font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; text-transform: uppercase; font-size: 29px; line-height: 1; white-space: nowrap; }
-      .sc-price { font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; font-size: 27px; line-height: 1.1; font-variant-numeric: tabular-nums lining-nums; }
-      .sc-sub { font-size: 15.5px; }
+      .sc-size { font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; text-transform: uppercase; font-size: 32px; line-height: 1; white-space: nowrap; }
       .sc-min {
         font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; text-transform: uppercase;
         letter-spacing: 0.03em; font-size: 14.5px; margin-top: 4px;
@@ -991,19 +989,8 @@
       .qty-input { width: 132px; min-height: 58px; text-align: center; font-size: 23px; font-weight: 700; }
       .qty-zone .qty-note { text-align: center; margin-top: 10px; }
       .qty-zone .cp-note { text-align: center; margin-top: 8px; font-size: 16.5px; }
-      .tier-zone { margin-top: 26px; text-align: center; }
-      .tier-zone .f-label { display: block; text-align: center; }
-      .tier-chips { display: flex; flex-wrap: wrap; gap: 9px; justify-content: center; margin-top: 12px; }
-      .tier-chips .ladder-cell {
-        flex-direction: row; align-items: baseline; justify-content: center; gap: 8px;
-        border: 1.5px solid var(--black); border-radius: 999px; background: var(--white); color: var(--black);
-        padding: 10px 18px; min-height: 48px; min-width: 0; cursor: pointer; font: inherit; text-align: center;
-      }
-      .tier-chips .ladder-cell:hover { box-shadow: inset 0 0 0 2px var(--black); }
-      .tier-chips .ladder-cell .lq { font-size: 20px; }
-      .tier-chips .ladder-cell .lp { font-size: 20px; }
-      .tier-chips .ladder-cell.active { background: var(--green); box-shadow: inset 0 0 0 2.5px var(--black); }
-      .tier-zone .ladder-note { text-align: center; margin-top: 14px; }
+      .wiz-ladder { margin-top: 26px; }
+      .wiz-ladder .ladder-title { margin-top: 0; }
       .custom-line { text-align: center; margin-top: 22px; font-weight: 600; font-size: 18.5px; }
       .addon-rows { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 840px; margin: 0 auto; }
       .addon-row .f-label { display: block; margin-bottom: 8px; }
@@ -1542,9 +1529,9 @@
                 <p class="qty-note" id="wQtyNote"></p>
                 <p class="cp-note" id="wVolNote"></p>
               </div>
-              <div class="tier-zone">
-                <span class="f-label">Buy more, save more — tap a quantity</span>
-                <div class="tier-chips" id="wTierChips"></div>
+              <div class="ladder wiz-ladder">
+                <h4 class="display ladder-title">Buy more, <span class="hl">save more!</span></h4>
+                <div class="ladder-grid" id="wTierGrid" role="group" aria-label="Pricing ladder — tap a quantity"></div>
               </div>
               <button type="button" class="btn black wiz-continue" id="wQtyContinue">Continue</button>
             </div>
@@ -1931,12 +1918,11 @@
           if (!wiz.material || !CALC_DATA[wiz.material]) { grid.innerHTML = ""; return; }
           var html = "";
           CALC_DATA[wiz.material].forEach(function (s) {
-            var price = wiz.mode === "onepc" ? s.pc[wiz.sides] : s.ws[wiz.sides];
             var badges = "";
             if (s.feat) badges += "<span class=\"sc-badge\">Popular</span>";
             if (s.key === "s48") badges += "<span class=\"sc-badge sc-badge--deal\">Best deal \u00B7 Full sheet</span>";
-            var min = wiz.mode === "onepc" ? "Single-sign price" : s.key === "s44" ? "Sold in pairs \u00B7 2 pc minimum" : s.pps > 1 ? s.pps + " pc minimum" : "No minimum";
-            html += "<button type=\"button\" class=\"size-card" + (s.key === "s48" ? " featured" : "") + "\" data-sizecard=\"" + s.key + "\" aria-pressed=\"" + (s.key === wiz.sizeKey ? "true" : "false") + "\"><span class=\"sc-badges\">" + badges + "</span><span class=\"sc-size\">" + s.label + "</span><span class=\"sc-price\">" + money(price) + "</span><span class=\"sc-sub\">per sign \u00B7 " + (wiz.sides ? "2 sides" : "1 side") + "</span><span class=\"sc-min\">" + min + "</span></button>";
+            var min = wiz.mode === "onepc" ? "No minimum" : s.key === "s44" ? "Sold in pairs \u00B7 2 pc minimum" : s.pps > 1 ? s.pps + " pc minimum" : "No minimum";
+            html += "<button type=\"button\" class=\"size-card" + (s.key === "s48" ? " featured" : "") + "\" data-sizecard=\"" + s.key + "\" aria-pressed=\"" + (s.key === wiz.sizeKey ? "true" : "false") + "\"><span class=\"sc-badges\">" + badges + "</span><span class=\"sc-size\">" + s.label + "</span><span class=\"sc-min\">" + min + "</span></button>";
           });
           grid.innerHTML = html;
         }
@@ -1952,10 +1938,10 @@
         function renderWizQty(rewriteField) {
           var e = wizEntry();
           var qEl = document.getElementById("wQty");
-          var chipsEl = document.getElementById("wTierChips");
+          var ladderEl = document.getElementById("wTierGrid");
           var note = document.getElementById("wQtyNote");
           var vol = document.getElementById("wVolNote");
-          if (!e) { chipsEl.innerHTML = ""; note.textContent = ""; note.classList.remove("show"); vol.textContent = ""; return; }
+          if (!e) { ladderEl.innerHTML = ""; note.textContent = ""; note.classList.remove("show"); vol.textContent = ""; return; }
           var q = wizQty();
           qEl.min = wizMinQty();
           qEl.step = wizStepQty();
@@ -1972,7 +1958,7 @@
             var p = signPriceFor(e, wiz.sides, t, wiz.mode) + wizAdders();
             html += "<button type=\"button\" class=\"ladder-cell" + (t === bracket ? " active" : "") + "\" data-wtier=\"" + t + "\" aria-pressed=\"" + (t === bracket ? "true" : "false") + "\" aria-label=\"Set quantity to " + t + "\"><span class=\"lq\">" + t + "</span><span class=\"lp\">" + money(p) + "</span></button>";
           });
-          chipsEl.innerHTML = html;
+          ladderEl.innerHTML = html;
         }
         function renderWizAdders() {
           if (wiz.material && wiz.material !== "coroplast") wiz.stakes = "0";
@@ -2067,7 +2053,7 @@
         }
         document.getElementById("wQtyMinus").addEventListener("click", function () { stepWizQty(-1); });
         document.getElementById("wQtyPlus").addEventListener("click", function () { stepWizQty(1); });
-        document.getElementById("wTierChips").addEventListener("click", function (e) {
+        document.getElementById("wTierGrid").addEventListener("click", function (e) {
           var btn = e.target && e.target.closest ? e.target.closest("[data-wtier]") : null;
           if (!btn) return;
           wiz.qty = wizNormalizeQty(btn.getAttribute("data-wtier"));
