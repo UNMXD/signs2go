@@ -994,6 +994,14 @@
       .custom-line { text-align: center; margin-top: 22px; font-weight: 600; font-size: 18.5px; }
       .addon-rows { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 840px; margin: 0 auto; }
       .addon-row .f-label { display: block; margin-bottom: 8px; }
+      .wiz-step.is-skipped { display: none !important; }
+      .flute-field { max-width: 840px; margin: 22px auto 0; }
+      .flute-field .f-label { display: block; margin-bottom: 8px; }
+      .flute-help { font-size: 15.5px; line-height: 1.5; margin-top: 10px; max-width: 640px; }
+      .flute-warn {
+        margin-top: 12px; border: 1.5px solid var(--black); border-left: 8px solid var(--green);
+        border-radius: 10px; padding: 11px 14px; font-size: 16px; font-weight: 600; line-height: 1.45;
+      }
       .co-zone .step-head { margin-bottom: 12px; }
       .step4-sub { font-size: 19.5px; margin-bottom: 28px; max-width: 42em; }
       @media (max-width: 960px) {
@@ -1569,6 +1577,15 @@
                   </select>
                 </div>
               </div>
+              <div class="flute-field" id="wFluteField" hidden>
+                <span class="f-label" id="wFluteLabel">Flute direction</span>
+                <div class="sides-toggle" role="group" aria-labelledby="wFluteLabel">
+                  <button type="button" class="sides-btn" data-wflute="vertical" aria-pressed="true">Vertical</button>
+                  <button type="button" class="sides-btn" data-wflute="horizontal" aria-pressed="false">Horizontal</button>
+                </div>
+                <p class="flute-help">Vertical flutes are required for standard wire H-stakes. Horizontal flutes are better for wooden stakes, zip-ties, fences, or poles.</p>
+                <p class="flute-warn" id="wFluteWarn" hidden>Heads up &mdash; wire H-stakes need vertical flutes. We&rsquo;ll run these vertical unless you tell us otherwise.</p>
+              </div>
               <button type="button" class="btn black wiz-continue" id="wAddContinue">Continue</button>
             </div>
           </div>
@@ -1842,7 +1859,7 @@
         function freshWizard() {
           return {
             mode: null, material: null, sizeKey: null, sides: 0, qty: null,
-            stakes: "0", grommets: "none",
+            stakes: "0", grommets: "none", flute: null,
             answered: { 1: false, 2: false, 3: false, 4: false, 5: false },
             open: 1, reached: 1
           };
@@ -1850,6 +1867,22 @@
         wiz = freshWizard();
 
         function wizEntry() { return wiz.material && wiz.sizeKey ? entryFor(wiz.material, wiz.sizeKey) : null; }
+        /* Finishing touches exist for Coroplast and Max Metal only.
+           Foamboard takes neither H-Stakes nor grommets, so the step is
+           skipped entirely for Foamboard and the artwork step renumbers. */
+        function hasFinishingStep() { return wiz.material !== "foamboard"; }
+        /* Flute direction is a Coroplast-only question, and never for the
+           full 4'x8' sheet. */
+        function needsFlute() { return wiz.material === "coroplast" && !!wiz.sizeKey && wiz.sizeKey !== "s48"; }
+        function displayStepNum(n) { return (!hasFinishingStep() && n === 6) ? 5 : n; }
+        /* State hygiene: clear whatever the current material/size makes
+           impossible, and default the flute to Vertical when it applies. */
+        function syncFinishingState() {
+          if (wiz.material !== "coroplast") { wiz.stakes = "0"; wiz.flute = null; }
+          if (wiz.material === "foamboard") { wiz.stakes = "0"; wiz.grommets = "none"; wiz.flute = null; }
+          if (wiz.material === "coroplast" && wiz.sizeKey === "s48") { wiz.flute = null; }
+          if (needsFlute() && !wiz.flute) { wiz.flute = "vertical"; }
+        }
         function wizMinQty() { var e = wizEntry(); if (!e) return 1; return wiz.mode === "onepc" ? 1 : e.pps; }
         function wizStepQty() { var e = wizEntry(); if (!e) return 1; return wiz.mode === "onepc" ? 1 : (e.key === "s44" ? 2 : 1); }
         function wizNormalizeQty(raw) {
@@ -1872,22 +1905,27 @@
           if (n === 2) return MATERIALS[wiz.material].label;
           if (n === 3) { var e = wizEntry(); return e ? e.label + " \u00B7 " + (wiz.sides ? "2 sides" : "1 side") : ""; }
           if (n === 4) return "Qty " + wizQty() + " \u00B7 " + money(wizEach()) + " each";
-          if (n === 5) { var l = adderLabelsFor(wiz.stakes, wiz.grommets); return l.length ? l.join(" \u00B7 ") : "No add-ons"; }
+          if (n === 5) { var l = adderLabelsFor(wiz.stakes, wiz.grommets); if (needsFlute() && wiz.flute) l.push("Flutes: " + wiz.flute); return l.length ? l.join(" \u00B7 ") : "No add-ons"; }
           return "";
         }
 
         function renderWizard() {
+          syncFinishingState();
           for (var n = 1; n <= 6; n++) {
             var step = document.querySelector('[data-wstep="' + n + '"]');
             if (!step) continue;
+            var skipped = n === 5 && !hasFinishingStep();
+            step.classList.toggle("is-skipped", skipped);
+            var numEl = step.querySelector(".step-num");
+            if (numEl) numEl.textContent = String(displayStepNum(n));
             var done = n <= 5 && wiz.answered[n];
             /* A done step collapses to its summary — unless it is the
                step currently being edited, when its body reopens and
                the summary/Edit tuck away until it is answered again. */
             var collapsed = !!done && wiz.open !== n;
-            step.classList.toggle("is-locked", n > wiz.reached);
+            step.classList.toggle("is-locked", skipped || n > wiz.reached);
             step.classList.toggle("is-done", collapsed);
-            step.classList.toggle("is-open", wiz.open === n);
+            step.classList.toggle("is-open", !skipped && wiz.open === n);
             var sum = step.querySelector("[data-wsummary]");
             var edit = step.querySelector("[data-wedit]");
             if (sum) { sum.hidden = !collapsed; if (done) sum.textContent = wizSummaryText(n); }
@@ -1901,6 +1939,9 @@
           });
           document.querySelectorAll("[data-wsides]").forEach(function (b) {
             b.setAttribute("aria-pressed", b.getAttribute("data-wsides") === String(wiz.sides) ? "true" : "false");
+          });
+          document.querySelectorAll("[data-wflute]").forEach(function (b) {
+            b.setAttribute("aria-pressed", b.getAttribute("data-wflute") === wiz.flute ? "true" : "false");
           });
           var about = document.getElementById("wMatAboutText");
           if (about) about.textContent = wiz.material ? MATERIALS[wiz.material].blurb : "";
@@ -1961,12 +2002,15 @@
           ladderEl.innerHTML = html;
         }
         function renderWizAdders() {
-          if (wiz.material && wiz.material !== "coroplast") wiz.stakes = "0";
-          if (wiz.material === "foamboard") wiz.grommets = "none";
+          syncFinishingState();
           document.getElementById("wStakes").value = wiz.stakes;
           document.getElementById("wGrommets").value = wiz.grommets;
           document.getElementById("wStakesField").hidden = wiz.material !== "coroplast";
           document.getElementById("wGrommetsField").hidden = wiz.material === "foamboard";
+          var fluteField = document.getElementById("wFluteField");
+          if (fluteField) fluteField.hidden = !needsFlute();
+          var fluteWarn = document.getElementById("wFluteWarn");
+          if (fluteWarn) fluteWarn.hidden = !(needsFlute() && wiz.flute === "horizontal" && wiz.stakes !== "0");
         }
         function renderPriceLine() {
           var line = document.getElementById("wizPriceLine");
@@ -1982,9 +2026,11 @@
           if (wiz.sizeKey && wiz.material) {
             wiz.qty = wiz.qty == null ? wizMinQty() : wizNormalizeQty(wiz.qty);
           }
-          wiz.reached = Math.max(wiz.reached, Math.min(6, n + 1));
+          var nextLogical = n + 1;
+          if (nextLogical === 5 && !hasFinishingStep()) nextLogical = 6;
+          wiz.reached = Math.max(wiz.reached, Math.min(6, nextLogical));
           var next = 0;
-          for (var i = 1; i <= 5; i++) { if (!wiz.answered[i]) { next = i; break; } }
+          for (var i = 1; i <= 5; i++) { if (i === 5 && !hasFinishingStep()) continue; if (!wiz.answered[i]) { next = i; break; } }
           wiz.open = next || 6;
           if (wiz.open > wiz.reached) wiz.reached = wiz.open;
           renderWizard();
@@ -2002,6 +2048,8 @@
           b.addEventListener("click", function () {
             var key = b.getAttribute("data-wmat");
             wiz.material = key;
+            if (key !== "coroplast") { wiz.stakes = "0"; wiz.flute = null; }
+            if (key === "foamboard") { wiz.stakes = "0"; wiz.grommets = "none"; wiz.flute = null; }
             if (wiz.sizeKey && !entryFor(key, wiz.sizeKey)) {
               wiz.sizeKey = null;
               wiz.answered[3] = false;
@@ -2014,6 +2062,7 @@
           var btn = e.target && e.target.closest ? e.target.closest("[data-sizecard]") : null;
           if (!btn) return;
           wiz.sizeKey = btn.getAttribute("data-sizecard");
+          if (wiz.sizeKey === "s48") wiz.flute = null;
           if (typeof recheckArtwork === "function") recheckArtwork();
           completeStep(3);
         });
@@ -2070,6 +2119,12 @@
         document.getElementById("wGrommets").addEventListener("change", function () {
           wiz.grommets = this.value;
           renderWizard();
+        });
+        document.querySelectorAll("[data-wflute]").forEach(function (b) {
+          b.addEventListener("click", function () {
+            wiz.flute = b.getAttribute("data-wflute") === "horizontal" ? "horizontal" : "vertical";
+            renderWizard();
+          });
         });
         document.getElementById("wAddContinue").addEventListener("click", function () { completeStep(5); });
 
@@ -2355,6 +2410,7 @@
           var parts = [it.qty + " \u00D7 " + it.sizeLabel + " " + MATERIALS[it.material].label + " sign", it.sides ? "2 sides" : "1 side"];
           var adds = adderLabelsFor(it.stakes, it.grommets);
           if (adds.length) parts.push(adds.join(" + "));
+          if (it.flute && it.material === "coroplast" && it.sizeKey !== "s48") parts.push("Flutes: " + it.flute);
           return parts.join(" \u00B7 ");
         }
         function cartTotal() { return cart.reduce(function (a, it) { return a + it.total; }, 0); }
@@ -2414,13 +2470,14 @@
         document.getElementById("addToCartBtn").addEventListener("click", function () {
           hideWizMsg();
           for (var i = 1; i <= 5; i++) {
+            if (i === 5 && !hasFinishingStep()) continue;
             if (!wiz.answered[i]) {
               wiz.open = i;
               if (wiz.reached < i) wiz.reached = i;
               renderWizard();
               var st = document.querySelector('[data-wstep="' + i + '"]');
               if (st) st.scrollIntoView({ behavior: "smooth", block: "start" });
-              showWizMsg("Almost \u2014 step " + i + " still needs an answer: " + STEP_NEEDS[i]);
+              showWizMsg("Almost \u2014 step " + displayStepNum(i) + " still needs an answer: " + STEP_NEEDS[i]);
               return;
             }
           }
@@ -2435,9 +2492,11 @@
           var e = wizEntry();
           var q = wizQty();
           var each = wizEach();
+          syncFinishingState();
           var item = {
             mode: wiz.mode, material: wiz.material, sizeKey: wiz.sizeKey, sizeLabel: e.label,
             sides: wiz.sides, qty: q, stakes: wiz.stakes, grommets: wiz.grommets,
+            flute: needsFlute() ? wiz.flute : null,
             each: each, total: each * q, artwork: snapshotArtwork()
           };
           cart.push(item);
