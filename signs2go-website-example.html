@@ -707,6 +707,42 @@
       .ladder-note { font-size: 16.5px; margin-top: 10px; }
       .calc-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
 
+      /* ---------- order panel opening steps (mode / substrate / quick picks) ---------- */
+      .calc-body .mode-switch { margin: 0 auto 30px; }
+      .calc-body .mat-switch { margin: 0 auto 32px; }
+      .qp-block { margin: 0 auto 34px; text-align: center; }
+      .qp-heading { margin-bottom: 16px; }
+      .qp-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 10px; }
+      .qp-btn {
+        position: relative; display: flex; flex-direction: column; align-items: center; gap: 3px;
+        border: 2px solid var(--black); border-radius: 16px; background: var(--white); color: var(--black);
+        padding: 20px 14px 16px; font: inherit; text-align: center; cursor: pointer; width: 100%;
+      }
+      .qp-btn:hover { box-shadow: inset 0 0 0 2px var(--black); }
+      .qp-btn[aria-pressed="true"] { background: rgba(172, 229, 14, 0.22); box-shadow: inset 0 0 0 2.5px var(--black); }
+      .qp-btn.featured { border-width: 3px; }
+      .qp-size { font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; text-transform: uppercase; font-size: 30px; line-height: 1; white-space: nowrap; }
+      .qp-price { font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; font-size: 30px; line-height: 1.1; font-variant-numeric: tabular-nums lining-nums; }
+      .qp-sub { font-size: 15.5px; }
+      .qp-min {
+        font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 0.03em; font-size: 15px; margin-top: 5px;
+        box-shadow: inset 0 -0.30em 0 var(--green);
+      }
+      .qp-flag {
+        position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+        background: var(--green); color: var(--black); border: 2px solid var(--black);
+        border-radius: 999px; padding: 3px 14px; white-space: nowrap;
+        font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 0.03em; font-size: 14px;
+      }
+      .qp-block .pkg-grid-note { margin-top: 20px; }
+      .qp-block .pkg-extra { margin-top: 10px; }
+      @media (max-width: 640px) {
+        .qp-row { grid-template-columns: 1fr; gap: 18px; }
+        .qp-btn { padding: 22px 14px 16px; }
+      }
+
       /* ---------- demo designer ---------- */
       .designer[hidden] { display: none; }
       body.designer-open .site-head, body.designer-open main, body.designer-open .site-foot { display: none; }
@@ -897,112 +933,69 @@
         </div>
       </section>
 
-      <!-- ================= PACKAGES ================= -->
-      <section class="section pkg-sec" id="packages">
-        <div class="wrap pkg-wrap">
-          <div class="section-head">
-            <span class="kicker" id="pkgKicker">Coroplast packages</span>
-            <h2 class="display">Pick a size. <em>That’s the price.</em></h2>
-            <p>Our three most popular sizes, three flat prices — just pick the one that fits. We print using 5–7yr UV inks — the longest, most durable outdoor inks on the market! And yes, the biggest one is the deal.</p>
-          </div>
-          <div class="mode-switch">
-            <span class="mode-heading" id="pricingLabel">How do you want to buy?</span>
-            <div class="mode-grid" role="group" aria-labelledby="pricingLabel">
-              <button type="button" class="mode-tile mode-tile--wholesale mode-btn" data-mode="wholesale" aria-pressed="true">
-                <span class="mode-tile-top"><span class="mode-tile-title">Wholesale (sheet qty)</span><span class="mode-check" aria-hidden="true">✓</span></span>
-                <span class="mode-tile-sub">Sheet quantities · lowest per-sign prices · minimums apply</span>
-              </button>
-              <button type="button" class="mode-tile mode-tile--one mode-btn" data-mode="onepc" aria-pressed="false">
-                <span class="mode-tile-top"><span class="mode-tile-title">One Sign</span><span class="mode-check" aria-hidden="true">✓</span></span>
-                <span class="mode-tile-sub">Just one sign · no minimum</span>
-              </button>
-            </div>
-          </div>
-          <div class="mat-switch">
-            <span class="ms-label" id="substrateLabel">Select your substrate</span>
-            <div class="ms-track" role="group" aria-labelledby="substrateLabel">
-              <button type="button" class="mat-btn" data-material="coroplast" aria-pressed="true">Coroplast</button>
-              <button type="button" class="mat-btn" data-material="maxmetal" aria-pressed="false">Max Metal</button>
-              <button type="button" class="mat-btn" data-material="foamboard" aria-pressed="false">Foamboard</button>
-            </div>
-            <p class="mat-blurb" id="matBlurb" hidden></p>
-            <p class="flute-note" id="fluteNote" hidden>Flute direction matters: vertical flutes are required if you&rsquo;re using standard Wire H-stakes. Horizontal flutes are recommended when attaching signs to wooden stakes, zip-tying them to fences, or mounting them to trees or poles, as they provide more rigidity and reduce bending. Choosing the correct flute orientation ensures your corrugated plastic signs display properly and hold up in outdoor conditions.</p>
-          </div>
-          <div class="pkg-grid">
-            <article class="pkg-card">
-              <div class="pkg-size"><span class="sz">24”<span class="x x-in">×</span>18”</span></div>
-              <p class="pkg-sub">The wide one — reads from the road</p>
-              <p class="pkg-only">Only</p>
-              <div class="pkg-price"><sup>$</sup>6.95</div>
-              <p class="pkg-per">Per sign · Single sided</p>
-              <p class="pkg-min">10 pc minimum</p>
-              <div class="pkg-btnwrap"><a class="btn pkg-select block" href="#checkout">Select <span class="sz">24”<span class="x x-in">×</span>18”</span></a></div>
-              <hr class="pkg-divider" />
-              <ul class="pkg-feats">
-                <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#ACE50E"/><path d="M8 12.5l2.6 2.6L16 9.5" stroke="#000000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg> 4mm Coroplast</li>
-                <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#ACE50E"/><path d="M8 12.5l2.6 2.6L16 9.5" stroke="#000000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg> Full-color · 1 side $6.95 · 2 sides $9.95</li>
-                <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#ACE50E"/><path d="M8 12.5l2.6 2.6L16 9.5" stroke="#000000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg> Same-day pickup</li>
-              </ul>
-            </article>
-            <article class="pkg-card">
-              <div class="pkg-size"><span class="sz">4’<span class="x x-ft">×</span>4’</span></div>
-              <p class="pkg-sub">Big square — job sites &amp; lots</p>
-              <p class="pkg-only">Only</p>
-              <div class="pkg-price"><sup>$</sup>39.95</div>
-              <p class="pkg-per">Per sign · Single sided</p>
-              <p class="pkg-min">2 pc minimum</p>
-              <div class="pkg-btnwrap"><a class="btn pkg-select block" href="#checkout">Select <span class="sz">4’<span class="x x-ft">×</span>4’</span></a></div>
-              <hr class="pkg-divider" />
-              <ul class="pkg-feats">
-                <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#ACE50E"/><path d="M8 12.5l2.6 2.6L16 9.5" stroke="#000000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg> 4mm Coroplast</li>
-                <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#ACE50E"/><path d="M8 12.5l2.6 2.6L16 9.5" stroke="#000000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg> Full-color · 1 side $39.95 · 2 sides $54.95</li>
-                <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#ACE50E"/><path d="M8 12.5l2.6 2.6L16 9.5" stroke="#000000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg> Same-day pickup</li>
-              </ul>
-            </article>
-            <article class="pkg-card featured">
-              <span class="pkg-flag">Best deal · Full sheet</span>
-              <div class="pkg-size"><span class="sz">4’<span class="x x-ft">×</span>8’</span></div>
-              <p class="pkg-sub">A full sheet. The whole billboard.</p>
-              <p class="pkg-only">Only</p>
-              <div class="pkg-price"><sup>$</sup>69.95</div>
-              <p class="pkg-per">Per sign · Single sided</p>
-              <div class="pkg-btnwrap"><a class="btn pkg-select block" href="#checkout">Select <span class="sz">4’<span class="x x-ft">×</span>8’</span></a></div>
-              <hr class="pkg-divider" />
-              <ul class="pkg-feats">
-                <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#ACE50E"/><path d="M8 12.5l2.6 2.6L16 9.5" stroke="#000000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg> <span>4mm Coroplast, Full <span class="sz">4’<span class="x x-ft">×</span>8’</span> Sheet</span></li>
-                <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#ACE50E"/><path d="M8 12.5l2.6 2.6L16 9.5" stroke="#000000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg> Full-color · 1 side $69.95 · 2 sides $99.95</li>
-                <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#ACE50E"/><path d="M8 12.5l2.6 2.6L16 9.5" stroke="#000000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg> Same-day pickup</li>
-                <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#ACE50E"/><path d="M8 12.5l2.6 2.6L16 9.5" stroke="#000000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg> Cheapest per square foot we sell</li>
-              </ul>
-            </article>
-          </div>
-          <p class="sample-note pkg-grid-note" id="pkgFootnote">Coroplast prices from our price sheet — wholesale based on <span class="sz">4’<span class="x x-ft">×</span>8’</span> sheets. Cutting fee for custom shapes: $50 per sheet. Headline price is for 1 side; 2-side prices are on each card.</p>
-          <p class="pkg-extra">Need a different size? We cut custom sizes too — call <a href="tel:+19567778300">(956) 777-8300</a>.</p>
-          <p class="pkg-extra">For higher quantities, call for special rates.</p>
-        </div>
-      </section>
-
       <!-- ================= PRICING TABLE ================= -->
-      <section class="section calc-sec" id="pricing">
+      <section class="section calc-sec" id="packages">
         <div class="wrap">
           <div class="section-head">
-            <span class="kicker">Full price table</span>
+            <span class="kicker" id="pkgKicker">Coroplast packages</span>
             <h2 class="display">Every size. <em>Priced live.</em></h2>
-            <p>Every size on our price sheets, for all three materials. Pick your material, size, and sides, type a quantity — the price figures itself out. Full color is always included.</p>
+            <p>Every size on our price sheets, for all three materials. Pick your material, size, and sides, type a quantity — the price figures itself out. Full color is always included. We print using 5–7yr UV inks — the longest, most durable outdoor inks on the market!</p>
           </div>
           <div class="calc-panel">
             <p class="calc-head" id="calcHead">4mm Corrugated Plastic • Printed with 5–7yr UV Inks • Durable Outdoors • Weatherproof</p>
             <div class="calc-body">
+              <div class="mode-switch">
+                <span class="mode-heading" id="pricingLabel">How do you want to buy?</span>
+                <div class="mode-grid" role="group" aria-labelledby="pricingLabel">
+                  <button type="button" class="mode-tile mode-tile--wholesale mode-btn" data-mode="wholesale" aria-pressed="true">
+                    <span class="mode-tile-top"><span class="mode-tile-title">Wholesale (sheet qty)</span><span class="mode-check" aria-hidden="true">✓</span></span>
+                    <span class="mode-tile-sub">Sheet quantities · lowest per-sign prices · minimums apply</span>
+                  </button>
+                  <button type="button" class="mode-tile mode-tile--one mode-btn" data-mode="onepc" aria-pressed="false">
+                    <span class="mode-tile-top"><span class="mode-tile-title">One Sign</span><span class="mode-check" aria-hidden="true">✓</span></span>
+                    <span class="mode-tile-sub">Just one sign · no minimum</span>
+                  </button>
+                </div>
+              </div>
+              <div class="mat-switch">
+                <span class="ms-label" id="substrateLabel">Select your substrate</span>
+                <div class="ms-track" role="group" aria-labelledby="substrateLabel">
+                  <button type="button" class="mat-btn" data-material="coroplast" aria-pressed="true">Coroplast</button>
+                  <button type="button" class="mat-btn" data-material="maxmetal" aria-pressed="false">Max Metal</button>
+                  <button type="button" class="mat-btn" data-material="foamboard" aria-pressed="false">Foamboard</button>
+                </div>
+                <p class="mat-blurb" id="matBlurb" hidden></p>
+                <p class="flute-note" id="fluteNote" hidden>Flute direction matters: vertical flutes are required if you&rsquo;re using standard Wire H-stakes. Horizontal flutes are recommended when attaching signs to wooden stakes, zip-tying them to fences, or mounting them to trees or poles, as they provide more rigidity and reduce bending. Choosing the correct flute orientation ensures your corrugated plastic signs display properly and hold up in outdoor conditions.</p>
+              </div>
+              <div class="qp-block">
+                <span class="ms-label qp-heading" id="qpLabel">Popular sizes — quick pick</span>
+                <div class="qp-row" role="group" aria-labelledby="qpLabel">
+                  <button type="button" class="qp-btn" data-qpsize="s24" aria-pressed="true">
+                    <span class="qp-size"><span class="sz">24”<span class="x x-in">×</span>18”</span></span>
+                    <span class="qp-price">$6.95</span>
+                    <span class="qp-sub">per sign · 1 side · 2 sides <span class="qp-price2">$9.95</span></span>
+                    <span class="qp-min">10 pc minimum</span>
+                  </button>
+                  <button type="button" class="qp-btn" data-qpsize="s44" aria-pressed="false">
+                    <span class="qp-size"><span class="sz">4’<span class="x x-ft">×</span>4’</span></span>
+                    <span class="qp-price">$39.95</span>
+                    <span class="qp-sub">per sign · 1 side · 2 sides <span class="qp-price2">$54.95</span></span>
+                    <span class="qp-min">2 pc minimum</span>
+                  </button>
+                  <button type="button" class="qp-btn featured" data-qpsize="s48" aria-pressed="false">
+                    <span class="qp-flag">Best deal · Full sheet</span>
+                    <span class="qp-size"><span class="sz">4’<span class="x x-ft">×</span>8’</span></span>
+                    <span class="qp-price">$69.95</span>
+                    <span class="qp-sub">per sign · 1 side · 2 sides <span class="qp-price2">$99.95</span></span>
+                  </button>
+                </div>
+                <p class="sample-note pkg-grid-note" id="pkgFootnote">Coroplast prices from our price sheet — wholesale based on <span class="sz">4’<span class="x x-ft">×</span>8’</span> sheets. Cutting fee for custom shapes: $50 per sheet. Headline price is for 1 side; 2-side prices are on each quick pick.</p>
+                <p class="pkg-extra">Need a different size? We cut custom sizes too — call <a href="tel:+19567778300">(956) 777-8300</a>.</p>
+                <p class="pkg-extra">For higher quantities, call for special rates.</p>
+              </div>
               <div class="calc-main">
                 <div class="calc-fields">
-                  <div>
-                    <label class="f-label" for="calcMaterial">Material</label>
-                    <select class="f-input" id="calcMaterial">
-                      <option value="coroplast">Coroplast 4mm</option>
-                      <option value="maxmetal">Max Metal 3mm</option>
-                      <option value="foamboard">Foamboard 3/16”</option>
-                    </select>
-                  </div>
+                  <input type="hidden" id="calcMaterial" value="coroplast" />
                   <div>
                     <label class="f-label" for="calcSize">Size</label>
                     <select class="f-input" id="calcSize"></select>
@@ -1180,7 +1173,7 @@
             <div class="step-card">
               <div class="num">01</div>
               <h3>Pick your package</h3>
-              <p>Choose one of the three sizes above. The price on the card is the price you pay — no quote forms, no callback roulette.</p>
+              <p>Choose one of the three popular sizes in the order panel above. The price you see is the price you pay — no quote forms, no callback roulette.</p>
             </div>
             <div class="step-card">
               <div class="num">02</div>
@@ -1602,8 +1595,16 @@
           if (currentMode === "onepc") return p.price;
           return curvedPrice(p.price, q);
         }
+        /* Highlight the quick-pick matching the size currently driving
+           the panel (the featured calc size in table mode, else none). */
+        function updateQuickPicks(activeKey) {
+          document.querySelectorAll(".qp-btn").forEach(function (b) {
+            b.setAttribute("aria-pressed", b.getAttribute("data-qpsize") === activeKey ? "true" : "false");
+          });
+        }
         function renderSummary() {
           if (driveSource === "calc") { renderSummaryFromCalc(); return; }
+          updateQuickPicks(packageSizeKey());
           var p = currentPackage();
           var q = currentQty();
           var unit = checkoutUnitPrice(p, q);
@@ -1640,22 +1641,21 @@
         function renderPricing(resetQty) {
           var m = MATERIALS[currentMaterial];
           var prices = activePrices(m);
-          var cards = document.querySelectorAll(".pkg-card");
-          for (var c = 0; c < cards.length && c < 3; c++) {
-            var s = SIZE_ORDER[c];
-            cards[c].querySelector(".pkg-price").innerHTML = "<sup>$</sup>" + prices[s][0].toFixed(2);
-            var feats = cards[c].querySelectorAll(".pkg-feats li");
-            setSpecLine(feats[0], m, c === 2);
-            setFirstText(feats[1], "Full-color \u00B7 1 side " + money(prices[s][0]) + " \u00B7 2 sides " + money(prices[s][1]));
-            var minEl = cards[c].querySelector(".pkg-min");
+          document.querySelectorAll(".qp-btn").forEach(function (btn) {
+            var s = btn.getAttribute("data-qpsize");
+            if (!prices[s]) return;
+            btn.querySelector(".qp-price").textContent = money(prices[s][0]);
+            var p2 = btn.querySelector(".qp-price2");
+            if (p2) p2.textContent = money(prices[s][1]);
+            var minEl = btn.querySelector(".qp-min");
             if (minEl) minEl.style.display = currentMode === "onepc" ? "none" : "";
-          }
+          });
           document.getElementById("pkgFootnote").innerHTML =
             m.label + " prices from our price sheet \u2014 " +
             (currentMode === "onepc"
               ? "1 pc prices. "
               : "wholesale based on <span class=\"sz\">4\u2019<span class=\"x x-ft\">\u00D7</span>8\u2019</span> sheets. ") +
-            "Cutting fee for custom shapes: $" + m.cuttingFee + " per sheet. Headline price is for 1 side; 2-side prices are on each card.";
+            "Cutting fee for custom shapes: $" + m.cuttingFee + " per sheet. Headline price is for 1 side; 2-side prices are on each quick pick.";
           buildPackageOptions();
           applyQtyMin(resetQty);
           renderSummary();
@@ -2025,16 +2025,14 @@
         document.querySelectorAll(".mode-btn").forEach(function (b) {
           b.addEventListener("click", function () { setMode(b.getAttribute("data-mode")); });
         });
-        /* A card's Select button configures the checkout to THAT card:
-           the currently selected substrate and pricing mode, that card's
+        /* A quick-pick configures the checkout to THAT size:
+           the currently selected substrate and pricing mode, that
            size, 1 side, and the size's default quantity for the mode —
-           so the summary and total always match the card that was clicked. */
-        document.querySelectorAll(".pkg-card").forEach(function (card, idx) {
-          var btn = card.querySelector(".pkg-select");
-          if (!btn) return;
+           so the summary and total always match the pick that was clicked. */
+        document.querySelectorAll(".qp-btn").forEach(function (btn) {
           btn.addEventListener("click", function () {
             driveSource = "packages";
-            coPackage.value = SIZE_ORDER[idx] + "-1";
+            coPackage.value = btn.getAttribute("data-qpsize") + "-1";
             applyQtyMin(true);
             syncTableFromPackages();
             renderSummary();
@@ -2269,6 +2267,7 @@
            table's own math (sheet/1 pc rule, volume curve, adders). */
         function renderSummaryFromCalc() {
           var entry = calcEntry();
+          updateQuickPicks(entry.feat);
           var m = MATERIALS[calcMaterialEl.value];
           var sideIdx = calcSidesEl.value === "1" ? 1 : 0;
           var qty = calcQtyVal();
