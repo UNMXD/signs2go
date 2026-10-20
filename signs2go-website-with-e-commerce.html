@@ -1222,6 +1222,16 @@
       /* Post-order artwork section on the "Order in!" confirmation —
          the wizard's old artwork step, now an invitation shown after
          the order is placed. Nothing here gates anything. */
+      /* Test payment screen — demo only: nothing is processed, sent, or stored. */
+      .eo-payment { margin-top: 26px; }
+      .pay-test-banner { background: var(--black); color: var(--green); border-radius: 12px; padding: 14px 18px; margin-top: 20px; font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; font-size: 21px; line-height: 1.2; text-align: center; }
+      .pay-note { font-size: 16.5px; line-height: 1.55; margin-top: 16px; }
+      .pay-total { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; border-top: 1.5px solid var(--black); margin-top: 20px; padding-top: 14px; }
+      .pay-total .t-label { font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; text-transform: uppercase; font-size: 18px; }
+      .pay-total .t-value { font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; font-size: 34px; font-variant-numeric: tabular-nums lining-nums; white-space: nowrap; }
+      .eo-payment .btn[disabled] { opacity: 0.65; cursor: wait; }
+      /* Paid marker on the confirmation, above the artwork ask. */
+      .paid-badge { display: inline-flex; align-items: center; gap: 8px; margin-top: 16px; background: var(--green); color: var(--black); border: 2px solid var(--black); border-radius: 999px; padding: 9px 18px; font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; font-size: 17.5px; line-height: 1.2; }
       .eo-artwork { margin-top: 26px; border-top: 2px solid var(--black); padding-top: 22px; }
       .eo-artwork-title { font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; text-transform: uppercase; font-size: 26px; line-height: 1.1; }
       .eo-artwork-intro { font-size: 17.5px; line-height: 1.5; margin-top: 8px; }
@@ -1915,10 +1925,39 @@
                 </div>
               </div>
               <p class="form-error" id="eoError" role="alert"></p>
-              <button class="btn block" type="submit" id="eoSubmitBtn" hidden style="margin-top:20px">Place demo order</button>
+              <button class="btn block" type="submit" id="eoSubmitBtn" hidden style="margin-top:20px">Continue to payment</button>
               <p class="sample-note" style="margin-top:12px;text-align:center">Demo checkout — no payment is taken and no file leaves your device.</p>
             </form>
             <p class="restrictions-note">*Restrictions apply.</p>
+          </div>
+          <!-- TEST PAYMENT (separate view, reached via Continue to payment) -->
+          <div class="eo-payment" id="eoPayment" hidden>
+            <button type="button" class="btn ghost small" id="eoPayBack">&larr; Back to checkout</button>
+            <div class="step-head" style="margin-top:20px"><span class="step-num" aria-hidden="true">$</span><h3 class="display step-title"><span class="sr-only">Test payment — </span>Test payment</h3></div>
+            <p class="pay-test-banner">Test payment &mdash; demo only</p>
+            <p class="pay-note">This is a <strong>fake payment screen</strong> for testing how checkout flows. No real charge happens, nothing is processed, and no card details are sent or stored anywhere. <strong>Please don&rsquo;t enter a real card</strong> &mdash; the standard test card is already filled in below, so just hit Pay.</p>
+            <div class="pay-total">
+              <span class="t-label">Total to pay</span>
+              <span class="t-value" id="eoPayTotal">$0.00</span>
+            </div>
+            <form class="form-panel" id="eoPayForm" novalidate style="margin-top:22px">
+              <div class="form-grid">
+                <div class="full">
+                  <label class="f-label" for="eoCardNum">Card number</label>
+                  <input class="f-input" id="eoCardNum" type="text" inputmode="numeric" autocomplete="off" value="4242 4242 4242 4242" />
+                </div>
+                <div>
+                  <label class="f-label" for="eoCardExp">Expiry</label>
+                  <input class="f-input" id="eoCardExp" type="text" inputmode="numeric" autocomplete="off" value="12/34" />
+                </div>
+                <div>
+                  <label class="f-label" for="eoCardCvc">CVC</label>
+                  <input class="f-input" id="eoCardCvc" type="text" inputmode="numeric" autocomplete="off" value="123" />
+                </div>
+              </div>
+              <button class="btn block" type="submit" id="eoPayBtn" style="margin-top:20px">Pay &mdash; TEST</button>
+              <p class="sample-note" style="margin-top:12px;text-align:center">Test mode &mdash; hitting Pay just pretends the payment went through. No real money moves.</p>
+            </form>
           </div>
           <div class="confirm" id="eoConfirm" role="status">
             <div class="c-head">
@@ -1926,6 +1965,7 @@
               <h3>Order in!</h3>
             </div>
             <p id="eoConfirmText"></p>
+            <p class="paid-badge" id="eoPaidBadge" hidden></p>
             <div class="eo-confirm-list" id="eoConfirmList"></div>
             <p id="eoConfirmPickup" style="margin-top:14px"></p>
             <div class="eo-artwork" id="eoArtwork">
@@ -1961,7 +2001,7 @@
               </div>
             </div>
             <button type="button" class="btn black" id="eoDone" style="margin-top:18px">Back to site</button>
-            <p class="sample-note" style="margin-top:14px">Demo checkout — no payment was taken and this order wasn&rsquo;t sent anywhere. On the live site it goes straight to the shop.</p>
+            <p class="sample-note" style="margin-top:14px">Demo checkout — that was a test payment: no real charge was made and this order wasn&rsquo;t sent anywhere. On the live site it goes straight to the shop.</p>
           </div>
         </div>
       </div>
@@ -2104,6 +2144,7 @@
         var eoReturnPanel = "wizard";
         function showWizardView() {
           eoView = "wizard";
+          if (typeof cancelPendingPayment === "function") cancelPendingPayment();
           var co = document.getElementById("eoCheckout");
           if (co) co.hidden = true;
           var added = document.getElementById("wizAdded");
@@ -2111,6 +2152,7 @@
         }
         function showCheckoutView() {
           if (!cart.length) { showWizardView(); return; }
+          if (typeof cancelPendingPayment === "function") cancelPendingPayment();
           var addedEl = document.getElementById("wizAdded");
           var stepsEl = document.getElementById("wizardSteps");
           if (addedEl && !addedEl.hidden) eoReturnPanel = "added";
@@ -3155,7 +3197,7 @@
 
         var eoForm = document.getElementById("eoForm");
         var eoError = document.getElementById("eoError");
-        /* Place demo order stays unrendered until both required contact
+        /* Continue to payment stays unrendered until both required contact
            fields (name + phone) hold something; email stays optional. */
         var eoSubmitBtn = document.getElementById("eoSubmitBtn");
         function syncEoSubmit() {
@@ -3181,7 +3223,67 @@
             (name ? document.getElementById("eoPhone") : document.getElementById("eoName")).focus();
             return;
           }
-          var total = cartTotal();
+          /* Contact info checks out — the order itself is only placed
+             after the test payment below "succeeds". */
+          pendingOrder = { name: name, phone: phone, pickup: pickup, total: cartTotal() };
+          showPaymentView();
+        });
+
+        /* ================= test payment (demo only — nothing is processed, sent, or stored) ================= */
+        var pendingOrder = null;
+        var payTimer = null;
+        var eoPaymentEl = document.getElementById("eoPayment");
+        var eoPayBtn = document.getElementById("eoPayBtn");
+        function currentPayTotal() { return pendingOrder ? pendingOrder.total : cartTotal(); }
+        function resetPayButton() {
+          if (!eoPayBtn) return;
+          eoPayBtn.disabled = false;
+          eoPayBtn.textContent = "Pay " + money(currentPayTotal()) + " \u2014 TEST";
+        }
+        function showPaymentView() {
+          document.getElementById("eoCartWrap").hidden = true;
+          document.getElementById("eoConfirm").classList.remove("show");
+          document.getElementById("eoPaidBadge").hidden = true;
+          eoPaymentEl.hidden = false;
+          document.getElementById("eoPayTotal").textContent = money(currentPayTotal());
+          resetPayButton();
+          eoPaymentEl.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+        function hidePaymentView() {
+          if (payTimer) { clearTimeout(payTimer); payTimer = null; }
+          if (eoPaymentEl) eoPaymentEl.hidden = true;
+          resetPayButton();
+        }
+        /* Leaving the checkout (back to signs, reopening the builder)
+           abandons any in-flight test payment. The view helpers above
+           call this via function hoisting. */
+        function cancelPendingPayment() {
+          pendingOrder = null;
+          hidePaymentView();
+        }
+        document.getElementById("eoPayBack").addEventListener("click", function () {
+          hidePaymentView();
+          document.getElementById("eoCartWrap").hidden = false;
+          document.getElementById("eoCheckout").scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+        document.getElementById("eoPayForm").addEventListener("submit", function (e) {
+          e.preventDefault();
+          if (!pendingOrder || payTimer) return;
+          eoPayBtn.disabled = true;
+          eoPayBtn.textContent = "Processing test payment\u2026";
+          payTimer = setTimeout(function () {
+            payTimer = null;
+            var order = pendingOrder;
+            pendingOrder = null;
+            hidePaymentView();
+            completeDemoOrder(order);
+          }, 1100);
+        });
+        function completeDemoOrder(order) {
+          var name = order.name;
+          var phone = order.phone;
+          var pickup = order.pickup;
+          var total = order.total;
           var firstName = name.split(" ")[0];
           var ct = document.getElementById("eoConfirmText");
           ct.innerHTML = "";
@@ -3190,6 +3292,9 @@
           ct.appendChild(document.createTextNode(" \u2014 your demo order is in. We\u2019ll text "));
           var s2 = document.createElement("strong"); s2.textContent = phone; ct.appendChild(s2);
           ct.appendChild(document.createTextNode(" when it\u2019s ready (" + pickup + ")."));
+          var paidBadge = document.getElementById("eoPaidBadge");
+          paidBadge.textContent = "\u2713 Payment received \u2014 TEST \u00B7 " + money(total);
+          paidBadge.hidden = false;
           var list = document.getElementById("eoConfirmList");
           list.innerHTML = "";
           cart.forEach(function (it) {
@@ -3231,7 +3336,7 @@
           var confirmBox = document.getElementById("eoConfirm");
           confirmBox.classList.add("show");
           confirmBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
-        });
+        }
 
         /* ================= campaign signs quote view ================= */
         var cqScroll = 0;
