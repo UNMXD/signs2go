@@ -2118,9 +2118,11 @@
         var cart = [];
         function freshWizard() {
           return {
-            /* Material comes first now, and the recommended material
-               (Coroplast) arrives pre-selected — see renderWizard. */
-            mode: null, material: "coroplast", thickness: null, sizeKey: null, sides: 0, qty: null,
+            /* Material comes first now, and NOTHING arrives
+               pre-selected: Coroplast carries the RECOMMENDED tag
+               and reason as a suggestion only (see renderWizard),
+               and Step 1 completes only on an actual tap. */
+            mode: null, material: null, thickness: null, sizeKey: null, sides: 0, qty: null,
             stakes: "0", grommets: "none", flute: null,
             answered: { 1: false, 2: false, 3: false, 4: false, 5: false, 6: false, 7: false },
             open: 1, reached: 1
@@ -2210,16 +2212,13 @@
              choosing) keeps the step open until the tap happens.
              Pre-loaded flows set a thickness, so they stay answered. */
           if (wiz.material === "coroplast" && !wiz.thickness) wiz.answered[1] = false;
-          /* Smart material recommendation: material is Step 1 now and
-             Coroplast arrives pre-selected (see freshWizard). If a
-             later size pick clears the material (a size that material
-             doesn't come in), the new size's recommended material
-             takes over here. Nothing is locked — tapping any other
-             material switches exactly like always. */
-          if (wiz.sizeKey && wiz.answered[2] && !wiz.material) {
-            var rec0 = SIZE_RECS[wiz.sizeKey];
-            if (rec0 && entryFor(rec0.material, wiz.sizeKey)) wiz.material = rec0.material;
-          }
+          /* Smart material recommendation: display only. The
+             recommended material (Coroplast, or the size-specific
+             pick once a size is in) carries the RECOMMENDED tag and
+             the reason line below, but it is never selected for the
+             customer — Step 1 completes only on an actual tap, and
+             if a size pick clears the material, Step 1 simply waits
+             for a fresh pick, exactly like a new wizard. */
           for (var n = 1; n <= 7; n++) {
             var step = document.querySelector('[data-wstep="' + n + '"]');
             if (!step) continue;
@@ -2309,8 +2308,9 @@
            fits the size's typical use. Coroplast is the shop's core
            outdoor product, so it is the pick for every size — for
            24"x36" the reason also names the indoor alternative. The
-           recommended material arrives pre-selected at Step 1,
-           tagged RECOMMENDED with its reason, changeable in one tap. */
+           recommendation shows as the RECOMMENDED tag plus its
+           reason at Step 1 — a suggestion only; nothing is selected
+           until the customer taps a material. */
         var DEFAULT_REC = { material: "coroplast", reason: "Coroplast \u2014 the go-to material for yard, real estate & job-site signs: light, weatherproof, and made for H-stakes." };
         var SIZE_RECS = {
           s1812: { material: "coroplast", reason: "Coroplast \u2014 the pick for small yard signs & riders, and the only material we cut at this size." },
@@ -2462,8 +2462,10 @@
           wiz.sizeKey = btn.getAttribute("data-sizecard");
           /* Material comes first now: if a material was already
              picked (editing Step 2) and it doesn't come in the new
-             size — 18"x12" is Coroplast-only — clear it and let the
-             new size's recommendation take over at Step 1. */
+             size — 18"x12" is Coroplast-only — clear it; Step 1
+             reopens for a fresh pick, with the new size's
+             recommendation showing as a tag + reason, not a
+             selection. */
           if (wiz.material && !entryFor(wiz.material, wiz.sizeKey)) {
             wiz.material = null;
             wiz.answered[1] = false;
@@ -2568,9 +2570,10 @@
 
         /* ================= material-first entry =================
            A fresh Build Your Sign open starts at Step 1 (material):
-           resetWizard() leaves the fresh wizard there with Coroplast
-           pre-selected and tagged RECOMMENDED (DEFAULT_REC), the
-           Step 2 size cards list only the sizes that material comes
+           resetWizard() leaves the fresh wizard there with nothing
+           selected — Coroplast carries the RECOMMENDED tag and reason
+           (DEFAULT_REC) as a suggestion only. Once a material is
+           tapped, the Step 2 size cards list only the sizes it comes
            in, and each card carries a plain-English example of what
            the size is for. Pre-loaded flows from elsewhere (cart
            edit) never pass through here. */
