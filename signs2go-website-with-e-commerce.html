@@ -940,7 +940,7 @@
       }
       @media (prefers-reduced-motion: reduce) {
         html { scroll-behavior: auto; }
-        .btn, .product-card, .choice, .order-chip, .mat-opt, .thick-opt { transition: none; }
+        .btn, .product-card, .choice, .order-chip, .mat-opt, .thick-opt, .pick-opt { transition: none; }
         .p-step.current .p-dot::after { animation: none; }
       }
 
@@ -1026,17 +1026,21 @@
         letter-spacing: 0.03em; font-size: 14.5px; margin-top: 4px;
         box-shadow: inset 0 -0.30em 0 var(--green);
       }
-      .sides-row { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; justify-content: center; margin-top: 24px; }
-      .sides-row .sides-label { margin-bottom: 0; }
-      .sides-toggle { display: inline-flex; flex-wrap: wrap; justify-content: center; gap: 6px; border: 2px solid var(--black); border-radius: 999px; padding: 5px; background: var(--white); }
-      .sides-btn {
-        border: 2px solid transparent; background: transparent; color: var(--black);
-        border-radius: 999px; padding: 10px 24px; min-height: 48px;
+      /* Two-option picks (Step 4 sides, Step 6 flute direction): each
+         option is its own box in the same option-card treatment as the
+         material / thickness / size cards — plain white with a black
+         border until touched, green tint + ring on hover, and the
+         stronger green treatment once chosen. Nothing is pre-selected. */
+      .pick-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+      .pick-opt {
+        text-align: center; border: 2px solid var(--black); border-radius: 14px; background: var(--white);
+        color: var(--black); padding: 16px 18px; cursor: pointer; width: 100%;
         font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; text-transform: uppercase;
-        letter-spacing: 0.03em; font-size: 17.5px; line-height: 1.1; cursor: pointer;
+        letter-spacing: 0.03em; font-size: 20px; line-height: 1.1;
+        transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
       }
-      .sides-btn:hover { border-color: var(--black); }
-      .sides-btn[aria-pressed="true"] { background: var(--black); color: var(--white); border-color: var(--black); }
+      .pick-opt:not([aria-pressed="true"]):hover { transform: translateY(-2px); background: rgba(172, 229, 14, 0.16); box-shadow: inset 0 0 0 3px var(--green), 0 10px 22px rgba(172, 229, 14, 0.40); }
+      .pick-opt[aria-pressed="true"] { background: rgba(172, 229, 14, 0.38); box-shadow: inset 0 0 0 3px var(--green), inset 0 0 0 5.5px var(--black); }
       .size-zone .pkg-grid-note { margin-top: 20px; }
       .size-zone .calc-ink { margin-top: 10px; font-size: 16.5px; }
       .qty-zone { text-align: center; }
@@ -1081,7 +1085,6 @@
         .step-num { width: 40px; height: 40px; font-size: 20px; }
         .qty-step-btn { width: 54px; min-height: 54px; }
         .qty-input { width: 112px; min-height: 54px; }
-        .sides-btn { padding: 10px 18px; }
       }
 
       /* ---------- entry note (under the Step 2 size cards) ---------- */
@@ -1146,9 +1149,9 @@
       }
       .mat-rec-note { font-size: 16.5px; font-weight: 600; line-height: 1.45; margin-top: 14px; }
       .wiz-about { margin-top: 14px; }
-      /* Build Your Sign wizard only: the artwork dropzone's descriptive
-         sub-line at readable body size (the Political Signs wizard's
-         dropzone keeps the shared .dz-sub size). */
+      /* The order-confirmation artwork dropzone's descriptive sub-line
+         at readable body size (the Political Signs wizard's dropzone
+         keeps the shared .dz-sub size). */
       .easyorder .dropzone .dz-sub { font-size: 16px; line-height: 1.5; }
       /* Coroplast thickness sub-choice (Step 1, Coroplast only) */
       .thick-field { margin-top: 16px; }
@@ -1178,6 +1181,29 @@
       .wiz-added h3 { font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; text-transform: uppercase; font-size: 26px; line-height: 1.1; }
       .wiz-added p { font-size: 18.5px; margin-top: 8px; font-weight: 600; }
       .wiz-added-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
+      /* Big standalone "Add another sign?" block in the added-to-cart
+         panel: its own full-width row under the item summary, black
+         with green type, so it reads as the obvious next action and
+         is never confused with the green Check out button below it. */
+      .add-another-big {
+        display: block; width: 100%; margin-top: 20px; cursor: pointer;
+        background: var(--black); color: var(--green);
+        border: 2.5px solid var(--black); border-radius: 12px;
+        font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700;
+        text-transform: uppercase; letter-spacing: 0.02em;
+        font-size: 30px; line-height: 1.15; padding: 22px 20px; text-align: center;
+        transition: background 0.15s ease, color 0.15s ease;
+      }
+      .add-another-big:hover { background: var(--green); color: var(--black); }
+      .add-another-big:focus-visible { outline: 3px solid var(--green); outline-offset: 3px; }
+      /* Checkout note: artwork comes after payment, not before. */
+      .cart-art-note { margin-top: 14px; font-size: 17.5px; font-weight: 700; line-height: 1.45; }
+      /* Post-order artwork section on the "Order in!" confirmation —
+         the wizard's old artwork step, now an invitation shown after
+         the order is placed. Nothing here gates anything. */
+      .eo-artwork { margin-top: 26px; border-top: 2px solid var(--black); padding-top: 22px; }
+      .eo-artwork-title { font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; text-transform: uppercase; font-size: 26px; line-height: 1.1; }
+      .eo-artwork-intro { font-size: 17.5px; line-height: 1.5; margin-top: 8px; }
       .btn.ghost.is-chosen { background: rgba(172, 229, 14, 0.25); box-shadow: inset 0 0 0 2px var(--black); }
       .eo-checkout { margin-top: 46px; border-top: 2px solid var(--black); padding-top: 34px; scroll-margin-top: calc(var(--head-h, 87px) + 92px); }
       .cart-lines { display: grid; gap: 12px; margin: 20px 0 6px; }
@@ -1209,11 +1235,13 @@
       @media (max-width: 640px) {
         .mat-opts { grid-template-columns: 1fr; }
         .thick-opts { grid-template-columns: 1fr; }
+        .pick-opts { grid-template-columns: 1fr; }
         .wiz-step { padding: 18px 16px; }
         .wiz-title { font-size: 21px; }
         .cart-bar { padding: 10px 14px; top: calc(var(--head-h, 87px) + 8px); }
         .cb-text { font-size: 16.5px; }
         .wiz-price { font-size: 18px; }
+        .add-another-big { font-size: 25px; padding: 18px 14px; }
         .cart-line .cl-total { font-size: 19px; }
       }
     </style>
@@ -1728,12 +1756,9 @@
               <button type="button" class="btn ghost small wiz-edit" data-wedit="4" hidden>Edit</button>
             </div>
             <div class="wiz-body">
-              <div class="sides-row" style="margin-top:0">
-                <span class="f-label sides-label" id="wSidesLabel">Sides</span>
-                <div class="sides-toggle" role="group" aria-labelledby="wSidesLabel">
-                  <button type="button" class="sides-btn" data-wsides="0" aria-pressed="false">Single sided</button>
-                  <button type="button" class="sides-btn" data-wsides="1" aria-pressed="false">Double sided</button>
-                </div>
+              <div class="pick-opts" role="group" aria-label="One side or two?">
+                <button type="button" class="pick-opt" data-wsides="0" aria-pressed="false">Single sided</button>
+                <button type="button" class="pick-opt" data-wsides="1" aria-pressed="false">Double sided</button>
               </div>
             </div>
           </div>
@@ -1801,9 +1826,9 @@
               </div>
               <div class="flute-field" id="wFluteField" hidden>
                 <span class="f-label" id="wFluteLabel">Flute direction</span>
-                <div class="sides-toggle" role="group" aria-labelledby="wFluteLabel">
-                  <button type="button" class="sides-btn" data-wflute="vertical" aria-pressed="false">Vertical</button>
-                  <button type="button" class="sides-btn" data-wflute="horizontal" aria-pressed="false">Horizontal</button>
+                <div class="pick-opts" role="group" aria-labelledby="wFluteLabel">
+                  <button type="button" class="pick-opt" data-wflute="vertical" aria-pressed="false">Vertical</button>
+                  <button type="button" class="pick-opt" data-wflute="horizontal" aria-pressed="false">Horizontal</button>
                 </div>
                 <p class="flute-help">Vertical flutes are required for standard wire H-stakes. Horizontal flutes are better for wooden stakes, zip-ties, fences, or poles.</p>
                 <p class="flute-warn" id="wFluteWarn" hidden>Heads up &mdash; wire H-stakes need vertical flutes. We&rsquo;ll run these vertical unless you tell us otherwise.</p>
@@ -1812,47 +1837,6 @@
             </div>
           </div>
 
-          <!-- STEP 7 · artwork -->
-          <div class="wiz-step is-locked" data-wstep="7">
-            <div class="wiz-head">
-              <span class="step-num" aria-hidden="true">7</span>
-              <div class="wiz-head-text">
-                <h3 class="wiz-title">Artwork for this sign</h3>
-                <p class="wiz-summary" data-wsummary="7" hidden></p>
-              </div>
-              <button type="button" class="btn ghost small wiz-edit" data-wedit="7" hidden>Edit</button>
-            </div>
-            <div class="wiz-body">
-              <div class="art-fork">
-                <span class="f-label" id="wArtForkLabel">Do you have artwork for this sign?</span>
-                <div class="art-fork-opts" role="group" aria-labelledby="wArtForkLabel">
-                  <button type="button" class="art-fork-btn" data-artbranch="yes" aria-pressed="false">Yes, I have artwork</button>
-                  <button type="button" class="art-fork-btn" data-artbranch="no" aria-pressed="false">Not yet</button>
-                </div>
-              </div>
-              <div class="art-branch" id="wArtYesBranch" hidden>
-                <div class="dropzone" id="wDropzone" role="button" tabindex="0" aria-label="Upload artwork for this sign: drop files here or activate to browse files" aria-describedby="wDzSub">
-                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V5m0 0l-4 4m4-4l4 4"/><path d="M4 17v1.5A2.5 2.5 0 0 0 6.5 21h11A2.5 2.5 0 0 0 20 18.5V17"/></svg>
-                  <div class="dz-title">Drag &amp; drop your artwork here, or <span class="dz-browse">browse files</span></div>
-                  <div class="dz-drop-hint" aria-hidden="true">Let go to add your file</div>
-                  <div class="dz-sub" id="wDzSub">Tap or click to browse · PDF, PNG, JPG, GIF, WebP, SVG, AI or EPS · We check raster images instantly against the 300 DPI print standard at your selected sign size. You can add more than one file.</div>
-                  <input class="sr-only" id="wArtFile" type="file" accept=".pdf,.png,.jpg,.jpeg,.gif,.webp,.svg,.ai,.eps" multiple aria-labelledby="wSidesLabel" tabindex="-1" />
-                </div>
-                <div class="res-list" id="wDzList" aria-live="polite"></div>
-              </div>
-              <div class="art-branch" id="wArtNoBranch" hidden>
-                <span class="f-label" id="wArtNoLabel">How do you want to handle it?</span>
-                <div class="art-fork-opts" role="group" aria-labelledby="wArtNoLabel">
-                  <button type="button" class="art-fork-btn" data-artchoice="later" aria-pressed="false">I&rsquo;ll provide it later</button>
-                </div>
-              </div>
-              <p class="art-status" id="wArtStatus" role="status"></p>
-              <div class="art-req" style="margin-top:16px;margin-bottom:0">
-                <p class="art-req-head">We require print ready artwork.</p>
-                <p>Print-ready means <strong>300 DPI at full size</strong> — your file sized exactly to your sign, at 100% scale. PDF, vector, or a high-resolution image all work. Don&rsquo;t have artwork? If we design it for you, that&rsquo;s an extra fee — <strong>new design work runs $95–$295</strong> and <strong>artwork corrections $50–$75 per file</strong>. Sending artwork later? Email it to <strong>info@signs2go.us</strong> so we can match it to your order.</p>
-              </div>
-            </div>
-          </div>
 
           <div class="edit-banner" id="editBanner" hidden>Editing a cart item &mdash; change anything below, then Save changes. Cancel returns to your cart with nothing changed.</div>
           <div class="wiz-price" id="wizPriceLine"><span id="wizPriceText"></span></div>
@@ -1864,8 +1848,8 @@
         <div class="wiz-added" id="wizAdded" hidden>
           <h3>Added to cart ✓</h3>
           <p id="wizAddedText"></p>
+          <button type="button" class="add-another-big" id="addAnotherBtn">Add another sign?</button>
           <div class="wiz-added-actions">
-            <button type="button" class="btn black" id="addAnotherBtn">Add another sign</button>
             <button type="button" class="btn" id="addedCheckoutBtn">Check out</button>
           </div>
         </div>
@@ -1880,6 +1864,7 @@
               <span class="t-label">Grand total</span>
               <span class="t-value" id="cartGrandTotal">$0.00</span>
             </div>
+            <p class="cart-art-note">You&rsquo;ll send your artwork after payment &mdash; we check every file before printing.</p>
             <form class="form-panel" id="eoForm" novalidate style="margin-top:26px">
               <div class="form-grid">
                 <div>
@@ -1922,7 +1907,38 @@
             <p id="eoConfirmText"></p>
             <div class="eo-confirm-list" id="eoConfirmList"></div>
             <p id="eoConfirmPickup" style="margin-top:14px"></p>
-            <p id="eoConfirmArtwork" style="margin-top:10px"></p>
+            <div class="eo-artwork" id="eoArtwork">
+              <h4 class="eo-artwork-title">Now send your artwork</h4>
+              <p class="eo-artwork-intro">Your order is in &mdash; artwork comes after payment, not before. Send your file now and we&rsquo;ll check it before anything prints. No file yet? No problem &mdash; send it later, or let us design it for you.</p>
+              <div class="art-fork">
+                <span class="f-label" id="wArtForkLabel">Do you have artwork for this sign?</span>
+                <div class="art-fork-opts" role="group" aria-labelledby="wArtForkLabel">
+                  <button type="button" class="art-fork-btn" data-artbranch="yes" aria-pressed="false">Yes, I have artwork</button>
+                  <button type="button" class="art-fork-btn" data-artbranch="no" aria-pressed="false">Not yet</button>
+                </div>
+              </div>
+              <div class="art-branch" id="wArtYesBranch" hidden>
+                <div class="dropzone" id="wDropzone" role="button" tabindex="0" aria-label="Upload artwork for this sign: drop files here or activate to browse files" aria-describedby="wDzSub">
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V5m0 0l-4 4m4-4l4 4"/><path d="M4 17v1.5A2.5 2.5 0 0 0 6.5 21h11A2.5 2.5 0 0 0 20 18.5V17"/></svg>
+                  <div class="dz-title">Drag &amp; drop your artwork here, or <span class="dz-browse">browse files</span></div>
+                  <div class="dz-drop-hint" aria-hidden="true">Let go to add your file</div>
+                  <div class="dz-sub" id="wDzSub">Tap or click to browse · PDF, PNG, JPG, GIF, WebP, SVG, AI or EPS · We check raster images instantly against the 300 DPI print standard at your ordered sign size. You can add more than one file.</div>
+                  <input class="sr-only" id="wArtFile" type="file" accept=".pdf,.png,.jpg,.jpeg,.gif,.webp,.svg,.ai,.eps" multiple aria-label="Choose artwork files" tabindex="-1" />
+                </div>
+                <div class="res-list" id="wDzList" aria-live="polite"></div>
+              </div>
+              <div class="art-branch" id="wArtNoBranch" hidden>
+                <span class="f-label" id="wArtNoLabel">How do you want to handle it?</span>
+                <div class="art-fork-opts" role="group" aria-labelledby="wArtNoLabel">
+                  <button type="button" class="art-fork-btn" data-artchoice="later" aria-pressed="false">I&rsquo;ll provide it later</button>
+                </div>
+              </div>
+              <p class="art-status" id="wArtStatus" role="status"></p>
+              <div class="art-req" style="margin-top:16px;margin-bottom:0">
+                <p class="art-req-head">We require print ready artwork.</p>
+                <p>Print-ready means <strong>300 DPI at full size</strong> — your file sized exactly to your sign, at 100% scale. PDF, vector, or a high-resolution image all work. Don&rsquo;t have artwork? If we design it for you, that&rsquo;s an extra fee — <strong>new design work runs $95–$295</strong> and <strong>artwork corrections $50–$75 per file</strong>. Sending artwork later? Email it to <strong>info@signs2go.us</strong> so we can match it to your order.</p>
+              </div>
+            </div>
             <button type="button" class="btn black" id="eoDone" style="margin-top:18px">Back to site</button>
             <p class="sample-note" style="margin-top:14px">Demo checkout — no payment was taken and this order wasn&rsquo;t sent anywhere. On the live site it goes straight to the shop.</p>
           </div>
@@ -2131,7 +2147,7 @@
                before that, and the step completes only on the tap. */
             mode: null, material: null, thickness: null, sizeKey: null, sides: null, qty: null,
             stakes: "0", grommets: "none", flute: null,
-            answered: { 1: false, 2: false, 3: false, 4: false, 5: false, 6: false, 7: false },
+            answered: { 1: false, 2: false, 3: false, 4: false, 5: false, 6: false },
             open: 1, reached: 1
           };
         }
@@ -2155,8 +2171,7 @@
            grommets, and 10mm Coroplast takes none either — wire
            H-stakes are sized for 4mm flutes and don't work in 10mm,
            and 10mm is too heavy to grommet (shops drill holes
-           instead). Both skip the step entirely, like Foamboard,
-           and the artwork step renumbers. 4mm Coroplast and Max
+           instead). Both skip the step entirely. 4mm Coroplast and Max
            Metal finishing is unchanged. */
         function hasFinishingStep() {
           if (wiz.material === "foamboard") return false;
@@ -2166,7 +2181,7 @@
         /* Flute direction is a 4mm Coroplast-only question, and
            never for the full 4'x8' sheet or for 10mm. */
         function needsFlute() { return wiz.material === "coroplast" && wiz.thickness !== "10" && !!wiz.sizeKey && wiz.sizeKey !== "s48"; }
-        function displayStepNum(n) { return (!hasFinishingStep() && n === 7) ? 6 : n; }
+        function displayStepNum(n) { return n; }
         /* State hygiene: clear whatever the current material/size
            makes impossible. The flute is NEVER defaulted here —
            it stays null (neither pill pressed) until the customer
@@ -2209,11 +2224,6 @@
           if (n === 4) return wiz.sides ? "2 sides" : "1 side";
           if (n === 5) return "Qty " + wizQty() + " \u00B7 " + money(wizEach()) + " each";
           if (n === 6) { var l = adderLabelsFor(wiz.stakes, wiz.grommets); if (needsFlute()) l.push("Flutes: " + (wiz.flute || "vertical")); return l.length ? l.join(" \u00B7 ") : "No add-ons"; }
-          if (n === 7) {
-            if (artBranch === "yes" && artworkFiles.length) return "Artwork: " + artworkFiles.length + (artworkFiles.length === 1 ? " file" : " files") + " uploaded";
-            if (artBranch === "no" && artNoChoice === "later") return "Artwork: you\u2019ll provide it later";
-            return "";
-          }
           return "";
         }
 
@@ -2232,7 +2242,7 @@
              customer — Step 1 completes only on an actual tap, and
              if a size pick clears the material, Step 1 simply waits
              for a fresh pick, exactly like a new wizard. */
-          for (var n = 1; n <= 7; n++) {
+          for (var n = 1; n <= 6; n++) {
             var step = document.querySelector('[data-wstep="' + n + '"]');
             if (!step) continue;
             var skipped = n === 6 && !hasFinishingStep();
@@ -2410,12 +2420,10 @@
           if (wiz.sizeKey && wiz.material) {
             wiz.qty = wiz.qty == null ? wizMinQty() : wizNormalizeQty(wiz.qty);
           }
-          var nextLogical = n + 1;
-          if (nextLogical === 6 && !hasFinishingStep()) nextLogical = 7;
-          wiz.reached = Math.max(wiz.reached, Math.min(7, nextLogical));
+          wiz.reached = Math.max(wiz.reached, Math.min(6, n + 1));
           var next = 0;
           for (var i = 1; i <= 6; i++) { if (i === 6 && !hasFinishingStep()) continue; if (!wiz.answered[i]) { next = i; break; } }
-          wiz.open = next || 7;
+          wiz.open = next;
           if (wiz.open > wiz.reached) wiz.reached = wiz.open;
           renderWizard();
           var target = document.querySelector('[data-wstep="' + wiz.open + '"]');
@@ -2595,12 +2603,14 @@
         var artFile = document.getElementById("wArtFile");
         var dzList = document.getElementById("wDzList");
         var artStatus = document.getElementById("wArtStatus");
-        var artBranch = null;   // null | "yes" | "no" — the step-6 fork answer
+        var artBranch = null;   // null | "yes" | "no" — the confirmation artwork fork answer
         var artNoChoice = null; // null | "later" — the Not-yet follow-up
         var artworkFiles = []; // {id, file, name, size, kind, width, height, dpi, roundedDpi, isPass, printLabel}
         var artworkSeq = 0;
+        var orderPrintSize = null; // set when an order is placed: the largest sign in that order, so the confirmation's DPI checker measures against the size actually ordered
 
         function getCurrentPrintSize() {
+          if (orderPrintSize) return orderPrintSize;
           var key = wiz.sizeKey || "s24";
           var dims = CALC_DIMS[key] || { w: 24, h: 18 };
           var label = dims.w + "\u201D\u00D7" + dims.h + "\u201D";
@@ -2674,10 +2684,10 @@
             var v = document.createElement("p"); v.className = "res-verdict"; v.textContent = verdictText(entry); item.appendChild(v);
             if (entry.kind === "raster" && !entry.isPass) {
               var d = document.createElement("p"); d.className = "res-detail";
-              d.innerHTML = "Your options: <strong>upload a larger file instead</strong> using the dropzone above, or <strong>keep this file and proceed anyway</strong> \u2014 your choice, we won\u2019t block your order. This low-resolution flag rides along on this cart item so the shop sees it. Need help? If we design or fix it for you, that\u2019s an extra fee \u2014 <strong>new design $95\u2013$295</strong>, <strong>corrections $50\u2013$75 per file</strong>.";
+              d.innerHTML = "Your options: <strong>upload a larger file instead</strong> using the dropzone above, or <strong>keep this file</strong> \u2014 your choice. This low-resolution flag goes to the shop with your order so they see it. Need help? If we design or fix it for you, that\u2019s an extra fee \u2014 <strong>new design $95\u2013$295</strong>, <strong>corrections $50\u2013$75 per file</strong>.";
               item.appendChild(d);
             } else if (entry.kind === "raster" && entry.isPass) {
-              var d2 = document.createElement("p"); d2.className = "res-detail"; d2.textContent = "This file meets the 300 DPI print standard at your selected size. If you change to a larger sign size, we\u2019ll re-check it automatically.";
+              var d2 = document.createElement("p"); d2.className = "res-detail"; d2.textContent = "This file meets the 300 DPI print standard at your ordered sign size.";
               item.appendChild(d2);
             } else if (entry.kind === "proof") {
               var d3 = document.createElement("p"); d3.className = "res-detail"; d3.textContent = entry.name + " \u2014 we can\u2019t reliably measure PDF, AI or EPS resolution in the browser, so there\u2019s no fake verdict here. We\u2019ll verify it when we proof your order.";
@@ -2695,9 +2705,9 @@
           if (artBranch === "no" && artNoChoice === "later") artStatus.textContent = "Artwork: you\u2019ll provide it later \u2014 email it to info@signs2go.us when you\u2019re ready and we\u2019ll match it to your order.";
           else if (artBranch === "no") artStatus.textContent = "";
           else if (!artworkFiles.length) { artStatus.textContent = ""; }
-          else if (artworkFiles.some(function (e) { return e.kind === "raster" && !e.isPass; })) artStatus.textContent = "\u26A0 One or more files are below the 300 DPI print standard \u2014 see the warning above. You can still add this sign to your cart; the flag rides along on the item.";
+          else if (artworkFiles.some(function (e) { return e.kind === "raster" && !e.isPass; })) artStatus.textContent = "\u26A0 One or more files are below the 300 DPI print standard \u2014 see the warning above. Your order is already in; the flag goes to the shop with your files so they can follow up.";
           else if (artworkFiles.some(function (e) { return e.kind === "error"; })) artStatus.textContent = "One file couldn\u2019t be read \u2014 try another file and we\u2019ll check it right away.";
-          else if (artworkFiles.every(function (e) { return e.kind === "vector" || (e.kind === "raster" && e.isPass); })) artStatus.textContent = "Artwork checked \u2014 print-ready at your selected sign size.";
+          else if (artworkFiles.every(function (e) { return e.kind === "vector" || (e.kind === "raster" && e.isPass); })) artStatus.textContent = "Artwork checked \u2014 print-ready at your ordered sign size.";
           else artStatus.textContent = "Artwork attached. PDF, AI and EPS files will have their resolution verified when we proof them.";
           syncArtworkGate();
         }
@@ -2804,24 +2814,12 @@
         });
         document.addEventListener("drop", function () { dzSetDrag(false); });
         window.__s2gDrop = { handleFiles: handleArtworkFiles, openPicker: openArtworkPicker, isDragging: function () { return dropzone.classList.contains("drag"); } };
-        /* Step-7 fork: completion comes from the ACTIVE branch only —
-           Yes needs at least one file; Not yet needs its follow-up
-           choice. Files and the follow-up choice each persist while
-           the other branch is active, so switching back restores them. */
-        function artworkComplete() {
-          if (artBranch === "yes") return artworkFiles.length > 0;
-          if (artBranch === "no") return !!artNoChoice;
-          return false;
-        }
-        var artWasComplete = false;
-        function syncArtworkGate() {
-          var c = artworkComplete();
-          wiz.answered[7] = c;
-          if (c && !artWasComplete && wiz.open === 7) wiz.open = 0;
-          artWasComplete = c;
-          updateAddToCartVisibility();
-          renderWizard();
-        }
+        /* The fork's two branches each keep their own state while the
+           other is active, so switching back restores them. Artwork
+           lives on the post-order confirmation now — it never gates
+           the wizard or Add to Cart, so the gate hook the artwork
+           list calls after every change is intentionally empty. */
+        function syncArtworkGate() {}
         function renderArtworkFork() {
           document.querySelectorAll("[data-artbranch]").forEach(function (b) {
             b.setAttribute("aria-pressed", b.getAttribute("data-artbranch") === artBranch ? "true" : "false");
@@ -2848,56 +2846,23 @@
         });
         window.__s2gResCheck = { getFiles: function () { return artworkFiles; }, recheck: recheckArtwork, effectiveDpi: effectiveDpi, getSize: getCurrentPrintSize };
         function resetArtwork() {
+          orderPrintSize = null;
           artBranch = null;
           artNoChoice = null;
           artworkFiles = [];
           artFile.value = "";
           renderArtworkList();
         }
-        function restoreArtwork(aw) {
-          resetArtwork();
-          if (!aw) return;
-          if (aw.type === "later") { artBranch = "no"; artNoChoice = "later"; }
-          else if (aw.type === "files") {
-            artBranch = "yes";
-            artworkFiles = (aw.files || []).map(function (f) {
-              return { id: ++artworkSeq, file: null, name: f.name, size: 0, kind: f.kind, width: 0, height: 0, dpi: f.roundedDpi || 0, roundedDpi: f.roundedDpi || 0, isPass: !!f.isPass, printLabel: getCurrentPrintSize().label, printKey: getCurrentPrintSize().key };
-            });
-          }
-          renderArtworkList();
-        }
-        function snapshotArtwork() {
-          if (artBranch === "no") {
-            return { type: "later", files: [] };
-          }
-          return {
-            type: "files",
-            files: artworkFiles.map(function (en) {
-              return { name: en.name, kind: en.kind, isPass: !!en.isPass, roundedDpi: en.roundedDpi || 0 };
-            })
-          };
-        }
-        function artworkSummaryText(aw) {
-          if (!aw || aw.type === "later") return "you\u2019ll provide it later";
-          return aw.files.map(function (f) {
-            if (f.kind === "vector") return f.name + " \u2713 print-ready";
-            if (f.kind === "proof") return f.name + " \u2014 checked at proof";
-            if (f.kind === "error") return f.name + " \u2014 couldn\u2019t read file";
-            if (f.kind === "checking") return f.name + " \u2014 checking\u2026";
-            return f.isPass ? f.name + " \u2713 print-ready (\u2248" + f.roundedDpi + " DPI)" : f.name + " \u26A0 low-res \u2248" + f.roundedDpi + " DPI";
-          }).join("; ");
-        }
-
         /* ================= cart + checkout ================= */
-        /* Add to Cart stays unrendered until the wizard is fully answered
-           AND the step-7 artwork fork is complete on its active branch
-           (a file uploaded, or "provide it later"). */
+        /* Add to Cart stays unrendered until the wizard is fully
+           answered (steps 1-6). Artwork is not part of it — artwork
+           happens after the order is placed, on the confirmation. */
         function wizardReadyForCart() {
           for (var i = 1; i <= 6; i++) {
             if (i === 6 && !hasFinishingStep()) continue;
             if (!wiz.answered[i]) return false;
           }
-          return artworkComplete();
+          return true;
         }
         var editingIndex = -1;
         function updateAddToCartVisibility() {
@@ -2975,10 +2940,8 @@
           syncFinishingState();
           wiz.answered[1] = true; wiz.answered[2] = true; wiz.answered[3] = true; wiz.answered[4] = true; wiz.answered[5] = true;
           wiz.answered[6] = hasFinishingStep();
-          wiz.reached = 7;
+          wiz.reached = 6;
           wiz.open = 0;
-          restoreArtwork(it.artwork);
-          wiz.answered[7] = artworkComplete();
           eoView = "wizard";
           document.getElementById("eoCheckout").hidden = true;
           document.getElementById("wizardSteps").hidden = false;
@@ -3017,7 +2980,7 @@
             var main = document.createElement("div"); main.className = "cl-main";
             var txt = document.createElement("div");
             txt.className = "cl-text";
-            txt.textContent = itemDesc(it) + " \u00B7 Artwork: " + artworkSummaryText(it.artwork);
+            txt.textContent = itemDesc(it);
             main.appendChild(txt);
             var eachLine = document.createElement("div"); eachLine.className = "cl-each";
             eachLine.textContent = money(it.each) + " each \u00D7 " + it.qty + " = " + money(it.total);
@@ -3029,7 +2992,7 @@
             minus.addEventListener("click", function () { var step = itemStepQty(it); it.qty = normalizeItemQty(it, it.qty - step); repriceItem(it); renderCart(); });
             qtyRow.appendChild(minus);
             var qInput = document.createElement("input"); qInput.type = "number"; qInput.className = "f-input cl-qty-input"; qInput.value = it.qty; qInput.min = itemMinQty(it); qInput.step = itemStepQty(it); qInput.setAttribute("aria-label", "Quantity for " + itemDesc(it)); qInput.setAttribute("data-cart-qty-input", String(idx));
-            qInput.addEventListener("input", function () { var v = Math.round(Number(qInput.value)); if (isFinite(v) && v >= 1) { it.qty = normalizeItemQty(it, v); repriceItem(it); txt.textContent = itemDesc(it) + " \u00B7 Artwork: " + artworkSummaryText(it.artwork); qInput.setAttribute("aria-label", "Quantity for " + itemDesc(it)); eachLine.textContent = money(it.each) + " each \u00D7 " + it.qty + " = " + money(it.total); var totEl = li.querySelector(".cl-total"); if (totEl) totEl.textContent = money(it.total); document.getElementById("cartGrandTotal").textContent = money(cartTotal()); var barEl = document.getElementById("cartBarText"); barEl.innerHTML = "Your cart \u00B7 " + cart.length + (cart.length === 1 ? " item" : " items") + " \u00B7 <span class=\"cb-amt\">" + money(cartTotal()) + "</span>"; } });
+            qInput.addEventListener("input", function () { var v = Math.round(Number(qInput.value)); if (isFinite(v) && v >= 1) { it.qty = normalizeItemQty(it, v); repriceItem(it); txt.textContent = itemDesc(it); qInput.setAttribute("aria-label", "Quantity for " + itemDesc(it)); eachLine.textContent = money(it.each) + " each \u00D7 " + it.qty + " = " + money(it.total); var totEl = li.querySelector(".cl-total"); if (totEl) totEl.textContent = money(it.total); document.getElementById("cartGrandTotal").textContent = money(cartTotal()); var barEl = document.getElementById("cartBarText"); barEl.innerHTML = "Your cart \u00B7 " + cart.length + (cart.length === 1 ? " item" : " items") + " \u00B7 <span class=\"cb-amt\">" + money(cartTotal()) + "</span>"; } });
             qInput.addEventListener("change", function () { var nq = normalizeItemQty(it, qInput.value); if (nq !== it.qty) { it.qty = nq; repriceItem(it); renderCart(); } else { qInput.value = it.qty; } });
             qtyRow.appendChild(qInput);
             var plus = document.createElement("button"); plus.type = "button"; plus.className = "cl-qty-btn"; plus.textContent = "+"; plus.setAttribute("aria-label", "Increase quantity"); plus.setAttribute("data-cart-qty-plus", String(idx));
@@ -3131,14 +3094,6 @@
               return;
             }
           }
-          if (!artworkComplete()) {
-            wiz.open = 7;
-            renderWizard();
-            var st6 = document.querySelector('[data-wstep="7"]');
-            if (st6) st6.scrollIntoView({ behavior: "smooth", block: "start" });
-            showWizMsg("One more thing \u2014 answer the artwork question above: upload your file or choose to provide it later.");
-            return;
-          }
           var e = wizEntry();
           var q = wizQty();
           syncFinishingState();
@@ -3147,7 +3102,7 @@
             mode: wiz.mode, material: wiz.material, thickness: wiz.material === "coroplast" ? wiz.thickness : "4", sizeKey: wiz.sizeKey, sizeLabel: e.label,
             sides: wiz.sides, qty: q, stakes: (wiz.material === "coroplast" && wiz.thickness === "10") ? "0" : wiz.stakes, grommets: (wiz.material === "coroplast" && wiz.thickness === "10") ? "none" : wiz.grommets,
             flute: needsFlute() ? (wiz.flute || "vertical") : null,
-            each: each, total: each * q, artwork: snapshotArtwork()
+            each: each, total: each * q
           };
           if (editingIndex >= 0 && cart[editingIndex]) {
             cart[editingIndex] = item;
@@ -3218,7 +3173,7 @@
             var row = document.createElement("div");
             row.className = "row";
             var l = document.createElement("span");
-            l.textContent = itemDesc(it) + " \u00B7 Artwork: " + artworkSummaryText(it.artwork);
+            l.textContent = itemDesc(it);
             var r = document.createElement("span");
             r.textContent = money(it.total);
             row.appendChild(l);
@@ -3234,16 +3189,18 @@
           list.appendChild(trow);
           document.getElementById("eoConfirmPickup").textContent =
             "Pickup: Signs2Go \u00B7 304 E Pecan Blvd Ste U, McAllen, TX 78501 \u2014 to schedule a pickup, call our factory at (956) 322-5588.";
-          var hasLaterArt = cart.some(function (it) { return it.artwork && it.artwork.type === "later"; });
-          document.getElementById("eoConfirmArtwork").textContent = hasLaterArt
-            ? "Sending artwork later? Email it to info@signs2go.us so we can match it to your order."
-            : "";
+          var biggest = null;
+          cart.forEach(function (it) {
+            var d = CALC_DIMS[it.sizeKey] || { w: 24, h: 18 };
+            if (!biggest || d.w * d.h > biggest.w * biggest.h) biggest = { w: d.w, h: d.h, label: it.sizeLabel, key: "order:" + it.sizeKey };
+          });
           cart = [];
           renderCart();
           document.getElementById("eoCartWrap").hidden = true;
           document.getElementById("eoCheckout").hidden = false;
           eoView = "checkout";
           resetWizard();
+          orderPrintSize = biggest;
           document.getElementById("eoCheckout").hidden = false;
           eoView = "checkout";
           document.getElementById("wizardSteps").hidden = true;
