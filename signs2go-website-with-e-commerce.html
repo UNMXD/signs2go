@@ -1007,10 +1007,12 @@
       .size-card:not([aria-pressed="true"]):hover { background: rgba(172, 229, 14, 0.16); box-shadow: inset 0 0 0 3px var(--green); }
       .size-card[aria-pressed="true"] { background: rgba(172, 229, 14, 0.38); box-shadow: inset 0 0 0 3px var(--green), inset 0 0 0 5.5px var(--black); }
       .size-card.featured { border-width: 3px; }
-      /* Loud tags at the top of the card: POPULAR is solid
-         brand green with black text; BEST DEAL is the inverse —
-         solid black with green text — so the pair reads apart. */
-      .sc-badges { align-self: flex-start; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; margin-bottom: 10px; }
+      /* Fixed-height badge slot at the top of every card: only the
+         black BEST DEAL tag (4'x8') ever sits in it, and the slot is
+         rendered on every card — empty or not — at one fixed height,
+         so the size label and example line start at the exact same
+         vertical position in every card in the grid. */
+      .sc-badges { align-self: flex-start; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; margin-bottom: 10px; height: 40px; flex: 0 0 40px; }
       .sc-badge {
         font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; text-transform: uppercase;
         letter-spacing: 0.03em; font-size: 17px; line-height: 1.15;
@@ -2336,10 +2338,9 @@
           var html = "";
           (CALC_DATA[wiz.material] || CALC_DATA.coroplast).forEach(function (s) {
             var badges = "";
-            if (s.feat) badges += "<span class=\"sc-badge\">\u2605 Popular</span>";
             if (s.key === "s48") badges += "<span class=\"sc-badge sc-badge--deal\">Best deal \u00B7 Full sheet</span>";
             var hint = SIZE_HINTS[s.key] ? "<span class=\"sc-hint\">" + SIZE_HINTS[s.key] + "</span>" : "";
-            html += "<button type=\"button\" class=\"size-card" + (s.key === "s48" ? " featured" : "") + "\" data-sizecard=\"" + s.key + "\" aria-pressed=\"" + (s.key === wiz.sizeKey ? "true" : "false") + "\">" + (badges ? "<span class=\"sc-badges\">" + badges + "</span>" : "") + "<span class=\"sc-size\">" + s.label + "</span>" + hint + "</button>";
+            html += "<button type=\"button\" class=\"size-card" + (s.key === "s48" ? " featured" : "") + "\" data-sizecard=\"" + s.key + "\" aria-pressed=\"" + (s.key === wiz.sizeKey ? "true" : "false") + "\">" + "<span class=\"sc-badges\">" + badges + "</span>" + "<span class=\"sc-size\">" + s.label + "</span>" + hint + "</button>";
           });
           grid.innerHTML = html;
         }
