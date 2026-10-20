@@ -1733,7 +1733,7 @@
               <div class="sides-row" style="margin-top:0">
                 <span class="f-label sides-label" id="wSidesLabel">Sides</span>
                 <div class="sides-toggle" role="group" aria-labelledby="wSidesLabel">
-                  <button type="button" class="sides-btn" data-wsides="0" aria-pressed="true">Single sided</button>
+                  <button type="button" class="sides-btn" data-wsides="0" aria-pressed="false">Single sided</button>
                   <button type="button" class="sides-btn" data-wsides="1" aria-pressed="false">Double sided</button>
                 </div>
               </div>
@@ -1804,7 +1804,7 @@
               <div class="flute-field" id="wFluteField" hidden>
                 <span class="f-label" id="wFluteLabel">Flute direction</span>
                 <div class="sides-toggle" role="group" aria-labelledby="wFluteLabel">
-                  <button type="button" class="sides-btn" data-wflute="vertical" aria-pressed="true">Vertical</button>
+                  <button type="button" class="sides-btn" data-wflute="vertical" aria-pressed="false">Vertical</button>
                   <button type="button" class="sides-btn" data-wflute="horizontal" aria-pressed="false">Horizontal</button>
                 </div>
                 <p class="flute-help">Vertical flutes are required for standard wire H-stakes. Horizontal flutes are better for wooden stakes, zip-ties, fences, or poles.</p>
@@ -2127,8 +2127,11 @@
             /* Material comes first now, and NOTHING arrives
                pre-selected: Coroplast carries the RECOMMENDED tag
                and reason as a suggestion only (see renderWizard),
-               and Step 1 completes only on an actual tap. */
-            mode: null, material: null, thickness: null, sizeKey: null, sides: 0, qty: null,
+               and Step 1 completes only on an actual tap. Sides is
+               the same rule: null until the customer taps Single or
+               Double sided at Step 4 — neither pill renders pressed
+               before that, and the step completes only on the tap. */
+            mode: null, material: null, thickness: null, sizeKey: null, sides: null, qty: null,
             stakes: "0", grommets: "none", flute: null,
             answered: { 1: false, 2: false, 3: false, 4: false, 5: false, 6: false, 7: false },
             open: 1, reached: 1
@@ -2167,16 +2170,18 @@
         function needsFlute() { return wiz.material === "coroplast" && wiz.thickness !== "10" && !!wiz.sizeKey && wiz.sizeKey !== "s48"; }
         function displayStepNum(n) { return (!hasFinishingStep() && n === 7) ? 6 : n; }
         /* State hygiene: clear whatever the current material/size
-           makes impossible, and default the flute to Vertical when
-           it applies. Switching thickness 4mm -> 10mm clears any
-           stakes/grommets/flute already answered. */
+           makes impossible. The flute is NEVER defaulted here —
+           it stays null (neither pill pressed) until the customer
+           taps Vertical or Horizontal; the cart line falls back to
+           the shop default at add-to-cart time only. Switching
+           thickness 4mm -> 10mm clears any stakes/grommets/flute
+           already answered. */
         function syncFinishingState() {
           if (wiz.material !== "coroplast") { wiz.stakes = "0"; wiz.flute = null; }
           if (wiz.material === "foamboard") { wiz.stakes = "0"; wiz.grommets = "none"; wiz.flute = null; }
           if (wiz.material === "coroplast" && wiz.thickness === "10") { wiz.stakes = "0"; wiz.grommets = "none"; wiz.flute = null; }
           if (!hasFinishingStep() && wiz.material) { wiz.stakes = wiz.material === "maxmetal" ? wiz.stakes : "0"; if (wiz.material !== "maxmetal") wiz.grommets = "none"; wiz.flute = null; }
           if (wiz.material === "coroplast" && wiz.sizeKey === "s48") { wiz.flute = null; }
-          if (needsFlute() && !wiz.flute) { wiz.flute = "vertical"; }
         }
         function wizMinQty() { var e = wizEntry(); if (!e) return 1; return wiz.mode === "onepc" ? 1 : e.pps; }
         function wizStepQty() { var e = wizEntry(); if (!e) return 1; return wiz.mode === "onepc" ? 1 : (e.key === "s44" ? 2 : 1); }
@@ -2192,7 +2197,11 @@
         }
         function wizQty() { return wiz.qty == null ? wizMinQty() : wizNormalizeQty(wiz.qty); }
         function wizAdders() { return (STAKES_ADD[wiz.stakes] || 0) + (GROMMETS_ADD[wiz.grommets] || 0); }
-        function wizSignEach() { var e = wizEntry(); if (!e) return 0; return signPriceFor(e, wiz.sides, wizQty(), wiz.mode); }
+        /* Price math before Step 4 is answered prices as single
+           sided (the display estimate only — sides itself stays
+           null and unselected until the customer taps a pill). */
+        function wizSideIdx() { return wiz.sides == null ? 0 : wiz.sides; }
+        function wizSignEach() { var e = wizEntry(); if (!e) return 0; return signPriceFor(e, wizSideIdx(), wizQty(), wiz.mode); }
         function wizEach() { return wizSignEach() + wizAdders(); }
 
         function wizSummaryText(n) {
@@ -2201,7 +2210,7 @@
           if (n === 3) return wiz.mode === "onepc" ? "One Sign \u2014 single-sign price, no minimum" : "Wholesale (sheet qty) \u2014 lowest per-sign prices, minimums apply";
           if (n === 4) return wiz.sides ? "2 sides" : "1 side";
           if (n === 5) return "Qty " + wizQty() + " \u00B7 " + money(wizEach()) + " each";
-          if (n === 6) { var l = adderLabelsFor(wiz.stakes, wiz.grommets); if (needsFlute() && wiz.flute) l.push("Flutes: " + wiz.flute); return l.length ? l.join(" \u00B7 ") : "No add-ons"; }
+          if (n === 6) { var l = adderLabelsFor(wiz.stakes, wiz.grommets); if (needsFlute()) l.push("Flutes: " + (wiz.flute || "vertical")); return l.length ? l.join(" \u00B7 ") : "No add-ons"; }
           if (n === 7) {
             if (artBranch === "yes" && artworkFiles.length) return "Artwork: " + artworkFiles.length + (artworkFiles.length === 1 ? " file" : " files") + " uploaded";
             if (artBranch === "no" && artNoChoice === "later") return "Artwork: you\u2019ll provide it later";
@@ -2351,7 +2360,7 @@
           if (wiz.mode === "onepc") return "1 pc price \u2014 the single-sign price, no minimum.";
           if (e.pps === 1) return "Full-sheet size \u2014 wholesale price at any quantity.";
           if (q >= e.pps) return "Wholesale per-piece price \u2014 you\u2019re at sheet quantity.";
-          return "1 pc price \u2014 order " + e.pps + "+ and each drops to " + money(e.ws[wiz.sides]) + ".";
+          return "1 pc price \u2014 order " + e.pps + "+ and each drops to " + money(e.ws[wizSideIdx()]) + ".";
         }
         function renderWizQty(rewriteField) {
           var e = wizEntry();
@@ -2373,7 +2382,7 @@
           CALC_TIERS.forEach(function (t) { if (q >= t) bracket = t; });
           var html = "";
           CALC_TIERS.forEach(function (t) {
-            var p = signPriceFor(e, wiz.sides, t, wiz.mode) + wizAdders();
+            var p = signPriceFor(e, wizSideIdx(), t, wiz.mode) + wizAdders();
             html += "<button type=\"button\" class=\"ladder-cell" + (t === bracket ? " active" : "") + "\" data-wtier=\"" + t + "\" aria-pressed=\"" + (t === bracket ? "true" : "false") + "\" aria-label=\"Set quantity to " + t + "\"><span class=\"lq\">" + t + "</span><span class=\"lp\">" + money(p) + "</span></button>";
           });
           ladderEl.innerHTML = html;
@@ -3139,7 +3148,7 @@
           var item = {
             mode: wiz.mode, material: wiz.material, thickness: wiz.material === "coroplast" ? wiz.thickness : "4", sizeKey: wiz.sizeKey, sizeLabel: e.label,
             sides: wiz.sides, qty: q, stakes: (wiz.material === "coroplast" && wiz.thickness === "10") ? "0" : wiz.stakes, grommets: (wiz.material === "coroplast" && wiz.thickness === "10") ? "none" : wiz.grommets,
-            flute: needsFlute() ? wiz.flute : null,
+            flute: needsFlute() ? (wiz.flute || "vertical") : null,
             each: each, total: each * q, artwork: snapshotArtwork()
           };
           if (editingIndex >= 0 && cart[editingIndex]) {
