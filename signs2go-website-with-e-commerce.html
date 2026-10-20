@@ -1084,20 +1084,8 @@
         .sides-btn { padding: 10px 18px; }
       }
 
-      /* ---------- what are you making? entry tiles ---------- */
-      .making {
-        border: 2px solid var(--black); border-radius: 16px; padding: 22px 24px;
-        margin-bottom: 18px; background: var(--white); scroll-margin-top: calc(var(--head-h, 87px) + 92px);
-      }
-      .making-title {
-        font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; text-transform: uppercase;
-        font-size: clamp(28px, 3.8vw, 40px); line-height: 1.05;
-      }
-      .making-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 18px; }
-      .make-tile { min-height: 108px; }
+      /* ---------- size-first entry note (under the Step 1 size cards) ---------- */
       .making-note { font-size: 17px; font-weight: 600; margin-top: 16px; }
-      @media (max-width: 960px) { .making-grid { grid-template-columns: repeat(2, 1fr); } }
-      @media (max-width: 640px) { .making { padding: 18px 16px; } .making-grid { grid-template-columns: 1fr; } .make-tile { min-height: 0; } }
 
       /* ---------- easy order view ---------- */
       [hidden] { display: none !important; }
@@ -1147,6 +1135,16 @@
       .mat-opt[aria-pressed="true"] { background: rgba(172, 229, 14, 0.38); box-shadow: inset 0 0 0 3px var(--green), inset 0 0 0 5.5px var(--black); }
       .mo-name { display: block; font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; text-transform: uppercase; font-size: 22px; line-height: 1.1; }
       .mo-sub { display: block; font-size: 15.5px; margin-top: 4px; }
+      /* RECOMMENDED tag on the material that fits the chosen size,
+         plus its one-line reason under the material options. */
+      .mo-rec {
+        display: inline-block; margin-top: 10px;
+        font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 0.03em; font-size: 14px; line-height: 1.15;
+        border: 2px solid var(--black); border-radius: 8px; padding: 4px 10px;
+        background: var(--green); color: var(--black);
+      }
+      .mat-rec-note { font-size: 16.5px; font-weight: 600; line-height: 1.45; margin-top: 14px; }
       .wiz-about { margin-top: 14px; }
       /* Coroplast thickness sub-choice (Step 2, Coroplast only) */
       .thick-field { margin-top: 16px; }
@@ -1624,47 +1622,32 @@
           <button type="button" class="btn small" id="cartBarCheckout" hidden>Check out</button>
         </div>
 
-        <div class="making" id="makingTiles" hidden>
-          <h3 class="display making-title">What are you making?</h3>
-          <div class="making-grid" role="group" aria-label="What are you making?">
-            <button type="button" class="mat-opt make-tile" data-making="realestate">
-              <span class="mo-name">Real Estate Sign</span>
-              <span class="mo-sub">Coroplast &middot; 24&Prime;&times;18&Prime; &middot; wholesale sheet qty</span>
-            </button>
-            <button type="button" class="mat-opt make-tile" data-making="yard">
-              <span class="mo-name">Yard Sign</span>
-              <span class="mo-sub">Coroplast &middot; 24&Prime;&times;18&Prime; &middot; just one sign</span>
-            </button>
-            <button type="button" class="mat-opt make-tile" data-making="business">
-              <span class="mo-name">Business / Job Site Sign</span>
-              <span class="mo-sub">Coroplast &middot; 4&prime;&times;4&prime; &middot; wholesale sheet qty</span>
-            </button>
-            <button type="button" class="mat-opt make-tile" data-making="big">
-              <span class="mo-name">Big Sign</span>
-              <span class="mo-sub">Coroplast &middot; 4&prime;&times;8&prime; &middot; wholesale sheet qty</span>
-            </button>
-            <button type="button" class="mat-opt make-tile" data-making="indoor">
-              <span class="mo-name">Indoor / Presentation Sign</span>
-              <span class="mo-sub">Foamboard &middot; 24&Prime;&times;36&Prime; &middot; just one sign</span>
-            </button>
-            <button type="button" class="mat-opt make-tile" data-making="scratch">
-              <span class="mo-name">Not sure &mdash; start from scratch</span>
-              <span class="mo-sub">Start with a blank wizard &mdash; pick everything yourself</span>
-            </button>
-          </div>
-          <p class="making-note">Pick the closest one &mdash; you can change everything in the next steps.</p>
-        </div>
-
         <div id="wizardSteps">
-          <!-- STEP 1 · buy mode -->
+          <!-- STEP 1 · size -->
           <div class="wiz-step" data-wstep="1">
             <div class="wiz-head">
               <span class="step-num" aria-hidden="true">1</span>
               <div class="wiz-head-text">
-                <h3 class="wiz-title">How do you want to buy?</h3>
+                <h3 class="wiz-title">What size do you need?</h3>
                 <p class="wiz-summary" data-wsummary="1" hidden></p>
               </div>
               <button type="button" class="btn ghost small wiz-edit" data-wedit="1" hidden>Edit</button>
+            </div>
+            <div class="wiz-body">
+              <div class="size-grid" id="wSizeGrid"></div>
+              <p class="making-note">Pick the closest one &mdash; you can change everything in the next steps.</p>
+            </div>
+          </div>
+
+          <!-- STEP 2 · buy mode -->
+          <div class="wiz-step is-locked" data-wstep="2">
+            <div class="wiz-head">
+              <span class="step-num" aria-hidden="true">2</span>
+              <div class="wiz-head-text">
+                <h3 class="wiz-title">How do you want to buy?</h3>
+                <p class="wiz-summary" data-wsummary="2" hidden></p>
+              </div>
+              <button type="button" class="btn ghost small wiz-edit" data-wedit="2" hidden>Edit</button>
             </div>
             <div class="wiz-body">
               <div class="mode-grid" role="group" aria-label="How do you want to buy?">
@@ -1680,31 +1663,35 @@
             </div>
           </div>
 
-          <!-- STEP 2 · material -->
-          <div class="wiz-step is-locked" data-wstep="2">
+          <!-- STEP 3 · material -->
+          <div class="wiz-step is-locked" data-wstep="3">
             <div class="wiz-head">
-              <span class="step-num" aria-hidden="true">2</span>
+              <span class="step-num" aria-hidden="true">3</span>
               <div class="wiz-head-text">
                 <h3 class="wiz-title">What material?</h3>
-                <p class="wiz-summary" data-wsummary="2" hidden></p>
+                <p class="wiz-summary" data-wsummary="3" hidden></p>
               </div>
-              <button type="button" class="btn ghost small wiz-edit" data-wedit="2" hidden>Edit</button>
+              <button type="button" class="btn ghost small wiz-edit" data-wedit="3" hidden>Edit</button>
             </div>
             <div class="wiz-body">
               <div class="mat-opts" role="group" aria-label="What material?">
                 <button type="button" class="mat-opt" data-wmat="coroplast" aria-pressed="false">
                   <span class="mo-name">Coroplast</span>
                   <span class="mo-sub">4mm fluted plastic · the outdoor workhorse for yard &amp; job-site signs</span>
+                  <span class="mo-rec" hidden>★ Recommended</span>
                 </button>
                 <button type="button" class="mat-opt" data-wmat="maxmetal" aria-pressed="false">
                   <span class="mo-name">Max Metal</span>
                   <span class="mo-sub">3mm aluminum composite · smooth, rigid, built to last outdoors</span>
+                  <span class="mo-rec" hidden>★ Recommended</span>
                 </button>
                 <button type="button" class="mat-opt" data-wmat="foamboard" aria-pressed="false">
                   <span class="mo-name">Foamboard</span>
                   <span class="mo-sub">3/16&rdquo; foam board · High Quality Interior Signs</span>
+                  <span class="mo-rec" hidden>★ Recommended</span>
                 </button>
               </div>
+              <p class="mat-rec-note" id="wMatRecNote" hidden></p>
               <div class="thick-field" id="wThickField" hidden>
                 <span class="f-label" id="wThickLabel">Coroplast thickness</span>
                 <div class="thick-opts" role="group" aria-labelledby="wThickLabel">
@@ -1726,19 +1713,18 @@
             </div>
           </div>
 
-          <!-- STEP 3 · size & sides -->
-          <div class="wiz-step is-locked" data-wstep="3">
+          <!-- STEP 4 · sides -->
+          <div class="wiz-step is-locked" data-wstep="4">
             <div class="wiz-head">
-              <span class="step-num" aria-hidden="true">3</span>
+              <span class="step-num" aria-hidden="true">4</span>
               <div class="wiz-head-text">
-                <h3 class="wiz-title">Size &amp; sides</h3>
-                <p class="wiz-summary" data-wsummary="3" hidden></p>
+                <h3 class="wiz-title">One side or two?</h3>
+                <p class="wiz-summary" data-wsummary="4" hidden></p>
               </div>
-              <button type="button" class="btn ghost small wiz-edit" data-wedit="3" hidden>Edit</button>
+              <button type="button" class="btn ghost small wiz-edit" data-wedit="4" hidden>Edit</button>
             </div>
             <div class="wiz-body">
-              <div class="size-grid" id="wSizeGrid"></div>
-              <div class="sides-row">
+              <div class="sides-row" style="margin-top:0">
                 <span class="f-label sides-label" id="wSidesLabel">Sides</span>
                 <div class="sides-toggle" role="group" aria-labelledby="wSidesLabel">
                   <button type="button" class="sides-btn" data-wsides="0" aria-pressed="true">Single sided</button>
@@ -1748,15 +1734,15 @@
             </div>
           </div>
 
-          <!-- STEP 4 · quantity -->
-          <div class="wiz-step is-locked" data-wstep="4">
+          <!-- STEP 5 · quantity -->
+          <div class="wiz-step is-locked" data-wstep="5">
             <div class="wiz-head">
-              <span class="step-num" aria-hidden="true">4</span>
+              <span class="step-num" aria-hidden="true">5</span>
               <div class="wiz-head-text">
                 <h3 class="wiz-title">How many?</h3>
-                <p class="wiz-summary" data-wsummary="4" hidden></p>
+                <p class="wiz-summary" data-wsummary="5" hidden></p>
               </div>
-              <button type="button" class="btn ghost small wiz-edit" data-wedit="4" hidden>Edit</button>
+              <button type="button" class="btn ghost small wiz-edit" data-wedit="5" hidden>Edit</button>
             </div>
             <div class="wiz-body">
               <div class="qty-zone">
@@ -1777,15 +1763,15 @@
             </div>
           </div>
 
-          <!-- STEP 5 · finishing touches -->
-          <div class="wiz-step is-locked" data-wstep="5">
+          <!-- STEP 6 · finishing touches -->
+          <div class="wiz-step is-locked" data-wstep="6">
             <div class="wiz-head">
-              <span class="step-num" aria-hidden="true">5</span>
+              <span class="step-num" aria-hidden="true">6</span>
               <div class="wiz-head-text">
                 <h3 class="wiz-title">Finishing touches <span class="step-opt">(optional)</span></h3>
-                <p class="wiz-summary" data-wsummary="5" hidden></p>
+                <p class="wiz-summary" data-wsummary="6" hidden></p>
               </div>
-              <button type="button" class="btn ghost small wiz-edit" data-wedit="5" hidden>Edit</button>
+              <button type="button" class="btn ghost small wiz-edit" data-wedit="6" hidden>Edit</button>
             </div>
             <div class="wiz-body">
               <div class="addon-rows">
@@ -1822,15 +1808,15 @@
             </div>
           </div>
 
-          <!-- STEP 6 · artwork -->
-          <div class="wiz-step is-locked" data-wstep="6">
+          <!-- STEP 7 · artwork -->
+          <div class="wiz-step is-locked" data-wstep="7">
             <div class="wiz-head">
-              <span class="step-num" aria-hidden="true">6</span>
+              <span class="step-num" aria-hidden="true">7</span>
               <div class="wiz-head-text">
                 <h3 class="wiz-title">Artwork for this sign</h3>
-                <p class="wiz-summary" data-wsummary="6" hidden></p>
+                <p class="wiz-summary" data-wsummary="7" hidden></p>
               </div>
-              <button type="button" class="btn ghost small wiz-edit" data-wedit="6" hidden>Edit</button>
+              <button type="button" class="btn ghost small wiz-edit" data-wedit="7" hidden>Edit</button>
             </div>
             <div class="wiz-body">
               <div class="art-fork">
@@ -2075,41 +2061,15 @@
 
         var eoView = "wizard";
         var eoReturnPanel = "wizard";
-        var tilesActive = false;
-        function showMakingTiles() {
-          tilesActive = true;
-          var t = document.getElementById("makingTiles");
-          if (t) t.hidden = false;
-          var ws = document.getElementById("wizardSteps");
-          if (ws) ws.hidden = true;
-          var added = document.getElementById("wizAdded");
-          if (added) added.hidden = true;
-          var co = document.getElementById("eoCheckout");
-          if (co) co.hidden = true;
-          eoView = "wizard";
-        }
-        function hideMakingTiles() {
-          tilesActive = false;
-          var t = document.getElementById("makingTiles");
-          if (t) t.hidden = true;
-        }
         function showWizardView() {
           eoView = "wizard";
           var co = document.getElementById("eoCheckout");
           if (co) co.hidden = true;
-          if (tilesActive) {
-            var t = document.getElementById("makingTiles");
-            if (t) t.hidden = false;
-            document.getElementById("wizardSteps").hidden = true;
-            return;
-          }
-          hideMakingTiles();
           var added = document.getElementById("wizAdded");
           if (added && added.hidden) document.getElementById("wizardSteps").hidden = false;
         }
         function showCheckoutView() {
           if (!cart.length) { showWizardView(); return; }
-          hideMakingTiles();
           var addedEl = document.getElementById("wizAdded");
           var stepsEl = document.getElementById("wizardSteps");
           if (addedEl && !addedEl.hidden) eoReturnPanel = "added";
@@ -2130,13 +2090,13 @@
           document.body.classList.add("easyorder-open");
           document.getElementById("eoConfirm").classList.remove("show");
           if (preload) applyPreload(preload);
-          else { resetWizard(); showMakingTiles(); }
+          else { resetWizard(); }
           showWizardView();
           renderCart();
           window.scrollTo(0, 0);
           document.getElementById("eoBack").focus();
           if (preload) {
-            var st = document.querySelector('[data-wstep="4"]');
+            var st = document.querySelector('[data-wstep="5"]');
             if (st) setTimeout(function () { st.scrollIntoView({ behavior: "smooth", block: "start" }); }, 60);
           }
         }
@@ -2160,7 +2120,7 @@
           return {
             mode: null, material: null, thickness: null, sizeKey: null, sides: 0, qty: null,
             stakes: "0", grommets: "none", flute: null,
-            answered: { 1: false, 2: false, 3: false, 4: false, 5: false, 6: false },
+            answered: { 1: false, 2: false, 3: false, 4: false, 5: false, 6: false, 7: false },
             open: 1, reached: 1
           };
         }
@@ -2195,7 +2155,7 @@
         /* Flute direction is a 4mm Coroplast-only question, and
            never for the full 4'x8' sheet or for 10mm. */
         function needsFlute() { return wiz.material === "coroplast" && wiz.thickness !== "10" && !!wiz.sizeKey && wiz.sizeKey !== "s48"; }
-        function displayStepNum(n) { return (!hasFinishingStep() && n === 6) ? 5 : n; }
+        function displayStepNum(n) { return (!hasFinishingStep() && n === 7) ? 6 : n; }
         /* State hygiene: clear whatever the current material/size
            makes impossible, and default the flute to Vertical when
            it applies. Switching thickness 4mm -> 10mm clears any
@@ -2226,12 +2186,13 @@
         function wizEach() { return wizSignEach() + wizAdders(); }
 
         function wizSummaryText(n) {
-          if (n === 1) return wiz.mode === "onepc" ? "One Sign \u2014 single-sign price, no minimum" : "Wholesale (sheet qty) \u2014 lowest per-sign prices, minimums apply";
-          if (n === 2) return MATERIALS[wiz.material].label + (wiz.material === "coroplast" && wiz.thickness ? " \u00B7 " + wiz.thickness + "mm" : "");
-          if (n === 3) { var e = wizEntry(); return e ? e.label + " \u00B7 " + (wiz.sides ? "2 sides" : "1 side") : ""; }
-          if (n === 4) return "Qty " + wizQty() + " \u00B7 " + money(wizEach()) + " each";
-          if (n === 5) { var l = adderLabelsFor(wiz.stakes, wiz.grommets); if (needsFlute() && wiz.flute) l.push("Flutes: " + wiz.flute); return l.length ? l.join(" \u00B7 ") : "No add-ons"; }
-          if (n === 6) {
+          if (n === 1) { var se = wizEntry() || (wiz.sizeKey ? entryFor("coroplast", wiz.sizeKey) : null); return se ? se.label : ""; }
+          if (n === 2) return wiz.mode === "onepc" ? "One Sign \u2014 single-sign price, no minimum" : "Wholesale (sheet qty) \u2014 lowest per-sign prices, minimums apply";
+          if (n === 3) return wiz.material ? MATERIALS[wiz.material].label + (wiz.material === "coroplast" && wiz.thickness ? " \u00B7 " + wiz.thickness + "mm" : "") : "";
+          if (n === 4) return wiz.sides ? "2 sides" : "1 side";
+          if (n === 5) return "Qty " + wizQty() + " \u00B7 " + money(wizEach()) + " each";
+          if (n === 6) { var l = adderLabelsFor(wiz.stakes, wiz.grommets); if (needsFlute() && wiz.flute) l.push("Flutes: " + wiz.flute); return l.length ? l.join(" \u00B7 ") : "No add-ons"; }
+          if (n === 7) {
             if (artBranch === "yes" && artworkFiles.length) return "Artwork: " + artworkFiles.length + (artworkFiles.length === 1 ? " file" : " files") + " uploaded";
             if (artBranch === "no" && artNoChoice === "later") return "Artwork: you\u2019ll provide it later";
             return "";
@@ -2241,16 +2202,25 @@
 
         function renderWizard() {
           syncFinishingState();
-          /* Step 2 is only answered once a thickness is really tapped
-             for Coroplast — nothing starts pre-picked, so a fresh
-             wizard (or switching back to Coroplast before choosing)
-             keeps the step open until the tap happens. Pre-loaded
-             flows set a thickness, so they stay answered. */
-          if (wiz.material === "coroplast" && !wiz.thickness) wiz.answered[2] = false;
-          for (var n = 1; n <= 6; n++) {
+          /* Step 3 is only answered once a thickness is really tapped
+             for Coroplast — the thickness itself is never pre-picked,
+             so a fresh wizard (or switching back to Coroplast before
+             choosing) keeps the step open until the tap happens.
+             Pre-loaded flows set a thickness, so they stay answered. */
+          if (wiz.material === "coroplast" && !wiz.thickness) wiz.answered[3] = false;
+          /* Smart material recommendation: once a size (Step 1) and a
+             buy mode (Step 2) are in and no material is picked yet,
+             the material that fits the size's typical use arrives
+             pre-selected. Nothing is locked — tapping any other
+             material switches exactly like always. */
+          if (wiz.sizeKey && wiz.answered[2] && !wiz.material) {
+            var rec0 = SIZE_RECS[wiz.sizeKey];
+            if (rec0 && entryFor(rec0.material, wiz.sizeKey)) wiz.material = rec0.material;
+          }
+          for (var n = 1; n <= 7; n++) {
             var step = document.querySelector('[data-wstep="' + n + '"]');
             if (!step) continue;
-            var skipped = n === 5 && !hasFinishingStep();
+            var skipped = n === 6 && !hasFinishingStep();
             step.classList.toggle("is-skipped", skipped);
             var numEl = step.querySelector(".step-num");
             if (numEl) numEl.textContent = String(displayStepNum(n));
@@ -2270,9 +2240,25 @@
           document.querySelectorAll("[data-wmode]").forEach(function (b) {
             b.setAttribute("aria-pressed", b.getAttribute("data-wmode") === wiz.mode ? "true" : "false");
           });
+          var rec = wiz.sizeKey ? SIZE_RECS[wiz.sizeKey] : null;
           document.querySelectorAll("[data-wmat]").forEach(function (b) {
-            b.setAttribute("aria-pressed", b.getAttribute("data-wmat") === wiz.material ? "true" : "false");
+            var k = b.getAttribute("data-wmat");
+            b.setAttribute("aria-pressed", k === wiz.material ? "true" : "false");
+            /* A size some materials don't come in (18"x12" is
+               Coroplast-only) doesn't offer a fake choice: those
+               materials tuck away for that size. */
+            b.hidden = !!(wiz.sizeKey && !entryFor(k, wiz.sizeKey));
+            var tag = b.querySelector(".mo-rec");
+            if (tag) tag.hidden = !(rec && rec.material === k);
           });
+          var recNote = document.getElementById("wMatRecNote");
+          if (recNote) {
+            if (rec && wiz.sizeKey) {
+              var recEntry = entryFor("coroplast", wiz.sizeKey);
+              recNote.textContent = "\u2605 Recommended for " + (recEntry ? recEntry.label : "") + ": " + rec.reason;
+              recNote.hidden = false;
+            } else recNote.hidden = true;
+          }
           document.querySelectorAll("[data-wthick]").forEach(function (b) {
             b.setAttribute("aria-pressed", b.getAttribute("data-wthick") === wiz.thickness ? "true" : "false");
           });
@@ -2300,26 +2286,45 @@
           updateAddToCartVisibility();
         }
 
+        /* One plain-English example per size on the Step 1 size
+           cards — what each size is commonly used for. */
         var SIZE_HINTS = {
-          s1812: "Small add-on / rider sign",
-          s24: "The standard real estate &amp; yard sign",
-          s2424: "Square sign \u2014 promos &amp; notices",
-          s2436: "Large yard or presentation sign",
-          s44: "Job-site & business sign",
-          s48: "Full sheet \u2014 the big one"
+          s1812: "Small yard signs &amp; riders",
+          s24: "The classic yard sign &amp; the standard real estate sign",
+          s2424: "Directional &amp; job-site signs",
+          s2436: "Bigger real estate &amp; presentation signs",
+          s44: "Job-site &amp; business signs",
+          s48: "The full sheet \u2014 for big business signs"
+        };
+        /* Smart material recommendation per size: the material that
+           fits the size's typical use. Coroplast is the shop's core
+           outdoor product, so it is the pick for every size — for
+           24"x36" the reason also names the indoor alternative. The
+           recommended material arrives pre-selected at Step 3,
+           tagged RECOMMENDED with its reason, changeable in one tap. */
+        var SIZE_RECS = {
+          s1812: { material: "coroplast", reason: "Coroplast \u2014 the pick for small yard signs & riders, and the only material we cut at this size." },
+          s24: { material: "coroplast", reason: "Coroplast \u2014 the classic real estate & yard sign material: light, weatherproof, and made for H-stakes." },
+          s2424: { material: "coroplast", reason: "Coroplast \u2014 tough, light, and weatherproof for directional & job-site signs." },
+          s2436: { material: "coroplast", reason: "Coroplast \u2014 the outdoor pick for bigger real estate signs. Presenting indoors instead? Foamboard is the lighter indoor option." },
+          s44: { material: "coroplast", reason: "Coroplast \u2014 the job-site workhorse: big, rigid, and weatherproof." },
+          s48: { material: "coroplast", reason: "Coroplast \u2014 the full sheet outdoors at the best per-sign price." }
         };
         function renderWizSizes() {
           var grid = document.getElementById("wSizeGrid");
           if (!grid) return;
-          if (!wiz.material || !CALC_DATA[wiz.material]) { grid.innerHTML = ""; return; }
+          /* Step 1 runs before any material is picked, so the cards
+             list every size the shop sells (the Coroplast list — the
+             only material with all six). Each card carries one
+             plain-English example of what the size is used for;
+             minimums wait for the buy-mode step, like before. */
           var html = "";
-          CALC_DATA[wiz.material].forEach(function (s) {
+          CALC_DATA.coroplast.forEach(function (s) {
             var badges = "";
             if (s.feat) badges += "<span class=\"sc-badge\">\u2605 Popular</span>";
             if (s.key === "s48") badges += "<span class=\"sc-badge sc-badge--deal\">Best deal \u00B7 Full sheet</span>";
-            var min = wiz.mode === "onepc" ? "No minimum" : s.key === "s44" ? "Sold in pairs \u00B7 2 pc minimum" : s.pps > 1 ? s.pps + " pc minimum" : "No minimum";
             var hint = SIZE_HINTS[s.key] ? "<span class=\"sc-hint\">" + SIZE_HINTS[s.key] + "</span>" : "";
-            html += "<button type=\"button\" class=\"size-card" + (s.key === "s48" ? " featured" : "") + "\" data-sizecard=\"" + s.key + "\" aria-pressed=\"" + (s.key === wiz.sizeKey ? "true" : "false") + "\">" + (badges ? "<span class=\"sc-badges\">" + badges + "</span>" : "") + "<span class=\"sc-size\">" + s.label + "</span>" + hint + "<span class=\"sc-min\">" + min + "</span></button>";
+            html += "<button type=\"button\" class=\"size-card" + (s.key === "s48" ? " featured" : "") + "\" data-sizecard=\"" + s.key + "\" aria-pressed=\"" + (s.key === wiz.sizeKey ? "true" : "false") + "\">" + (badges ? "<span class=\"sc-badges\">" + badges + "</span>" : "") + "<span class=\"sc-size\">" + s.label + "</span>" + hint + "</button>";
           });
           grid.innerHTML = html;
         }
@@ -2383,11 +2388,11 @@
             wiz.qty = wiz.qty == null ? wizMinQty() : wizNormalizeQty(wiz.qty);
           }
           var nextLogical = n + 1;
-          if (nextLogical === 5 && !hasFinishingStep()) nextLogical = 6;
-          wiz.reached = Math.max(wiz.reached, Math.min(6, nextLogical));
+          if (nextLogical === 6 && !hasFinishingStep()) nextLogical = 7;
+          wiz.reached = Math.max(wiz.reached, Math.min(7, nextLogical));
           var next = 0;
-          for (var i = 1; i <= 5; i++) { if (i === 5 && !hasFinishingStep()) continue; if (!wiz.answered[i]) { next = i; break; } }
-          wiz.open = next || 6;
+          for (var i = 1; i <= 6; i++) { if (i === 6 && !hasFinishingStep()) continue; if (!wiz.answered[i]) { next = i; break; } }
+          wiz.open = next || 7;
           if (wiz.open > wiz.reached) wiz.reached = wiz.open;
           renderWizard();
           var target = document.querySelector('[data-wstep="' + wiz.open + '"]');
@@ -2397,7 +2402,7 @@
         document.querySelectorAll("[data-wmode]").forEach(function (b) {
           b.addEventListener("click", function () {
             wiz.mode = b.getAttribute("data-wmode") === "onepc" ? "onepc" : "wholesale";
-            completeStep(1);
+            completeStep(2);
           });
         });
         document.querySelectorAll("[data-wmat]").forEach(function (b) {
@@ -2408,7 +2413,7 @@
             if (key === "foamboard") { wiz.stakes = "0"; wiz.grommets = "none"; wiz.flute = null; }
             if (wiz.sizeKey && !entryFor(key, wiz.sizeKey)) {
               wiz.sizeKey = null;
-              wiz.answered[3] = false;
+              wiz.answered[1] = false;
               wiz.qty = null;
             }
             if (key === "coroplast") {
@@ -2416,42 +2421,51 @@
                  10mm — so the step stays open on the thickness choice
                  instead of collapsing; tapping a thickness completes
                  the step (see the thickness handler below). */
-              wiz.answered[2] = true;
-              if (wiz.reached < 2) wiz.reached = 2;
-              wiz.open = 2;
+              wiz.answered[3] = true;
+              if (wiz.reached < 3) wiz.reached = 3;
+              wiz.open = 3;
               renderWizard();
-              var st2 = document.querySelector('[data-wstep="2"]');
+              var st2 = document.querySelector('[data-wstep="3"]');
               if (st2) st2.scrollIntoView({ behavior: "smooth", block: "start" });
               return;
             }
-            completeStep(2);
+            completeStep(3);
           });
         });
-        /* Thickness lives inside Step 2 with the material: it only
+        /* Thickness lives inside Step 3 with the material: it only
            shows for Coroplast, starts unpicked (neither option is
            pre-selected), and a pick survives switching material away
-           and back. Tapping one completes Step 2 (the step stays
+           and back. Tapping one completes Step 3 (the step stays
            open on this choice after Coroplast is picked), and
            changing it later reprices everything downstream through
            wizEntry(), like a material change does. */
         document.querySelectorAll("[data-wthick]").forEach(function (b) {
           b.addEventListener("click", function () {
             wiz.thickness = b.getAttribute("data-wthick") === "10" ? "10" : "4";
-            completeStep(2);
+            completeStep(3);
           });
         });
         document.getElementById("wSizeGrid").addEventListener("click", function (e) {
           var btn = e.target && e.target.closest ? e.target.closest("[data-sizecard]") : null;
           if (!btn) return;
           wiz.sizeKey = btn.getAttribute("data-sizecard");
+          /* Size comes first now: if a material was already picked
+             (editing Step 1) and it doesn't come in the new size —
+             18"x12" is Coroplast-only — clear it and let the new
+             size's recommendation take over at Step 3. */
+          if (wiz.material && !entryFor(wiz.material, wiz.sizeKey)) {
+            wiz.material = null;
+            wiz.answered[3] = false;
+            wiz.qty = null;
+          }
           if (wiz.sizeKey === "s48") wiz.flute = null;
           if (typeof recheckArtwork === "function") recheckArtwork();
-          completeStep(3);
+          completeStep(1);
         });
         document.querySelectorAll("[data-wsides]").forEach(function (b) {
           b.addEventListener("click", function () {
             wiz.sides = b.getAttribute("data-wsides") === "1" ? 1 : 0;
-            renderWizard();
+            completeStep(4);
           });
         });
         document.querySelectorAll("[data-wedit]").forEach(function (b) {
@@ -2492,7 +2506,7 @@
         });
         document.getElementById("wQtyContinue").addEventListener("click", function () {
           wiz.qty = wizNormalizeQty(wQtyEl.value);
-          completeStep(4);
+          completeStep(5);
         });
         document.getElementById("wStakes").addEventListener("change", function () {
           wiz.stakes = this.value;
@@ -2508,10 +2522,9 @@
             renderWizard();
           });
         });
-        document.getElementById("wAddContinue").addEventListener("click", function () { completeStep(5); });
+        document.getElementById("wAddContinue").addEventListener("click", function () { completeStep(6); });
 
         function applyPreload(p) {
-          hideMakingTiles();
           editingIndex = -1;
           wiz = freshWizard();
           resetArtwork();
@@ -2523,16 +2536,16 @@
           wiz.answered[1] = true;
           wiz.answered[2] = true;
           wiz.answered[3] = true;
+          wiz.answered[4] = true;
           wiz.qty = wizMinQty();
-          wiz.reached = 4;
-          wiz.open = 4;
+          wiz.reached = 5;
+          wiz.open = 5;
           document.getElementById("wizardSteps").hidden = false;
           document.getElementById("wizAdded").hidden = true;
           hideWizMsg();
           renderWizard();
         }
         function resetWizard() {
-          hideMakingTiles();
           editingIndex = -1;
           wiz = freshWizard();
           resetArtwork();
@@ -2542,42 +2555,13 @@
           renderWizard();
         }
 
-        /* ================= "What are you making?" entry tiles =================
-           A plain-English front door for a FRESH Build Your Sign open.
-           A preset tile pre-loads buy mode, material (+ Coroplast
-           thickness) and size through applyPreload, so steps 1-3 land
-           answered and collapsed and Step 4 opens with the mode's
-           default quantity and a price already forming. "Start from
-           scratch" just reveals the fresh wizard exactly as it was.
-           Pre-loaded flows from elsewhere (cart edit) never pass
-           through here. */
-        var MAKING_PRESETS = {
-          realestate: { mode: "wholesale", material: "coroplast", thickness: "4", size: "s24", sides: 0 },
-          yard: { mode: "onepc", material: "coroplast", thickness: "4", size: "s24", sides: 0 },
-          business: { mode: "wholesale", material: "coroplast", thickness: "4", size: "s44", sides: 0 },
-          big: { mode: "wholesale", material: "coroplast", thickness: "4", size: "s48", sides: 0 },
-          indoor: { mode: "onepc", material: "foamboard", size: "s2436", sides: 0 }
-        };
-        document.querySelectorAll("[data-making]").forEach(function (b) {
-          b.addEventListener("click", function () {
-            var key = b.getAttribute("data-making");
-            if (key === "scratch" || !MAKING_PRESETS[key]) {
-              hideMakingTiles();
-              eoView = "wizard";
-              document.getElementById("eoCheckout").hidden = true;
-              document.getElementById("wizardSteps").hidden = false;
-              document.getElementById("wizAdded").hidden = true;
-              renderWizard();
-              var first = document.querySelector('[data-wstep="1"]');
-              if (first) setTimeout(function () { first.scrollIntoView({ behavior: "smooth", block: "start" }); }, 40);
-              return;
-            }
-            applyPreload(MAKING_PRESETS[key]);
-            showWizardView();
-            var st4 = document.querySelector('[data-wstep="4"]');
-            if (st4) setTimeout(function () { st4.scrollIntoView({ behavior: "smooth", block: "start" }); }, 60);
-          });
-        });
+        /* ================= size-first entry =================
+           A fresh Build Your Sign open starts at Step 1 (size):
+           resetWizard() leaves the fresh wizard there, each size
+           card carries a plain-English example of what the size is
+           for, and the material recommendation (SIZE_RECS) is
+           waiting at Step 3. Pre-loaded flows from elsewhere (cart
+           edit) never pass through here. */
 
         /* ================= artwork upload + resolution checker (in-memory only) ================= */
         var dropzone = document.getElementById("wDropzone");
@@ -2793,7 +2777,7 @@
         });
         document.addEventListener("drop", function () { dzSetDrag(false); });
         window.__s2gDrop = { handleFiles: handleArtworkFiles, openPicker: openArtworkPicker, isDragging: function () { return dropzone.classList.contains("drag"); } };
-        /* Step-6 fork: completion comes from the ACTIVE branch only —
+        /* Step-7 fork: completion comes from the ACTIVE branch only —
            Yes needs at least one file; Not yet needs its follow-up
            choice. Files and the follow-up choice each persist while
            the other branch is active, so switching back restores them. */
@@ -2805,8 +2789,8 @@
         var artWasComplete = false;
         function syncArtworkGate() {
           var c = artworkComplete();
-          wiz.answered[6] = c;
-          if (c && !artWasComplete && wiz.open === 6) wiz.open = 0;
+          wiz.answered[7] = c;
+          if (c && !artWasComplete && wiz.open === 7) wiz.open = 0;
           artWasComplete = c;
           updateAddToCartVisibility();
           renderWizard();
@@ -2879,11 +2863,11 @@
 
         /* ================= cart + checkout ================= */
         /* Add to Cart stays unrendered until the wizard is fully answered
-           AND the step-6 artwork fork is complete on its active branch
+           AND the step-7 artwork fork is complete on its active branch
            (a file uploaded, or "provide it later"). */
         function wizardReadyForCart() {
-          for (var i = 1; i <= 5; i++) {
-            if (i === 5 && !hasFinishingStep()) continue;
+          for (var i = 1; i <= 6; i++) {
+            if (i === 6 && !hasFinishingStep()) continue;
             if (!wiz.answered[i]) return false;
           }
           return artworkComplete();
@@ -2956,19 +2940,18 @@
         function cartTotal() { return cart.reduce(function (a, it) { return a + it.total; }, 0); }
         function startEditCartItem(idx) {
           var it = cart[idx]; if (!it) return;
-          hideMakingTiles();
           editingIndex = idx;
           wiz = freshWizard();
           wiz.mode = it.mode; wiz.material = it.material; wiz.thickness = it.thickness || "4";
           wiz.sizeKey = it.sizeKey; wiz.sides = it.sides; wiz.qty = it.qty;
           wiz.stakes = it.stakes || "0"; wiz.grommets = it.grommets || "none"; wiz.flute = it.flute || null;
           syncFinishingState();
-          wiz.answered[1] = true; wiz.answered[2] = true; wiz.answered[3] = true; wiz.answered[4] = true;
-          wiz.answered[5] = hasFinishingStep();
-          wiz.reached = 6;
+          wiz.answered[1] = true; wiz.answered[2] = true; wiz.answered[3] = true; wiz.answered[4] = true; wiz.answered[5] = true;
+          wiz.answered[6] = hasFinishingStep();
+          wiz.reached = 7;
           wiz.open = 0;
           restoreArtwork(it.artwork);
-          wiz.answered[6] = artworkComplete();
+          wiz.answered[7] = artworkComplete();
           eoView = "wizard";
           document.getElementById("eoCheckout").hidden = true;
           document.getElementById("wizardSteps").hidden = false;
@@ -3100,16 +3083,17 @@
         function showWizMsg(t) { wizMsg.textContent = t; wizMsg.classList.add("show"); }
         function hideWizMsg() { wizMsg.classList.remove("show"); wizMsg.textContent = ""; }
         var STEP_NEEDS = {
-          1: "\u201CWholesale (sheet qty)\u201D or \u201COne Sign.\u201D",
-          2: "pick a material \u2014 Coroplast, Max Metal, or Foamboard.",
-          3: "pick a size \u2014 single sided is already selected for you.",
-          4: "set how many you need, then hit Continue.",
-          5: "look over the finishing touches (none is fine), then hit Continue."
+          1: "pick a size.",
+          2: "\u201CWholesale (sheet qty)\u201D or \u201COne Sign.\u201D",
+          3: "pick a material \u2014 Coroplast, Max Metal, or Foamboard.",
+          4: "pick single or double sided.",
+          5: "set how many you need, then hit Continue.",
+          6: "look over the finishing touches (none is fine), then hit Continue."
         };
         document.getElementById("addToCartBtn").addEventListener("click", function () {
           hideWizMsg();
-          for (var i = 1; i <= 5; i++) {
-            if (i === 5 && !hasFinishingStep()) continue;
+          for (var i = 1; i <= 6; i++) {
+            if (i === 6 && !hasFinishingStep()) continue;
             if (!wiz.answered[i]) {
               wiz.open = i;
               if (wiz.reached < i) wiz.reached = i;
@@ -3121,9 +3105,9 @@
             }
           }
           if (!artworkComplete()) {
-            wiz.open = 6;
+            wiz.open = 7;
             renderWizard();
-            var st6 = document.querySelector('[data-wstep="6"]');
+            var st6 = document.querySelector('[data-wstep="7"]');
             if (st6) st6.scrollIntoView({ behavior: "smooth", block: "start" });
             showWizMsg("One more thing \u2014 answer the artwork question above: upload your file or choose to provide it later.");
             return;
@@ -3160,9 +3144,8 @@
         });
         document.getElementById("addAnotherBtn").addEventListener("click", function () {
           resetWizard();
-          showMakingTiles();
-          var tiles = document.getElementById("makingTiles");
-          if (tiles) tiles.scrollIntoView({ behavior: "smooth", block: "start" });
+          var first = document.querySelector('[data-wstep="1"]');
+          if (first) first.scrollIntoView({ behavior: "smooth", block: "start" });
         });
 
         var eoForm = document.getElementById("eoForm");
