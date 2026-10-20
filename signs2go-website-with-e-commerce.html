@@ -316,32 +316,30 @@
       .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; width: 100%; }
       .mode-tile {
         display: flex; flex-direction: column; gap: 8px; text-align: left;
-        border: 3px solid var(--black); border-radius: 18px; padding: 22px 24px 20px;
+        border: 2px solid var(--black); border-radius: 18px; padding: 22px 24px 20px;
+        background: var(--white); color: var(--black);
         font: inherit; cursor: pointer; width: 100%;
-        transition: transform 0.15s ease, box-shadow 0.15s ease;
+        transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
       }
-      .mode-tile:hover { transform: translateY(-1px); }
-      .mode-tile--wholesale { background: var(--black); color: var(--white); }
-      .mode-tile--one { background: var(--green); color: var(--black); }
+      /* Same plain-until-tapped language as the material and size
+         cards: both buy-mode tiles open white and unchosen — the step
+         completes only on an actual tap. Hovering tints green, and the
+         chosen tile keeps the stronger green selected treatment. */
+      .mode-tile:not([aria-pressed="true"]):hover { transform: translateY(-2px); background: rgba(172, 229, 14, 0.16); box-shadow: inset 0 0 0 3px var(--green), 0 10px 22px rgba(172, 229, 14, 0.40); }
+      .mode-tile[aria-pressed="true"] { background: rgba(172, 229, 14, 0.38); box-shadow: inset 0 0 0 3px var(--green), inset 0 0 0 5.5px var(--black); }
       .mode-tile-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
       .mode-tile-title {
         font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; text-transform: uppercase;
         letter-spacing: 0.02em; font-size: 29px; line-height: 1.05;
       }
-      .mode-tile--wholesale .mode-tile-title { color: var(--white); }
-      .mode-tile--wholesale .mode-tile-title .mode-accent { color: var(--green); }
       .mode-tile-sub { font-size: 17px; line-height: 1.45; font-weight: 500; }
-      .mode-tile--wholesale .mode-tile-sub { color: var(--white); }
-      .mode-tile--one .mode-tile-sub { color: var(--black); }
       .mode-check {
         flex: 0 0 auto; width: 34px; height: 34px; border-radius: 50%;
         display: inline-flex; align-items: center; justify-content: center;
         font-size: 19px; font-weight: 700; line-height: 1;
         border: 2.5px solid currentColor; color: transparent; background: transparent;
       }
-      .mode-tile[aria-pressed="true"] { box-shadow: 0 0 0 3px var(--white), 0 0 0 7px var(--black); }
-      .mode-tile--wholesale[aria-pressed="true"] .mode-check { background: var(--green); border-color: var(--green); color: var(--black); }
-      .mode-tile--one[aria-pressed="true"] .mode-check { background: var(--black); border-color: var(--black); color: var(--green); }
+      .mode-tile[aria-pressed="true"] .mode-check { background: var(--green); border-color: var(--black); color: var(--black); }
       .mode-switch + .mat-switch { margin-top: 0; }
       @media (max-width: 640px) {
         .mode-grid { grid-template-columns: 1fr; gap: 14px; }
