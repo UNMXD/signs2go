@@ -1084,7 +1084,7 @@
         .sides-btn { padding: 10px 18px; }
       }
 
-      /* ---------- size-first entry note (under the Step 1 size cards) ---------- */
+      /* ---------- entry note (under the Step 2 size cards) ---------- */
       .making-note { font-size: 17px; font-weight: 600; margin-top: 16px; }
 
       /* ---------- easy order view ---------- */
@@ -1146,7 +1146,7 @@
       }
       .mat-rec-note { font-size: 16.5px; font-weight: 600; line-height: 1.45; margin-top: 14px; }
       .wiz-about { margin-top: 14px; }
-      /* Coroplast thickness sub-choice (Step 2, Coroplast only) */
+      /* Coroplast thickness sub-choice (Step 1, Coroplast only) */
       .thick-field { margin-top: 16px; }
       .thick-field .f-label { display: block; margin-bottom: 8px; }
       .thick-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -1623,55 +1623,15 @@
         </div>
 
         <div id="wizardSteps">
-          <!-- STEP 1 · size -->
+          <!-- STEP 1 · material -->
           <div class="wiz-step" data-wstep="1">
             <div class="wiz-head">
               <span class="step-num" aria-hidden="true">1</span>
               <div class="wiz-head-text">
-                <h3 class="wiz-title">What size do you need?</h3>
+                <h3 class="wiz-title">What material?</h3>
                 <p class="wiz-summary" data-wsummary="1" hidden></p>
               </div>
               <button type="button" class="btn ghost small wiz-edit" data-wedit="1" hidden>Edit</button>
-            </div>
-            <div class="wiz-body">
-              <div class="size-grid" id="wSizeGrid"></div>
-              <p class="making-note">Pick the closest one &mdash; you can change everything in the next steps.</p>
-            </div>
-          </div>
-
-          <!-- STEP 2 · buy mode -->
-          <div class="wiz-step is-locked" data-wstep="2">
-            <div class="wiz-head">
-              <span class="step-num" aria-hidden="true">2</span>
-              <div class="wiz-head-text">
-                <h3 class="wiz-title">How do you want to buy?</h3>
-                <p class="wiz-summary" data-wsummary="2" hidden></p>
-              </div>
-              <button type="button" class="btn ghost small wiz-edit" data-wedit="2" hidden>Edit</button>
-            </div>
-            <div class="wiz-body">
-              <div class="mode-grid" role="group" aria-label="How do you want to buy?">
-                <button type="button" class="mode-tile mode-tile--wholesale" data-wmode="wholesale" aria-pressed="false">
-                  <span class="mode-tile-top"><span class="mode-tile-title">Wholesale <span class="mode-accent">(sheet qty)</span></span><span class="mode-check" aria-hidden="true">✓</span></span>
-                  <span class="mode-tile-sub">Sheet quantities · lowest per-sign prices · minimums apply</span>
-                </button>
-                <button type="button" class="mode-tile mode-tile--one" data-wmode="onepc" aria-pressed="false">
-                  <span class="mode-tile-top"><span class="mode-tile-title">One Sign</span><span class="mode-check" aria-hidden="true">✓</span></span>
-                  <span class="mode-tile-sub">Just one sign · no minimum</span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- STEP 3 · material -->
-          <div class="wiz-step is-locked" data-wstep="3">
-            <div class="wiz-head">
-              <span class="step-num" aria-hidden="true">3</span>
-              <div class="wiz-head-text">
-                <h3 class="wiz-title">What material?</h3>
-                <p class="wiz-summary" data-wsummary="3" hidden></p>
-              </div>
-              <button type="button" class="btn ghost small wiz-edit" data-wedit="3" hidden>Edit</button>
             </div>
             <div class="wiz-body">
               <div class="mat-opts" role="group" aria-label="What material?">
@@ -1710,6 +1670,46 @@
                 <p class="mat-blurb" id="wMatAboutText"></p>
                 <p class="flute-note" id="wMatAboutFlute" hidden></p>
               </details>
+            </div>
+          </div>
+
+          <!-- STEP 2 · size -->
+          <div class="wiz-step is-locked" data-wstep="2">
+            <div class="wiz-head">
+              <span class="step-num" aria-hidden="true">2</span>
+              <div class="wiz-head-text">
+                <h3 class="wiz-title">What size do you need?</h3>
+                <p class="wiz-summary" data-wsummary="2" hidden></p>
+              </div>
+              <button type="button" class="btn ghost small wiz-edit" data-wedit="2" hidden>Edit</button>
+            </div>
+            <div class="wiz-body">
+              <div class="size-grid" id="wSizeGrid"></div>
+              <p class="making-note">Pick the closest one &mdash; you can change everything in the next steps.</p>
+            </div>
+          </div>
+
+          <!-- STEP 3 · buy mode -->
+          <div class="wiz-step is-locked" data-wstep="3">
+            <div class="wiz-head">
+              <span class="step-num" aria-hidden="true">3</span>
+              <div class="wiz-head-text">
+                <h3 class="wiz-title">How do you want to buy?</h3>
+                <p class="wiz-summary" data-wsummary="3" hidden></p>
+              </div>
+              <button type="button" class="btn ghost small wiz-edit" data-wedit="3" hidden>Edit</button>
+            </div>
+            <div class="wiz-body">
+              <div class="mode-grid" role="group" aria-label="How do you want to buy?">
+                <button type="button" class="mode-tile mode-tile--wholesale" data-wmode="wholesale" aria-pressed="false">
+                  <span class="mode-tile-top"><span class="mode-tile-title">Wholesale <span class="mode-accent">(sheet qty)</span></span><span class="mode-check" aria-hidden="true">✓</span></span>
+                  <span class="mode-tile-sub">Sheet quantities · lowest per-sign prices · minimums apply</span>
+                </button>
+                <button type="button" class="mode-tile mode-tile--one" data-wmode="onepc" aria-pressed="false">
+                  <span class="mode-tile-top"><span class="mode-tile-title">One Sign</span><span class="mode-check" aria-hidden="true">✓</span></span>
+                  <span class="mode-tile-sub">Just one sign · no minimum</span>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -2118,7 +2118,9 @@
         var cart = [];
         function freshWizard() {
           return {
-            mode: null, material: null, thickness: null, sizeKey: null, sides: 0, qty: null,
+            /* Material comes first now, and the recommended material
+               (Coroplast) arrives pre-selected — see renderWizard. */
+            mode: null, material: "coroplast", thickness: null, sizeKey: null, sides: 0, qty: null,
             stakes: "0", grommets: "none", flute: null,
             answered: { 1: false, 2: false, 3: false, 4: false, 5: false, 6: false, 7: false },
             open: 1, reached: 1
@@ -2186,9 +2188,9 @@
         function wizEach() { return wizSignEach() + wizAdders(); }
 
         function wizSummaryText(n) {
-          if (n === 1) { var se = wizEntry() || (wiz.sizeKey ? entryFor("coroplast", wiz.sizeKey) : null); return se ? se.label : ""; }
-          if (n === 2) return wiz.mode === "onepc" ? "One Sign \u2014 single-sign price, no minimum" : "Wholesale (sheet qty) \u2014 lowest per-sign prices, minimums apply";
-          if (n === 3) return wiz.material ? MATERIALS[wiz.material].label + (wiz.material === "coroplast" && wiz.thickness ? " \u00B7 " + wiz.thickness + "mm" : "") : "";
+          if (n === 1) return wiz.material ? MATERIALS[wiz.material].label + (wiz.material === "coroplast" && wiz.thickness ? " \u00B7 " + wiz.thickness + "mm" : "") : "";
+          if (n === 2) { var se = wizEntry() || (wiz.sizeKey ? entryFor("coroplast", wiz.sizeKey) : null); return se ? se.label : ""; }
+          if (n === 3) return wiz.mode === "onepc" ? "One Sign \u2014 single-sign price, no minimum" : "Wholesale (sheet qty) \u2014 lowest per-sign prices, minimums apply";
           if (n === 4) return wiz.sides ? "2 sides" : "1 side";
           if (n === 5) return "Qty " + wizQty() + " \u00B7 " + money(wizEach()) + " each";
           if (n === 6) { var l = adderLabelsFor(wiz.stakes, wiz.grommets); if (needsFlute() && wiz.flute) l.push("Flutes: " + wiz.flute); return l.length ? l.join(" \u00B7 ") : "No add-ons"; }
@@ -2202,16 +2204,17 @@
 
         function renderWizard() {
           syncFinishingState();
-          /* Step 3 is only answered once a thickness is really tapped
+          /* Step 1 is only answered once a thickness is really tapped
              for Coroplast — the thickness itself is never pre-picked,
              so a fresh wizard (or switching back to Coroplast before
              choosing) keeps the step open until the tap happens.
              Pre-loaded flows set a thickness, so they stay answered. */
-          if (wiz.material === "coroplast" && !wiz.thickness) wiz.answered[3] = false;
-          /* Smart material recommendation: once a size (Step 1) and a
-             buy mode (Step 2) are in and no material is picked yet,
-             the material that fits the size's typical use arrives
-             pre-selected. Nothing is locked — tapping any other
+          if (wiz.material === "coroplast" && !wiz.thickness) wiz.answered[1] = false;
+          /* Smart material recommendation: material is Step 1 now and
+             Coroplast arrives pre-selected (see freshWizard). If a
+             later size pick clears the material (a size that material
+             doesn't come in), the new size's recommended material
+             takes over here. Nothing is locked — tapping any other
              material switches exactly like always. */
           if (wiz.sizeKey && wiz.answered[2] && !wiz.material) {
             var rec0 = SIZE_RECS[wiz.sizeKey];
@@ -2240,7 +2243,10 @@
           document.querySelectorAll("[data-wmode]").forEach(function (b) {
             b.setAttribute("aria-pressed", b.getAttribute("data-wmode") === wiz.mode ? "true" : "false");
           });
-          var rec = wiz.sizeKey ? SIZE_RECS[wiz.sizeKey] : null;
+          /* Before any size is picked, the recommendation is the
+             house default (Coroplast); once a size is in, the
+             size-specific recommendation takes over the tag + note. */
+          var rec = wiz.sizeKey ? SIZE_RECS[wiz.sizeKey] : DEFAULT_REC;
           document.querySelectorAll("[data-wmat]").forEach(function (b) {
             var k = b.getAttribute("data-wmat");
             b.setAttribute("aria-pressed", k === wiz.material ? "true" : "false");
@@ -2253,11 +2259,14 @@
           });
           var recNote = document.getElementById("wMatRecNote");
           if (recNote) {
-            if (rec && wiz.sizeKey) {
+            if (wiz.sizeKey) {
               var recEntry = entryFor("coroplast", wiz.sizeKey);
               recNote.textContent = "\u2605 Recommended for " + (recEntry ? recEntry.label : "") + ": " + rec.reason;
               recNote.hidden = false;
-            } else recNote.hidden = true;
+            } else {
+              recNote.textContent = "\u2605 Recommended: " + DEFAULT_REC.reason;
+              recNote.hidden = false;
+            }
           }
           document.querySelectorAll("[data-wthick]").forEach(function (b) {
             b.setAttribute("aria-pressed", b.getAttribute("data-wthick") === wiz.thickness ? "true" : "false");
@@ -2286,7 +2295,7 @@
           updateAddToCartVisibility();
         }
 
-        /* One plain-English example per size on the Step 1 size
+        /* One plain-English example per size on the Step 2 size
            cards — what each size is commonly used for. */
         var SIZE_HINTS = {
           s1812: "Small yard signs &amp; riders",
@@ -2300,8 +2309,9 @@
            fits the size's typical use. Coroplast is the shop's core
            outdoor product, so it is the pick for every size — for
            24"x36" the reason also names the indoor alternative. The
-           recommended material arrives pre-selected at Step 3,
+           recommended material arrives pre-selected at Step 1,
            tagged RECOMMENDED with its reason, changeable in one tap. */
+        var DEFAULT_REC = { material: "coroplast", reason: "Coroplast \u2014 the go-to material for yard, real estate & job-site signs: light, weatherproof, and made for H-stakes." };
         var SIZE_RECS = {
           s1812: { material: "coroplast", reason: "Coroplast \u2014 the pick for small yard signs & riders, and the only material we cut at this size." },
           s24: { material: "coroplast", reason: "Coroplast \u2014 the classic real estate & yard sign material: light, weatherproof, and made for H-stakes." },
@@ -2313,13 +2323,14 @@
         function renderWizSizes() {
           var grid = document.getElementById("wSizeGrid");
           if (!grid) return;
-          /* Step 1 runs before any material is picked, so the cards
-             list every size the shop sells (the Coroplast list — the
-             only material with all six). Each card carries one
-             plain-English example of what the size is used for;
-             minimums wait for the buy-mode step, like before. */
+          /* Material is picked first (Step 1), so the cards list
+             exactly the sizes that material comes in — a size the
+             chosen material doesn't make (18"x12" is Coroplast-only)
+             is never offered. Each card carries one plain-English
+             example of what the size is used for; minimums wait for
+             the buy-mode step, like before. */
           var html = "";
-          CALC_DATA.coroplast.forEach(function (s) {
+          (CALC_DATA[wiz.material] || CALC_DATA.coroplast).forEach(function (s) {
             var badges = "";
             if (s.feat) badges += "<span class=\"sc-badge\">\u2605 Popular</span>";
             if (s.key === "s48") badges += "<span class=\"sc-badge sc-badge--deal\">Best deal \u00B7 Full sheet</span>";
@@ -2402,7 +2413,7 @@
         document.querySelectorAll("[data-wmode]").forEach(function (b) {
           b.addEventListener("click", function () {
             wiz.mode = b.getAttribute("data-wmode") === "onepc" ? "onepc" : "wholesale";
-            completeStep(2);
+            completeStep(3);
           });
         });
         document.querySelectorAll("[data-wmat]").forEach(function (b) {
@@ -2413,7 +2424,7 @@
             if (key === "foamboard") { wiz.stakes = "0"; wiz.grommets = "none"; wiz.flute = null; }
             if (wiz.sizeKey && !entryFor(key, wiz.sizeKey)) {
               wiz.sizeKey = null;
-              wiz.answered[1] = false;
+              wiz.answered[2] = false;
               wiz.qty = null;
             }
             if (key === "coroplast") {
@@ -2421,46 +2432,46 @@
                  10mm — so the step stays open on the thickness choice
                  instead of collapsing; tapping a thickness completes
                  the step (see the thickness handler below). */
-              wiz.answered[3] = true;
-              if (wiz.reached < 3) wiz.reached = 3;
-              wiz.open = 3;
+              wiz.answered[1] = true;
+              if (wiz.reached < 1) wiz.reached = 1;
+              wiz.open = 1;
               renderWizard();
-              var st2 = document.querySelector('[data-wstep="3"]');
+              var st2 = document.querySelector('[data-wstep="1"]');
               if (st2) st2.scrollIntoView({ behavior: "smooth", block: "start" });
               return;
             }
-            completeStep(3);
+            completeStep(1);
           });
         });
-        /* Thickness lives inside Step 3 with the material: it only
+        /* Thickness lives inside Step 1 with the material: it only
            shows for Coroplast, starts unpicked (neither option is
            pre-selected), and a pick survives switching material away
-           and back. Tapping one completes Step 3 (the step stays
+           and back. Tapping one completes Step 1 (the step stays
            open on this choice after Coroplast is picked), and
            changing it later reprices everything downstream through
            wizEntry(), like a material change does. */
         document.querySelectorAll("[data-wthick]").forEach(function (b) {
           b.addEventListener("click", function () {
             wiz.thickness = b.getAttribute("data-wthick") === "10" ? "10" : "4";
-            completeStep(3);
+            completeStep(1);
           });
         });
         document.getElementById("wSizeGrid").addEventListener("click", function (e) {
           var btn = e.target && e.target.closest ? e.target.closest("[data-sizecard]") : null;
           if (!btn) return;
           wiz.sizeKey = btn.getAttribute("data-sizecard");
-          /* Size comes first now: if a material was already picked
-             (editing Step 1) and it doesn't come in the new size —
-             18"x12" is Coroplast-only — clear it and let the new
-             size's recommendation take over at Step 3. */
+          /* Material comes first now: if a material was already
+             picked (editing Step 2) and it doesn't come in the new
+             size — 18"x12" is Coroplast-only — clear it and let the
+             new size's recommendation take over at Step 1. */
           if (wiz.material && !entryFor(wiz.material, wiz.sizeKey)) {
             wiz.material = null;
-            wiz.answered[3] = false;
+            wiz.answered[1] = false;
             wiz.qty = null;
           }
           if (wiz.sizeKey === "s48") wiz.flute = null;
           if (typeof recheckArtwork === "function") recheckArtwork();
-          completeStep(1);
+          completeStep(2);
         });
         document.querySelectorAll("[data-wsides]").forEach(function (b) {
           b.addEventListener("click", function () {
@@ -2555,12 +2566,13 @@
           renderWizard();
         }
 
-        /* ================= size-first entry =================
-           A fresh Build Your Sign open starts at Step 1 (size):
-           resetWizard() leaves the fresh wizard there, each size
-           card carries a plain-English example of what the size is
-           for, and the material recommendation (SIZE_RECS) is
-           waiting at Step 3. Pre-loaded flows from elsewhere (cart
+        /* ================= material-first entry =================
+           A fresh Build Your Sign open starts at Step 1 (material):
+           resetWizard() leaves the fresh wizard there with Coroplast
+           pre-selected and tagged RECOMMENDED (DEFAULT_REC), the
+           Step 2 size cards list only the sizes that material comes
+           in, and each card carries a plain-English example of what
+           the size is for. Pre-loaded flows from elsewhere (cart
            edit) never pass through here. */
 
         /* ================= artwork upload + resolution checker (in-memory only) ================= */
@@ -3083,9 +3095,9 @@
         function showWizMsg(t) { wizMsg.textContent = t; wizMsg.classList.add("show"); }
         function hideWizMsg() { wizMsg.classList.remove("show"); wizMsg.textContent = ""; }
         var STEP_NEEDS = {
-          1: "pick a size.",
-          2: "\u201CWholesale (sheet qty)\u201D or \u201COne Sign.\u201D",
-          3: "pick a material \u2014 Coroplast, Max Metal, or Foamboard.",
+          1: "pick a material \u2014 Coroplast, Max Metal, or Foamboard.",
+          2: "pick a size.",
+          3: "\u201CWholesale (sheet qty)\u201D or \u201COne Sign.\u201D",
           4: "pick single or double sided.",
           5: "set how many you need, then hit Continue.",
           6: "look over the finishing touches (none is fine), then hit Continue."
