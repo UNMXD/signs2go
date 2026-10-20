@@ -324,8 +324,15 @@
       /* Same plain-until-tapped language as the material and size
          cards: both buy-mode tiles open white and unchosen — the step
          completes only on an actual tap. Hovering tints green, and the
-         chosen tile keeps the stronger green selected treatment. */
-      .mode-tile:not([aria-pressed="true"]):hover { transform: translateY(-2px); background: rgba(172, 229, 14, 0.16); box-shadow: inset 0 0 0 3px var(--green), 0 10px 22px rgba(172, 229, 14, 0.40); }
+         chosen tile keeps the stronger green selected treatment. The
+         hover tint is gated to devices with a real hovering pointer:
+         on touch screens the browser sticks :hover onto whatever card
+         ends up under the tap point after the previous step scrolls,
+         which left the untouched Wholesale tile wearing the green
+         tint — looking pre-selected when nothing had been tapped. */
+      @media (hover: hover) and (pointer: fine) {
+        .mode-tile:not([aria-pressed="true"]):hover { transform: translateY(-2px); background: rgba(172, 229, 14, 0.16); box-shadow: inset 0 0 0 3px var(--green), 0 10px 22px rgba(172, 229, 14, 0.40); }
+      }
       .mode-tile[aria-pressed="true"] { background: rgba(172, 229, 14, 0.38); box-shadow: inset 0 0 0 3px var(--green), inset 0 0 0 5.5px var(--black); }
       .mode-tile-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
       .mode-tile-title {
