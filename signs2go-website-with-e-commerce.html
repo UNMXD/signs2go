@@ -1112,6 +1112,20 @@
         margin-bottom: 18px; background: var(--white); scroll-margin-top: calc(var(--head-h, 87px) + 92px);
       }
       .wiz-step.is-locked { display: none; }
+      /* Answered state (Build Your Sign only): once a step is answered
+         and collapsed, the whole card reads as done at a glance — pale
+         brand-green tint, a stronger green border, and the number
+         badge becomes a green circle with a bold check. The open
+         step keeps the normal white treatment; locked/upcoming steps
+         never get this. */
+      .wiz-step[data-wstep].is-done {
+        background: rgba(172, 229, 14, 0.14);
+        border: 2px solid #6f9a04;
+        box-shadow: inset 0 0 0 2px rgba(172, 229, 14, 0.55);
+      }
+      .wiz-step[data-wstep].is-done .step-num {
+        background: var(--green); color: var(--black); border-color: var(--black);
+      }
       .wiz-head { display: flex; align-items: flex-start; gap: 14px; }
       .wiz-head-text { flex: 1; min-width: 0; }
       .wiz-title {
@@ -2248,12 +2262,14 @@
             var skipped = n === 6 && !hasFinishingStep();
             step.classList.toggle("is-skipped", skipped);
             var numEl = step.querySelector(".step-num");
-            if (numEl) numEl.textContent = String(displayStepNum(n));
             var done = !!wiz.answered[n];
             /* A done step collapses to its summary — unless it is the
                step currently being edited, when its body reopens and
                the summary/Edit tuck away until it is answered again. */
             var collapsed = !!done && wiz.open !== n;
+            /* Collapsed (answered) steps show a check in the badge;
+               open and upcoming steps keep their number. */
+            if (numEl) numEl.textContent = collapsed ? "✓" : String(displayStepNum(n));
             step.classList.toggle("is-locked", skipped || n > wiz.reached);
             step.classList.toggle("is-done", collapsed);
             step.classList.toggle("is-open", !skipped && wiz.open === n);
