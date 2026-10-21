@@ -1174,15 +1174,61 @@
          at readable body size (the Political Signs wizard's dropzone
          keeps the shared .dz-sub size). */
       .easyorder .dropzone .dz-sub { font-size: 16px; line-height: 1.5; }
-      /* Coroplast thickness sub-choice (Step 1, Coroplast only) */
-      .thick-field { margin-top: 16px; }
-      .thick-field .f-label { display: block; margin-bottom: 8px; }
+      /* Coroplast thickness sub-choice (Step 1, Coroplast only).
+         Picking Coroplast doesn't finish Step 1 — the thickness is a
+         required sub-question inside it, so it is framed as one: its
+         own bordered panel with a 1B sub-step badge, a question
+         heading, and a "pick one" pill. While Coroplast is chosen
+         but no thickness is tapped yet, the panel wears the .is-waiting
+         treatment (light green wash + green ring) so it reads as the
+         thing the wizard is waiting on — never as an answer already
+         given: the two options themselves stay plain white until
+         tapped, exactly like every other choice on the page. */
+      .thick-field {
+        margin-top: 20px; padding: 18px;
+        border: 2px solid var(--black); border-radius: 14px; background: var(--white);
+        scroll-margin-top: calc(var(--head-h, 87px) + 104px);
+      }
+      .thick-field.is-waiting { background: rgba(172, 229, 14, 0.10); box-shadow: inset 0 0 0 3px var(--green); }
+      .thick-head { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 10px 12px; margin-bottom: 14px; }
+      .thick-badge {
+        flex: 0 0 auto; width: 38px; height: 38px; border-radius: 50%;
+        background: var(--black); color: var(--green); border: 2px solid var(--black);
+        display: inline-flex; align-items: center; justify-content: center;
+        font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; font-size: 15.5px; line-height: 1;
+      }
+      .thick-head-text { flex: 1 1 220px; min-width: 0; }
+      .thick-q {
+        display: block;
+        font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; text-transform: uppercase;
+        font-size: 22px; line-height: 1.1;
+      }
+      .thick-q-sub { display: block; font-size: 16.5px; font-weight: 600; line-height: 1.4; margin-top: 4px; }
+      .thick-need {
+        flex: 0 0 auto; margin-left: auto;
+        font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 0.03em; font-size: 14.5px; line-height: 1.15; white-space: nowrap;
+        border: 2px solid var(--black); border-radius: 999px; padding: 6px 13px;
+        background: var(--green); color: var(--black);
+        box-shadow: 0 3px 0 rgba(0, 0, 0, 0.85);
+      }
       .thick-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
       .thick-opt {
+        position: relative;
         text-align: left; border: 2px solid var(--black); border-radius: 14px; background: var(--white);
-        color: var(--black); padding: 14px 16px; cursor: pointer; font: inherit; width: 100%;
+        color: var(--black); padding: 14px 56px 14px 16px; cursor: pointer; font: inherit; width: 100%;
         transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
       }
+      /* Empty check ring on each option, filled green with a check
+         once tapped — the same answered / not-yet language as the
+         buy-mode tiles' check circles. */
+      .thick-opt::after {
+        content: "✓"; position: absolute; top: 13px; right: 13px;
+        width: 30px; height: 30px; border-radius: 50%;
+        border: 2.5px solid var(--black); background: transparent; color: transparent;
+        font-size: 16px; font-weight: 700; line-height: 26px; text-align: center;
+      }
+      .thick-opt[aria-pressed="true"]::after { background: var(--green); color: var(--black); }
       .thick-opt:not([aria-pressed="true"]):hover { transform: translateY(-2px); background: rgba(172, 229, 14, 0.16); box-shadow: inset 0 0 0 3px var(--green), 0 10px 22px rgba(172, 229, 14, 0.40); }
       .thick-opt[aria-pressed="true"] { background: rgba(172, 229, 14, 0.38); box-shadow: inset 0 0 0 3px var(--green), inset 0 0 0 5.5px var(--black); }
       .to-name { display: block; font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; text-transform: uppercase; font-size: 20px; line-height: 1.1; }
@@ -1716,7 +1762,14 @@
               </div>
               <p class="mat-rec-note" id="wMatRecNote" hidden></p>
               <div class="thick-field" id="wThickField" hidden>
-                <span class="f-label" id="wThickLabel">Coroplast thickness</span>
+                <div class="thick-head">
+                  <span class="thick-badge" aria-hidden="true">1B</span>
+                  <div class="thick-head-text">
+                    <span class="thick-q" id="wThickLabel">How thick?</span>
+                    <span class="thick-q-sub">Coroplast comes in two thicknesses &mdash; pick one to keep going.</span>
+                  </div>
+                  <span class="thick-need" id="wThickNeed" hidden>Pick one to continue</span>
+                </div>
                 <div class="thick-opts" role="group" aria-labelledby="wThickLabel">
                   <button type="button" class="thick-opt" data-wthick="4" aria-pressed="false">
                     <span class="to-name">4mm &mdash; Standard</span>
@@ -2366,7 +2419,16 @@
             b.setAttribute("aria-pressed", b.getAttribute("data-wthick") === wiz.thickness ? "true" : "false");
           });
           var thickField = document.getElementById("wThickField");
-          if (thickField) thickField.hidden = wiz.material !== "coroplast";
+          if (thickField) {
+            thickField.hidden = wiz.material !== "coroplast";
+            /* The thickness sub-question only reads as answered once
+               a thickness is really tapped; until then its panel
+               carries the waiting treatment and the "pick one" pill,
+               so a chosen Coroplast never looks like a finished step. */
+            thickField.classList.toggle("is-waiting", wiz.material === "coroplast" && !wiz.thickness);
+          }
+          var thickNeed = document.getElementById("wThickNeed");
+          if (thickNeed) thickNeed.hidden = !(wiz.material === "coroplast" && !wiz.thickness);
           document.querySelectorAll("[data-wsides]").forEach(function (b) {
             b.setAttribute("aria-pressed", b.getAttribute("data-wsides") === String(wiz.sides) ? "true" : "false");
           });
@@ -2549,7 +2611,11 @@
               if (wiz.reached < 1) wiz.reached = 1;
               wiz.open = 1;
               renderWizard();
-              var st2 = document.querySelector('[data-wstep="1"]');
+              /* Bring the thickness sub-question itself into view —
+                 it is what Step 1 is now waiting on, so the eye lands
+                 on it rather than back at the top of the step. */
+              var tf = document.getElementById("wThickField");
+              var st2 = tf || document.querySelector('[data-wstep="1"]');
               if (st2) st2.scrollIntoView({ behavior: "smooth", block: "start" });
               return;
             }
