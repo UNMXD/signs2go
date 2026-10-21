@@ -728,35 +728,6 @@
         .bigorder-stats { grid-template-columns: 1fr; }
       }
 
-      /* ---------- faq ---------- */
-      .faq-list { max-width: 880px; border-top: 2px solid var(--black); }
-      .faq-item { border-bottom: 2px solid var(--black); }
-      .faq-q {
-        width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 16px;
-        background: none; border: 0; padding: 20px 4px; text-align: left; cursor: pointer;
-        font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 600;
-        text-transform: uppercase; letter-spacing: 0.02em; font-size: 20px; color: var(--black);
-      }
-      .faq-chev {
-        flex: 0 0 auto; width: 34px; height: 34px; border-radius: 50%; background: var(--green);
-        display: inline-flex; align-items: center; justify-content: center;
-        transition: transform 0.25s ease;
-      }
-      .faq-item.open .faq-chev { transform: rotate(45deg); }
-      .faq-a { display: none; padding: 0 4px 24px; font-size: 18.5px; max-width: 46em; }
-      .faq-item.open .faq-a { display: block; }
-      .faq-a a { font-weight: 600; }
-      .faq-link {
-        background: none; border: 0; padding: 0; cursor: pointer; font: inherit; font-weight: 600;
-        color: var(--black); text-decoration: underline; text-decoration-color: var(--green);
-        text-decoration-thickness: 2px; text-underline-offset: 3px;
-      }
-      .faq-more { margin-top: 28px; font-size: 19px; max-width: 880px; }
-      .faq-more a { font-weight: 600; }
-      @media (prefers-reduced-motion: reduce) {
-        .faq-chev { transition: none; }
-      }
-
       .foot-banner { background: var(--black); line-height: 0; }
       .foot-banner img { width: 100%; height: auto; display: block; }
       @media (max-width: 640px) {
@@ -1485,14 +1456,14 @@
       </section>
 
       <!-- ================= BIG ORDERS ================= -->
-      <section class="section bigorder-sec" aria-label="Big orders — up to 2,000 signs in 24 hours or less">
+      <section class="section bigorder-sec" aria-label="Big orders — 2,000+ signs in 24 hours or less">
         <div class="wrap">
           <span class="kicker">Big orders welcome</span>
-          <h2 class="display">Need a big order? <em>2,000 signs?</em> We can do it in 24 hours or less.</h2>
+          <h2 class="display">Need a big order? <em>2,000+ signs?</em> We can do it in 24 hours or less.</h2>
           <p class="bigorder-sub">Campaigns, real estate teams, franchises, grand openings — if you need signs by the pallet instead of the handful, this is the shop that prints them. Volume pricing is built right into the builder: the more you order, the less each sign costs.</p>
           <div class="bigorder-stats">
             <div class="bo">
-              <div class="bo-num">2,000 signs</div>
+              <div class="bo-num">2,000+ signs</div>
               <p>One big run, printed on our floor in McAllen — one design, or a whole slate of them.</p>
             </div>
             <div class="bo">
@@ -1555,107 +1526,6 @@
         </div>
       </section>
 
-      <!-- ================= FAQ ================= -->
-      <section class="section faq-sec" id="faq" aria-label="Frequently asked questions">
-        <div class="wrap">
-          <div class="section-head">
-            <span class="kicker">Good questions</span>
-            <h2 class="display">Questions? <em>We've got answers.</em></h2>
-            <p>The stuff people call about most — answered straight.</p>
-          </div>
-          <div class="faq-list">
-            <div class="faq-item">
-              <h3>
-                <button type="button" class="faq-q" aria-expanded="false">
-                  How fast can I get my signs?
-                  <span class="faq-chev" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="3" stroke-linecap="round"><path d="M12 4v16M4 12h16"/></svg></span>
-                </button>
-              </h3>
-              <div class="faq-a">
-                <p>Order by 2 PM, Monday–Friday, and standard orders are ready for pickup the same day. Need a mountain of them? We can print up to 2,000 signs in 24 hours or less. We&rsquo;ll text you when your stack is ready, and ready orders are held until 6 PM.</p>
-              </div>
-            </div>
-            <div class="faq-item">
-              <h3>
-                <button type="button" class="faq-q" aria-expanded="false">
-                  How much do signs cost?
-                  <span class="faq-chev" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="3" stroke-linecap="round"><path d="M12 4v16M4 12h16"/></svg></span>
-                </button>
-              </h3>
-              <div class="faq-a">
-                <p>It depends on the size, the material, one side or two, and how many — so the builder prices it live as you answer, no quote form and no waiting on a callback. Wholesale orders price by the sheet with the bulk discount built in: the more you order, the less each sign costs.</p>
-              </div>
-            </div>
-            <div class="faq-item">
-              <h3>
-                <button type="button" class="faq-q" aria-expanded="false">
-                  What&rsquo;s the difference between Wholesale and One Sign?
-                  <span class="faq-chev" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="3" stroke-linecap="round"><path d="M12 4v16M4 12h16"/></svg></span>
-                </button>
-              </h3>
-              <div class="faq-a">
-                <p>Wholesale (Sheet Qty) is the bulk lane: sheet quantities with minimums per size, and the lowest per-sign prices on the site. One Sign is exactly what it sounds like — a single sign, no minimum. Same printing, same inks, same pickup either way.</p>
-              </div>
-            </div>
-            <div class="faq-item">
-              <h3>
-                <button type="button" class="faq-q" aria-expanded="false">
-                  Which material should I pick?
-                  <span class="faq-chev" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="3" stroke-linecap="round"><path d="M12 4v16M4 12h16"/></svg></span>
-                </button>
-              </h3>
-              <div class="faq-a">
-                <p>Coroplast is the go-to for most outdoor signs — light, weatherproof, and made for H-stakes — in standard 4mm, or extra-rigid 10mm for the big 4&prime;&times;4&prime; and 4&prime;&times;8&prime; sheets. Max Metal is a 3mm aluminum composite: smooth, rigid, and built to last outdoors. Foamboard is a 3/16&Prime; foam board made for indoor signs — presentations, displays, and events.</p>
-              </div>
-            </div>
-            <div class="faq-item">
-              <h3>
-                <button type="button" class="faq-q" aria-expanded="false">
-                  Can I get H-stakes or grommets?
-                  <span class="faq-chev" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="3" stroke-linecap="round"><path d="M12 4v16M4 12h16"/></svg></span>
-                </button>
-              </h3>
-              <div class="faq-a">
-                <p>Yes — H-stakes in 15&Prime;, 24&Prime;, and 30&Prime; for Coroplast signs, and grommets on Coroplast and Max Metal. You&rsquo;ll pick your finishing in the builder after size and sides. One exception: 10mm Coroplast has no finishing step — it&rsquo;s ordered plain.</p>
-              </div>
-            </div>
-            <div class="faq-item">
-              <h3>
-                <button type="button" class="faq-q" aria-expanded="false">
-                  What artwork files do you accept?
-                  <span class="faq-chev" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="3" stroke-linecap="round"><path d="M12 4v16M4 12h16"/></svg></span>
-                </button>
-              </h3>
-              <div class="faq-a">
-                <p>Print-ready PDF or JPEG files are perfect. You check out first, then we ask for your artwork — upload it right in the order flow, or email it to <a href="mailto:info@signs2go.us">info@signs2go.us</a>. No file yet? You can send it later, and if you need a hand getting artwork print-ready, tell us — we&rsquo;ll get a proof back to you before we print.</p>
-              </div>
-            </div>
-            <div class="faq-item">
-              <h3>
-                <button type="button" class="faq-q" aria-expanded="false">
-                  Where do I pick up my order?
-                  <span class="faq-chev" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="3" stroke-linecap="round"><path d="M12 4v16M4 12h16"/></svg></span>
-                </button>
-              </h3>
-              <div class="faq-a">
-                <p>Everything is printed at our McAllen shop — 304 E Pecan Blvd Ste U, McAllen, TX 78501 — and we serve the entire Rio Grande Valley. We&rsquo;re open Monday–Friday; to schedule a pickup, call our factory at <a href="tel:+19563225588">(956) 322-5588</a>.</p>
-              </div>
-            </div>
-            <div class="faq-item">
-              <h3>
-                <button type="button" class="faq-q" aria-expanded="false">
-                  I&rsquo;m running for office. Can you do my campaign signs?
-                  <span class="faq-chev" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="3" stroke-linecap="round"><path d="M12 4v16M4 12h16"/></svg></span>
-                </button>
-              </h3>
-              <div class="faq-a">
-                <p>Absolutely — campaign runs are some of our biggest orders, and we can turn up to 2,000 signs in 24 hours or less when the deadline is tight. Hit <button type="button" class="faq-link" data-open-campaign>Political Signs</button> at the top of the page, tell us how many you need and by when, and we&rsquo;ll quote the run fast.</p>
-              </div>
-            </div>
-          </div>
-          <p class="faq-more">Still stuck? Call us at <a href="tel:+19567778300">(956) 777-8300</a> or email <a href="mailto:info@signs2go.us">info@signs2go.us</a> — a real person at the shop will sort it out.</p>
-        </div>
-      </section>
     </main>
 
     <div class="foot-banner" aria-hidden="true">
@@ -4115,19 +3985,6 @@
         renderArtworkList();
       })();
 
-    </script>
-    <script>
-      (function () {
-        var qs = document.querySelectorAll(".faq-q");
-        Array.prototype.forEach.call(qs, function (btn) {
-          btn.addEventListener("click", function () {
-            var item = btn.closest(".faq-item");
-            if (!item) return;
-            var open = item.classList.toggle("open");
-            btn.setAttribute("aria-expanded", open ? "true" : "false");
-          });
-        });
-      })();
     </script>
   </body>
 </html>
