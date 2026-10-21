@@ -2418,7 +2418,15 @@
              example of what the size is used for; minimums wait for
              the buy-mode step, like before. */
           var html = "";
-          (CALC_DATA[wiz.material] || CALC_DATA.coroplast).forEach(function (s) {
+          var sizeList = CALC_DATA[wiz.material] || CALC_DATA.coroplast;
+          /* 10mm Coroplast is a heavy-duty board sold only as big
+             sheets: at 10mm the size step offers ONLY 4'x4' and
+             4'x8' — the four smaller sizes don't exist in 10mm and
+             are never rendered. 4mm keeps the full six-size list. */
+          if (wiz.material === "coroplast" && wiz.thickness === "10") {
+            sizeList = sizeList.filter(function (s) { return s.key === "s44" || s.key === "s48"; });
+          }
+          sizeList.forEach(function (s) {
             var badges = "";
             if (s.key === "s48") badges += "<span class=\"sc-badge sc-badge--deal\">Best deal \u00B7 Full sheet</span>";
             var hint = SIZE_HINTS[s.key] ? "<span class=\"sc-hint\">" + SIZE_HINTS[s.key] + "</span>" : "";
@@ -2538,6 +2546,19 @@
         document.querySelectorAll("[data-wthick]").forEach(function (b) {
           b.addEventListener("click", function () {
             wiz.thickness = b.getAttribute("data-wthick") === "10" ? "10" : "4";
+            /* 10mm only comes in 4'x4' and 4'x8': if a smaller size
+               was already answered and the customer switches the
+               thickness to 10mm (e.g. via Edit on Step 1), that size
+               answer is invalid — clear it so Step 2 reopens
+               unanswered instead of pricing a 10mm combination that
+               doesn't exist. syncFinishingState() (via renderWizard)
+               also strips any finishing picked under 4mm, since
+               10mm takes no finishing at all. */
+            if (wiz.thickness === "10" && wiz.sizeKey && wiz.sizeKey !== "s44" && wiz.sizeKey !== "s48") {
+              wiz.sizeKey = null;
+              wiz.answered[2] = false;
+              wiz.qty = null;
+            }
             completeStep(1);
           });
         });
