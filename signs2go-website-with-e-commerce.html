@@ -1724,7 +1724,7 @@
                   </button>
                   <button type="button" class="thick-opt" data-wthick="10" aria-pressed="false">
                     <span class="to-name">10mm &mdash; Heavy Duty</span>
-                    <span class="to-sub">Thicker and stiffer, no light shines through &mdash; priced at 2&times; the 4mm price</span>
+                    <span class="to-sub">Thicker and stiffer, no light shines through &mdash; big sheets only, at a flat per-sign price</span>
                   </button>
                 </div>
               </div>
@@ -1815,7 +1815,7 @@
                 <p class="qty-note" id="wQtyNote"></p>
                 <p class="cp-note" id="wVolNote"></p>
               </div>
-              <div class="ladder wiz-ladder">
+              <div class="ladder wiz-ladder" id="wLadder">
                 <h4 class="display ladder-title">Buy more, <span class="hl">save more!</span></h4>
                 <div class="ladder-grid" id="wTierGrid" role="group" aria-label="Pricing ladder — tap a quantity"></div>
               </div>
@@ -2076,17 +2076,19 @@
             { key: "s48", label: "4\u2019\u00D78\u2019", ws: [129.95, 179.95], pc: [129.95, 179.95], pps: 1, feat: "s48" }
           ]
         };
-        /* Coroplast 10mm prices: exactly 2x the 4mm table, same
-           structure (ws = wholesale per-piece, pc = 1 pc price,
-           [1-side, 2-side]). Minimums (pps) and size labels come from
-           the 4mm entries — identical for both thicknesses. */
+        /* Coroplast 10mm prices (Dad's flat rates): NO wholesale /
+           one-sign split and NO volume curve at 10mm — one flat
+           per-piece price per size and side count, the same at any
+           quantity. [1-side, 2-side]: 4'x4' $72.50 / $109.90 and
+           4'x8' $139.95 / $199.95. The double-sided values are the
+           previous 10mm ones, kept unchanged this round. ws and pc
+           hold identical numbers because there is no buy-mode split;
+           minimums (pps) and size labels still come from the 4mm
+           entries — 2 pc for 4'x4', 1 pc for 4'x8'. Only s44/s48
+           exist at 10mm (the size step offers no others). */
         var CORO10 = {
-          s1812: { ws: [9.90, 13.90], pc: [20.00, 30.00] },
-          s24: { ws: [13.90, 19.90], pc: [40.00, 50.00] },
-          s2424: { ws: [17.90, 25.90], pc: [50.00, 60.00] },
-          s2436: { ws: [29.90, 41.90], pc: [60.00, 70.00] },
-          s44: { ws: [79.90, 109.90], pc: [120.00, 160.00] },
-          s48: { ws: [139.90, 199.90], pc: [139.90, 199.90] }
+          s44: { ws: [72.50, 109.90], pc: [72.50, 109.90] },
+          s48: { ws: [139.95, 199.95], pc: [139.95, 199.95] }
         };
         var CALC_TIERS = [1, 5, 10, 25, 50, 100, 200, 500, 1000, 2000];
         var CALC_DIMS = { s1812: { w: 18, h: 12 }, s24: { w: 24, h: 18 }, s2424: { w: 24, h: 24 }, s2436: { w: 24, h: 36 }, s44: { w: 48, h: 48 }, s48: { w: 48, h: 96 } };
@@ -2230,6 +2232,11 @@
           }
           return e;
         }
+        /* 10mm Coroplast is its own simplified path (Dad's rules):
+           no buy-mode step, no finishing step, no volume ladder —
+           just size, sides, and a plain quantity at a flat price. */
+        function is10mm() { return wiz.material === "coroplast" && wiz.thickness === "10"; }
+        function hasBuyModeStep() { return !is10mm(); }
         /* Finishing touches: Foamboard takes neither stakes nor
            grommets, and 10mm Coroplast takes none either — wire
            H-stakes are sized for 4mm flutes and don't work in 10mm,
@@ -2259,8 +2266,8 @@
           if (!hasFinishingStep() && wiz.material) { wiz.stakes = wiz.material === "maxmetal" ? wiz.stakes : "0"; if (wiz.material !== "maxmetal") wiz.grommets = "none"; wiz.flute = null; }
           if (wiz.material === "coroplast" && wiz.sizeKey === "s48") { wiz.flute = null; }
         }
-        function wizMinQty() { var e = wizEntry(); if (!e) return 1; return wiz.mode === "onepc" ? 1 : e.pps; }
-        function wizStepQty() { var e = wizEntry(); if (!e) return 1; return wiz.mode === "onepc" ? 1 : (e.key === "s44" ? 2 : 1); }
+        function wizMinQty() { var e = wizEntry(); if (!e) return 1; if (is10mm()) return e.pps; return wiz.mode === "onepc" ? 1 : e.pps; }
+        function wizStepQty() { var e = wizEntry(); if (!e) return 1; if (is10mm()) return 1; return wiz.mode === "onepc" ? 1 : (e.key === "s44" ? 2 : 1); }
         function wizNormalizeQty(raw) {
           var e = wizEntry(); if (!e) return 1;
           var min = wizMinQty(), step = wizStepQty();
@@ -2277,7 +2284,7 @@
            sided (the display estimate only — sides itself stays
            null and unselected until the customer taps a pill). */
         function wizSideIdx() { return wiz.sides == null ? 0 : wiz.sides; }
-        function wizSignEach() { var e = wizEntry(); if (!e) return 0; return signPriceFor(e, wizSideIdx(), wizQty(), wiz.mode); }
+        function wizSignEach() { var e = wizEntry(); if (!e) return 0; return is10mm() ? e.ws[wizSideIdx()] : signPriceFor(e, wizSideIdx(), wizQty(), wiz.mode); }
         function wizEach() { return wizSignEach() + wizAdders(); }
 
         function wizSummaryText(n) {
@@ -2308,7 +2315,7 @@
           for (var n = 1; n <= 6; n++) {
             var step = document.querySelector('[data-wstep="' + n + '"]');
             if (!step) continue;
-            var skipped = n === 6 && !hasFinishingStep();
+            var skipped = (n === 3 && !hasBuyModeStep()) || (n === 6 && !hasFinishingStep());
             step.classList.toggle("is-skipped", skipped);
             var numEl = step.querySelector(".step-num");
             var done = !!wiz.answered[n];
@@ -2454,6 +2461,19 @@
           qEl.min = wizMinQty();
           qEl.step = wizStepQty();
           if (rewriteField) qEl.value = q;
+          var ladderWrap = document.getElementById("wLadder");
+          if (is10mm()) {
+            /* 10mm: a plain "How many?" picker — no BUY MORE, SAVE
+               MORE! ladder and no volume pricing, just the flat
+               per-piece price and the size minimum. */
+            if (ladderWrap) ladderWrap.hidden = true;
+            if (e.pps > 1) { note.textContent = e.pps + " pc minimum for this size"; note.classList.add("show"); }
+            else { note.textContent = ""; note.classList.remove("show"); }
+            vol.textContent = "";
+            ladderEl.innerHTML = "";
+            return;
+          }
+          if (ladderWrap) ladderWrap.hidden = false;
           if (wiz.mode === "onepc") { note.textContent = ""; note.classList.remove("show"); }
           else if (e.key === "s44") { note.textContent = "Sold in pairs \u2014 2 pc minimum for this size"; note.classList.add("show"); }
           else if (e.pps > 1) { note.textContent = e.pps + " pc minimum for this size"; note.classList.add("show"); }
@@ -2495,7 +2515,7 @@
           }
           wiz.reached = Math.max(wiz.reached, Math.min(6, n + 1));
           var next = 0;
-          for (var i = 1; i <= 6; i++) { if (i === 6 && !hasFinishingStep()) continue; if (!wiz.answered[i]) { next = i; break; } }
+          for (var i = 1; i <= 6; i++) { if (i === 3 && !hasBuyModeStep()) continue; if (i === 6 && !hasFinishingStep()) continue; if (!wiz.answered[i]) { next = i; break; } }
           wiz.open = next;
           if (wiz.open > wiz.reached) wiz.reached = wiz.open;
           renderWizard();
@@ -2559,6 +2579,13 @@
               wiz.answered[2] = false;
               wiz.qty = null;
             }
+            /* 10mm has no buy-mode step at all: mark Step 3 answered
+               so the flow (and Add to Cart) never waits on a mode
+               that will never be picked. Switching back to 4mm
+               restores the step — answered only if a mode was
+               actually picked earlier. */
+            if (wiz.thickness === "10") wiz.answered[3] = true;
+            else wiz.answered[3] = !!wiz.mode;
             completeStep(1);
           });
         });
@@ -2945,6 +2972,7 @@
            happens after the order is placed, on the confirmation. */
         function wizardReadyForCart() {
           for (var i = 1; i <= 6; i++) {
+            if (i === 3 && !hasBuyModeStep()) continue;
             if (i === 6 && !hasFinishingStep()) continue;
             if (!wiz.answered[i]) return false;
           }
@@ -2983,8 +3011,8 @@
           }
           return e;
         }
-        function itemMinQty(it) { var e = entryForItem(it); if (!e) return 1; return it.mode === "onepc" ? 1 : e.pps; }
-        function itemStepQty(it) { var e = entryForItem(it); if (!e) return 1; return it.mode === "onepc" ? 1 : (e.key === "s44" ? 2 : 1); }
+        function itemMinQty(it) { var e = entryForItem(it); if (!e) return 1; if (it.material === "coroplast" && it.thickness === "10") return e.pps; return it.mode === "onepc" ? 1 : e.pps; }
+        function itemStepQty(it) { var e = entryForItem(it); if (!e) return 1; if (it.material === "coroplast" && it.thickness === "10") return 1; return it.mode === "onepc" ? 1 : (e.key === "s44" ? 2 : 1); }
         function normalizeItemQty(it, raw) {
           var e = entryForItem(it); if (!e) return 1;
           var min = itemMinQty(it), step = itemStepQty(it);
@@ -3004,13 +3032,14 @@
           var e = entryForItem(it); if (!e) return;
           it.qty = normalizeItemQty(it, it.qty);
           it.sizeLabel = e.label;
-          var signEach = signPriceFor(e, it.sides, it.qty, it.mode);
+          var signEach = (it.material === "coroplast" && it.thickness === "10") ? e.ws[it.sides] : signPriceFor(e, it.sides, it.qty, it.mode);
           it.each = signEach + itemAdders(it);
           it.total = it.each * it.qty;
         }
         function itemMinNote(it) {
-          if (it.mode === "onepc") return "";
           var e = entryForItem(it); if (!e) return "";
+          if (it.material === "coroplast" && it.thickness === "10") return e.pps > 1 ? e.pps + " pc minimum for this size" : "";
+          if (it.mode === "onepc") return "";
           if (e.key === "s44") return "Sold in pairs \u00B7 2 pc minimum for this size";
           if (e.pps > 1) return e.pps + " pc minimum for this size";
           return "";
@@ -3169,6 +3198,7 @@
         document.getElementById("addToCartBtn").addEventListener("click", function () {
           hideWizMsg();
           for (var i = 1; i <= 6; i++) {
+            if (i === 3 && !hasBuyModeStep()) continue;
             if (i === 6 && !hasFinishingStep()) continue;
             if (!wiz.answered[i]) {
               wiz.open = i;
