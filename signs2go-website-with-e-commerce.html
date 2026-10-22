@@ -1088,6 +1088,13 @@
       .qty-zone .cp-note { text-align: center; margin-top: 8px; font-size: 16.5px; }
       .wiz-ladder { margin-top: 26px; }
       .wiz-ladder .ladder-title { margin-top: 0; }
+      /* Save-more prompt: replaces the ladder in the One Sign lane
+         on flat-priced sizes, where every tier would repeat the
+         same price — same divider treatment as the ladder block. */
+      .wiz-savemore { margin-top: 26px; border-top: 2px solid var(--black); padding-top: 22px; text-align: center; }
+      .wiz-savemore-q { font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; font-size: 27px; line-height: 1.15; }
+      .wiz-savemore-p { font-size: 16.5px; line-height: 1.5; margin: 8px auto 0; max-width: 34em; }
+      .wiz-savemore .btn { margin-top: 14px; }
       .custom-line { text-align: center; margin-top: 22px; font-weight: 600; font-size: 18.5px; }
       .addon-rows { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 840px; margin: 0 auto; }
       .addon-row .f-label { display: block; margin-bottom: 8px; }
@@ -1929,6 +1936,11 @@
                 <h4 class="display ladder-title">Buy more, <span class="hl">save more!</span></h4>
                 <div class="ladder-grid" id="wTierGrid" role="group" aria-label="Pricing ladder — tap a quantity"></div>
               </div>
+              <div class="wiz-savemore" id="wSaveMore" hidden>
+                <p class="wiz-savemore-q">Want to save more?</p>
+                <p class="wiz-savemore-p">One Sign pricing stays flat no matter how many you order. Buy in sheet quantities instead and the per-sign price drops as you go.</p>
+                <button type="button" class="btn" id="wSaveMoreBtn">Switch to Wholesale</button>
+              </div>
               <button type="button" class="btn black wiz-continue" id="wQtyContinue">Continue</button>
             </div>
           </div>
@@ -2618,7 +2630,8 @@
           var ladderEl = document.getElementById("wTierGrid");
           var note = document.getElementById("wQtyNote");
           var vol = document.getElementById("wVolNote");
-          if (!e) { ladderEl.innerHTML = ""; note.textContent = ""; note.classList.remove("show"); vol.textContent = ""; return; }
+          var saveMore = document.getElementById("wSaveMore");
+          if (!e) { ladderEl.innerHTML = ""; note.textContent = ""; note.classList.remove("show"); vol.textContent = ""; if (saveMore) saveMore.hidden = true; return; }
           var q = wizQty();
           qEl.min = wizMinQty();
           qEl.step = wizStepQty();
@@ -2634,12 +2647,34 @@
                MORE! ladder and no volume pricing, just the flat
                per-piece price and the size minimum. */
             if (ladderWrap) ladderWrap.hidden = true;
+            if (saveMore) saveMore.hidden = true;
             if (e.pps > 1) { note.textContent = e.pps + " pc minimum for this size"; note.classList.add("show"); }
             else { note.textContent = ""; note.classList.remove("show"); }
             vol.textContent = "";
             ladderEl.innerHTML = "";
             return;
           }
+          if (wiz.mode === "onepc" && !e.tiers) {
+            /* One Sign lane on a flat-priced size: the per-sign
+               price is the 1 pc price at EVERY quantity, so the
+               BUY MORE, SAVE MORE! ladder would just repeat one
+               price across all ten tiers — it hides, and the
+               save-more prompt takes its place. Tapping its button
+               reopens Step 3 with every answer untouched, so the
+               customer picks Wholesale themselves and their
+               material, size, sides and quantity carry over.
+               Tier-table sizes (Foamboard 24"x18" and 24"x24")
+               skip this branch: Dad's table really does drop the
+               price with quantity in this lane too, so their
+               ladder stays and no prompt shows. */
+            if (ladderWrap) ladderWrap.hidden = true;
+            ladderEl.innerHTML = "";
+            note.textContent = ""; note.classList.remove("show");
+            vol.textContent = wizPriceNote(e, q);
+            if (saveMore) saveMore.hidden = false;
+            return;
+          }
+          if (saveMore) saveMore.hidden = true;
           if (ladderWrap) ladderWrap.hidden = false;
           if (wiz.mode === "onepc") { note.textContent = ""; note.classList.remove("show"); }
           else if (e.key === "s44") { note.textContent = "Sold in pairs \u2014 2 pc minimum for this size"; note.classList.add("show"); }
@@ -2794,6 +2829,18 @@
             var st = document.querySelector('[data-wstep="' + wiz.open + '"]');
             if (st) st.scrollIntoView({ behavior: "smooth", block: "start" });
           });
+        });
+        /* Save-more prompt (One Sign lane, flat-priced sizes): jump
+           back to Step 3 WITHOUT changing any answer — the customer
+           taps Wholesale themselves, exactly like an Edit on Step 3,
+           and their material, size, sides and quantity carry over.
+           Wholesale minimums and the real ladder then apply through
+           the normal mode-pick flow. */
+        document.getElementById("wSaveMoreBtn").addEventListener("click", function () {
+          wiz.open = 3;
+          renderWizard();
+          var st3 = document.querySelector('[data-wstep="3"]');
+          if (st3) st3.scrollIntoView({ behavior: "smooth", block: "start" });
         });
 
         var wQtyEl = document.getElementById("wQty");
@@ -3185,7 +3232,7 @@
           return e;
         }
         function itemMinQty(it) { var e = entryForItem(it); if (!e) return 1; if (it.material === "coroplast" && it.thickness === "10") return e.pps; return it.mode === "onepc" ? 1 : e.pps; }
-        function itemStepQty(it) { var e = entryForItem(it); if (!e) return 1; if (it.material === "coroplast" && it.thickness === "10") return 1; return it.mode === "onepc" ? 1 : (e.key === "s44" ? 2 : 1); }
+        function itemStepQty(it) { var e = entryForItem(it); if (!e) return 1; if (it.material === "coroplast" && it.thickness === "10") return 1; if (e.key === "s1812" && it.mode !== "onepc") return 16; return it.mode === "onepc" ? 1 : (e.key === "s44" ? 2 : 1); }
         function normalizeItemQty(it, raw) {
           var e = entryForItem(it); if (!e) return 1;
           var min = itemMinQty(it), step = itemStepQty(it);
