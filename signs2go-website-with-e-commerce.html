@@ -783,6 +783,9 @@
         background-size: 100% 80%;
       }
       .ladder-grid { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); border: 2px solid var(--black); border-radius: 14px; overflow: hidden; }
+      /* Fixed tier tables carry only four tiers — the grid narrows
+         to four columns so the cells fill the box. */
+      .ladder-grid.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
       .ladder-cell { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-width: 0; padding: 20px 4px 18px; border-top: none; border-right: none; border-bottom: none; border-left: 1px solid var(--line); background: var(--white); color: var(--black); font: inherit; text-align: center; cursor: pointer; }
       .ladder-cell:first-child { border-left: none; }
       .ladder-cell:hover { box-shadow: inset 0 0 0 2px var(--black); }
@@ -902,6 +905,7 @@
         .co-zone { padding: 26px 16px 22px; }
         .calc-fields { grid-template-columns: 1fr; }
         .ladder-grid { grid-template-columns: repeat(2, 1fr); }
+        .ladder-grid.four { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         .ladder-cell { padding: 16px 6px 14px; }
         .ladder-cell:nth-child(odd) { border-left: none; }
         .ladder-cell:nth-child(even) { border-left: 1px solid var(--line); }
@@ -2001,7 +2005,7 @@
               <span class="t-label">Grand total</span>
               <span class="t-value" id="cartGrandTotal">$0.00</span>
             </div>
-            <p class="cart-art-note">You&rsquo;ll send your artwork after payment &mdash; we check every file before printing.</p>
+            <p class="cart-art-note">You can send your artwork after payment - we check every file before printing.</p>
             <form class="form-panel" id="eoForm" novalidate style="margin-top:26px">
               <div class="form-grid">
                 <div>
@@ -2175,8 +2179,17 @@
             { key: "s48", label: "4\u2019\u00D78\u2019", ws: [225.00, 250.00], pc: [225.00, 250.00], pps: 1, feat: "s48" }
           ],
           foamboard: [
-            { key: "s24", label: "24\u201D\u00D718\u201D", ws: [14.95, 19.95], pc: [30.00, 40.00], pps: 10, feat: "s24" },
-            { key: "s2424", label: "24\u201D\u00D724\u201D", ws: [19.95, 24.95], pc: [40.00, 50.00], pps: 8, feat: null },
+            /* 24"x18" and 24"x24" carry Dad's fixed tier tables
+               (tiers: [min qty, 1-side, 2-side] per-each prices) —
+               they REPLACE the interim volume curve for these two
+               sizes only: the price at any quantity is the highest
+               tier at or below it, with no further discount above
+               the top tier. The other Foamboard sizes still run the
+               curve on ws until Dad's prices for them land. */
+            { key: "s24", label: "24\u201D\u00D718\u201D", ws: [14.95, 19.95], pc: [30.00, 40.00], pps: 10, feat: "s24",
+              tiers: [[1, 30.00, 40.00], [10, 15.00, 20.00], [50, 14.00, 19.00], [100, 13.00, 18.00]] },
+            { key: "s2424", label: "24\u201D\u00D724\u201D", ws: [19.95, 24.95], pc: [40.00, 50.00], pps: 8, feat: null,
+              tiers: [[1, 40.00, 50.00], [8, 25.00, 30.00], [48, 20.00, 25.00], [96, 18.00, 23.00]] },
             { key: "s2436", label: "24\u201D\u00D736\u201D", ws: [29.95, 39.95], pc: [50.00, 60.00], pps: 5, feat: null },
             { key: "s44", label: "4\u2019\u00D74\u2019", ws: [69.95, 89.95], pc: [95.00, 125.00], pps: 2, feat: "s44" },
             { key: "s48", label: "4\u2019\u00D78\u2019", ws: [129.95, 179.95], pc: [129.95, 179.95], pps: 1, feat: "s48" }
@@ -2206,7 +2219,14 @@
            mode keeps the standard ladder and 1 pc prices. */
         var S1812_TIERS = [16, 32, 48, 64, 80, 96, 112, 128, 144, 160];
         function is1812Wholesale(e) { return !!e && e.key === "s1812" && wiz.mode !== "onepc" && !is10mm(); }
-        function wizTiers(e) { return is1812Wholesale(e) ? S1812_TIERS : CALC_TIERS; }
+        function wizTiers(e) {
+          if (is1812Wholesale(e)) return S1812_TIERS;
+          /* Tier-table sizes show exactly their table's quantities
+             in the wholesale ladder (One Sign mode keeps the
+             standard ladder at the flat 1 pc price). */
+          if (e && e.tiers && wiz.mode !== "onepc") return e.tiers.map(function (t) { return t[0]; });
+          return CALC_TIERS;
+        }
         var CALC_DIMS = { s1812: { w: 18, h: 12 }, s24: { w: 24, h: 18 }, s2424: { w: 24, h: 24 }, s2436: { w: 24, h: 36 }, s44: { w: 48, h: 48 }, s48: { w: 48, h: 96 } };
         /* Per-sign adders, never discounted by the volume curve.
            H-Stakes are Coroplast-only; Grommets Coroplast + Max Metal. */
@@ -2234,11 +2254,24 @@
           var d = volumeDiscountRate(qty);
           return d > 0 ? roundNickel(base * (1 - d)) : base;
         }
+        /* Fixed tier table (Dad's prices, Foamboard 24"x18" and
+           24"x24"): the per-each price at any quantity is the price
+           of the highest tier at or below that quantity — no volume
+           curve and no discount past the top tier. */
+        function tierPriceFor(entry, sideIdx, qty) {
+          var price = entry.tiers[0][sideIdx + 1];
+          for (var i = 0; i < entry.tiers.length; i++) {
+            if (qty >= entry.tiers[i][0]) price = entry.tiers[i][sideIdx + 1];
+          }
+          return price;
+        }
         /* The sign price at a quantity: the 1 pc price below the size's
            pieces-per-sheet count; at/above it, the wholesale price run
-           through the volume curve. In One Sign mode, always the 1 pc price. */
+           through the volume curve. In One Sign mode, always the 1 pc price.
+           Sizes carrying a fixed tier table price off the table instead. */
         function signPriceFor(entry, sideIdx, qty, mode) {
           if (mode === "onepc") return entry.pc[sideIdx];
+          if (entry.tiers) return tierPriceFor(entry, sideIdx, qty);
           return qty >= entry.pps ? curvedPrice(entry.ws[sideIdx], qty) : entry.pc[sideIdx];
         }
         function entryFor(materialKey, sizeKey) {
@@ -2568,6 +2601,7 @@
         }
 
         function wizPriceNote(e, q) {
+          if (e.tiers && wiz.mode !== "onepc") return "Tier pricing for this size \u2014 " + money(tierPriceFor(e, wizSideIdx(), q)) + " each at this quantity. Bigger tiers in the ladder drop the per-piece price.";
           var rate = wiz.mode === "onepc" ? 0 : (q >= e.pps ? volumeDiscountRate(q) : 0);
           if (rate > 0) return "Volume discount applied \u2014 " + Math.round(rate * 100) + "% off the wholesale per-piece price at this quantity.";
           if (wiz.mode === "onepc") return "1 pc price \u2014 the single-sign price, no minimum.";
@@ -2610,6 +2644,7 @@
           else { note.textContent = ""; note.classList.remove("show"); }
           vol.textContent = wizPriceNote(e, q);
           var tiers = wizTiers(e);
+          ladderEl.classList.toggle("four", tiers.length === 4);
           var bracket = tiers[0];
           tiers.forEach(function (t) { if (q >= t) bracket = t; });
           var html = "";
