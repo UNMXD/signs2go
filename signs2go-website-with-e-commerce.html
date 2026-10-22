@@ -2182,7 +2182,8 @@
             /* 24"x18" and 24"x24" carry Dad's fixed tier tables
                (tiers: [min qty, 1-side, 2-side] per-each prices) —
                they REPLACE the interim volume curve for these two
-               sizes only: the price at any quantity is the highest
+               sizes only, in BOTH buy lanes (Wholesale and
+               Single-Sign): the price at any quantity is the highest
                tier at or below it, with no further discount above
                the top tier. The other Foamboard sizes still run the
                curve on ws until Dad's prices for them land. */
@@ -2222,9 +2223,9 @@
         function wizTiers(e) {
           if (is1812Wholesale(e)) return S1812_TIERS;
           /* Tier-table sizes show exactly their table's quantities
-             in the wholesale ladder (One Sign mode keeps the
-             standard ladder at the flat 1 pc price). */
-          if (e && e.tiers && wiz.mode !== "onepc") return e.tiers.map(function (t) { return t[0]; });
+             in the ladder in BOTH lanes — Dad's table is the single
+             price source for these sizes, Single-Sign included. */
+          if (e && e.tiers) return e.tiers.map(function (t) { return t[0]; });
           return CALC_TIERS;
         }
         var CALC_DIMS = { s1812: { w: 18, h: 12 }, s24: { w: 24, h: 18 }, s2424: { w: 24, h: 24 }, s2436: { w: 24, h: 36 }, s44: { w: 48, h: 48 }, s48: { w: 48, h: 96 } };
@@ -2268,10 +2269,12 @@
         /* The sign price at a quantity: the 1 pc price below the size's
            pieces-per-sheet count; at/above it, the wholesale price run
            through the volume curve. In One Sign mode, always the 1 pc price.
-           Sizes carrying a fixed tier table price off the table instead. */
+           Sizes carrying a fixed tier table price off the table instead —
+           in BOTH lanes, by quantity alone, since the table's first tier
+           already is the 1 pc price. */
         function signPriceFor(entry, sideIdx, qty, mode) {
-          if (mode === "onepc") return entry.pc[sideIdx];
           if (entry.tiers) return tierPriceFor(entry, sideIdx, qty);
+          if (mode === "onepc") return entry.pc[sideIdx];
           return qty >= entry.pps ? curvedPrice(entry.ws[sideIdx], qty) : entry.pc[sideIdx];
         }
         function entryFor(materialKey, sizeKey) {
@@ -2601,7 +2604,7 @@
         }
 
         function wizPriceNote(e, q) {
-          if (e.tiers && wiz.mode !== "onepc") return "Tier pricing for this size \u2014 " + money(tierPriceFor(e, wizSideIdx(), q)) + " each at this quantity. Bigger tiers in the ladder drop the per-piece price.";
+          if (e.tiers) return "Tier pricing for this size \u2014 " + money(tierPriceFor(e, wizSideIdx(), q)) + " each at this quantity. Bigger tiers in the ladder drop the per-piece price.";
           var rate = wiz.mode === "onepc" ? 0 : (q >= e.pps ? volumeDiscountRate(q) : 0);
           if (rate > 0) return "Volume discount applied \u2014 " + Math.round(rate * 100) + "% off the wholesale per-piece price at this quantity.";
           if (wiz.mode === "onepc") return "1 pc price \u2014 the single-sign price, no minimum.";
