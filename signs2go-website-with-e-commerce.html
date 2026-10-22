@@ -1304,7 +1304,11 @@
          the wizard's old artwork step, now an invitation shown after
          the order is placed. Nothing here gates anything. */
       /* Test payment screen — demo only: nothing is processed, sent, or stored. */
-      .eo-payment { margin-top: 26px; }
+      /* scroll-margin-top matches the other scroll targets (.wiz-step,
+         .eo-checkout): when the payment view opens and scrolls to the top
+         of this panel, the "Back to checkout" pill must land fully below
+         the sticky header + sticky cart bar, not tucked behind them. */
+      .eo-payment { margin-top: 26px; scroll-margin-top: calc(var(--head-h, 87px) + 92px); }
       .pay-test-banner { background: var(--black); color: var(--green); border-radius: 12px; padding: 14px 18px; margin-top: 20px; font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; font-size: 21px; line-height: 1.2; text-align: center; }
       .pay-note { font-size: 16.5px; line-height: 1.55; margin-top: 16px; }
       .pay-total { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; border-top: 1.5px solid var(--black); margin-top: 20px; padding-top: 14px; }
@@ -1317,6 +1321,7 @@
       .eo-artwork-title { font-family: "Oswald", "Arial Narrow", sans-serif; font-weight: 700; text-transform: uppercase; font-size: 26px; line-height: 1.1; }
       .eo-artwork-intro { font-size: 17.5px; line-height: 1.5; margin-top: 8px; }
       .btn.ghost.is-chosen { background: rgba(172, 229, 14, 0.25); box-shadow: inset 0 0 0 2px var(--black); }
+      .back-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
       .eo-checkout { margin-top: 46px; border-top: 2px solid var(--black); padding-top: 34px; scroll-margin-top: calc(var(--head-h, 87px) + 92px); }
       .cart-lines { display: grid; gap: 12px; margin: 20px 0 6px; }
       .cart-line {
@@ -1351,6 +1356,11 @@
         .wiz-step { padding: 18px 16px; }
         .wiz-title { font-size: 21px; }
         .cart-bar { padding: 10px 14px; top: calc(var(--head-h, 87px) + 8px); }
+        /* On phones the sticky cart bar wraps to two lines (~94px tall
+           instead of one ~52px line), so the payment view's open scroll
+           offset must grow too — otherwise the "Back to checkout" pill
+           lands tucked under the bar. */
+        .eo-payment { scroll-margin-top: calc(var(--head-h, 87px) + 130px); }
         .cb-text { font-size: 16.5px; }
         .wiz-price { font-size: 18px; }
         .add-another-big { font-size: 25px; padding: 18px 14px; }
@@ -2009,7 +2019,10 @@
 
         <!-- CHECKOUT (separate view, reached via Check out) -->
         <div class="eo-checkout" id="eoCheckout" hidden>
-          <button type="button" class="btn ghost small" id="eoCheckoutBack">&larr; Back to signs</button>
+          <div class="back-row">
+            <button type="button" class="btn ghost small" id="eoCheckoutSiteBack">&larr; Back to site</button>
+            <button type="button" class="btn ghost small" id="eoCheckoutBack">&larr; Back to signs</button>
+          </div>
           <div class="step-head" style="margin-top:20px"><span class="step-num" aria-hidden="true">✓</span><h3 class="display step-title"><span class="sr-only">Checkout — </span>Checkout</h3></div>
           <div id="eoCartWrap" hidden>
             <ul class="cart-lines" id="cartLines"></ul>
@@ -2082,7 +2095,8 @@
             </form>
           </div>
           <div class="confirm" id="eoConfirm" role="status">
-            <div class="c-head">
+            <button type="button" class="btn ghost small" id="eoConfirmBack" style="margin-top:0">&larr; Back to site</button>
+            <div class="c-head" style="margin-top:18px">
               <svg width="52" height="52" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10.5" fill="#ACE50E" stroke="#000000" stroke-width="1.6"/><path d="M7.5 12.5l3 3L16.5 9" stroke="#000000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
               <h3>Order in!</h3>
             </div>
@@ -3362,6 +3376,12 @@
         function scrollToCheckout() { showCheckoutView(); }
         document.getElementById("cartBarCheckout").addEventListener("click", scrollToCheckout);
         document.getElementById("addedCheckoutBtn").addEventListener("click", scrollToCheckout);
+        /* Back to site from checkout / order confirmation: closeEasyOrder
+           only hides the view and restores scroll — the cart, wizard
+           answers, and anything typed into the checkout form all stay
+           exactly as they were. */
+        document.getElementById("eoCheckoutSiteBack").addEventListener("click", closeEasyOrder);
+        document.getElementById("eoConfirmBack").addEventListener("click", closeEasyOrder);
         document.getElementById("eoCheckoutBack").addEventListener("click", function () {
           eoView = "wizard";
           document.getElementById("eoCheckout").hidden = true;
